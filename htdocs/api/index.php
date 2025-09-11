@@ -334,9 +334,9 @@ function route(string $method, array $seg, PDO $db)
         case 'cart':
             handleCart($method, $seg, $db);
             break;
-		case 'customizations':
+                case 'customizations':
             handleCustomizations($method, $seg, $db);
-            break;	
+            break;      
         default:
             throw new ApiException('Endpoint not found.', 404);
     }
@@ -479,7 +479,28 @@ function handleBranches(string $method, array $seg, PDO $db)
 function getBranches(PDO $db)
 {
     $branches = getCachedData('branches_all', function() use ($db) {
-        $stmt = $db->query('SELECT * FROM Branches WHERE is_active = 1');
+        $sql = <<<SQL
+SELECT
+  b.branch_id,
+  b.internal_name,
+  b.address,
+  b.latitude,
+  b.longitude,
+  b.timezone,
+  b.contact_email,
+  b.is_active,
+  bs.display_name_translation_key AS name_translation_key,
+  bs.logo_url,
+  bs.cover_photo_url,
+  bs.phone_number,
+  bs.vat_percentage,
+  bs.service_charge_percentage
+FROM Branches b
+LEFT JOIN BranchSettings bs
+  ON b.branch_id = bs.branch_id
+WHERE b.is_active = 1
+SQL;
+        $stmt = $db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     });
     
@@ -499,7 +520,7 @@ SELECT
   b.timezone,
   b.contact_email,
   b.is_active,
-  bs.display_name_translation_key,
+  bs.display_name_translation_key AS name_translation_key,
   bs.logo_url,
   bs.cover_photo_url,
   bs.phone_number,
@@ -575,6 +596,7 @@ SQL;
                 $menuData[$cid] = [
                     'category_id'   => (int)$cid,
                     'category_name' => $row['category_name'],
+                    'name_translation_key' => $row['category_name'],
                     'category_image' => $row['category_image'],
                     'items'         => []
                 ];
@@ -589,7 +611,9 @@ SQL;
                 'branch_menu_id' => (int)$row['branch_menu_id'],
                 'item_id'        => (int)$row['item_id'],
                 'name'           => $row['item_name'],
+                'name_translation_key' => $row['item_name'],
                 'description'    => $row['item_description'],
+                'description_translation_key' => $row['item_description'],
                 'image_url'      => $row['image_url'],
                 'price'          => (float)$row['price'],
                 'preparation_time' => (int)$row['preparation_time_minutes'],
@@ -736,7 +760,9 @@ function getMenuItem(PDO $db, int $itemId)
         $sql = <<<SQL
 SELECT
   mi.*,
-  mc.name_translation_key AS category_name
+  mc.name_translation_key AS category_name,
+  mi.name_translation_key,
+  mi.description_translation_key
 FROM MenuItems_Global mi
 JOIN MenuCategories mc ON mi.category_id = mc.category_id
 WHERE mi.item_id = ?
@@ -1062,7 +1088,13 @@ SELECT
   oi.item_total,
   oi.customizations,
   bm.item_id         AS menu_item_id,
-  mi.name_translation_key AS item_name
+  mi.name_translation_key AS item_name,
+  mi.name_translation_key AS name,
+  mi.name_translation_key AS name_translation_key,
+  mi.description_translation_key AS item_description,
+  mi.description_translation_key AS description,
+  mi.description_translation_key AS description_translation_key,
+  mi.image_url
 FROM OrderItems oi
 JOIN BranchMenu bm ON oi.branch_menu_id = bm.branch_menu_id
 JOIN MenuItems_Global mi ON bm.item_id = mi.item_id
@@ -1694,7 +1726,7 @@ function validateCart(PDO $db)
         // Check if item exists and is available
         $stmt = $db->prepare('
             SELECT bm.branch_menu_id, bm.price, bm.is_available, 
-                   mi.name_translation_key, mi.image_url
+                   mi.name_translation_key, mi.name_translation_key AS name, mi.image_url
             FROM BranchMenu bm
             JOIN MenuItems_Global mi ON bm.item_id = mi.item_id
             WHERE bm.branch_menu_id = ? AND bm.branch_id = ?
