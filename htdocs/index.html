@@ -693,6 +693,20 @@
             color: var(--uber-green);
             font-weight: 600;
             font-size: var(--font-size-16);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-4);
+        }
+        
+        .cart-item-price .price-breakdown {
+            font-size: var(--font-size-14);
+            color: var(--uber-gray-600);
+            font-weight: normal;
+        }
+        
+        .cart-item-price .price-total {
+            font-weight: 600;
+            color: var(--uber-gray-900);
         }
         
         .cart-item-actions {
@@ -1536,6 +1550,20 @@
             display: flex;
             justify-content: space-between;
             font-size: var(--font-size-14);
+            flex-direction: column;
+            gap: var(--spacing-4);
+        }
+        
+        .order-item-price-qty .price-breakdown {
+            color: var(--uber-gray-600);
+            font-size: var(--font-size-12);
+        }
+        
+        .order-item-price-qty .price-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--uber-gray-900);
         }
         
         .order-summary {
@@ -2457,7 +2485,7 @@
                 async get(url) {
                     try {
                         showLoading();
-                        const response = await fetch(`./api/${url}`);
+                        const response = await fetch(`/api/${url}`);
                         if (!response.ok) {
                             throw new Error(`API error: ${response.status}`);
                         }
@@ -2901,12 +2929,19 @@
                     
                     const cartItem = document.createElement('div');
                     cartItem.className = 'cart-item';
+                    
+                    const customizationText = formatCustomizations(item.customizations);
+                    const hasCustomizations = customizationText && customizationText.trim() !== '';
+                    
                     cartItem.innerHTML = `
                         <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.name}" class="cart-item-image">
                         <div class="cart-item-details">
                             <h4 class="cart-item-name">${getTranslation(item.name, item.name_translation_key)}</h4>
-                            ${item.customizations ? `<p class="cart-item-customizations">${formatCustomizations(item.customizations)}</p>` : ''}
-                            <div class="cart-item-price">${formatPrice(item.price)} × ${item.quantity} = ${formatPrice(itemTotal)}</div>
+                            ${hasCustomizations ? `<p class="cart-item-customizations">${customizationText}</p>` : ''}
+                            <div class="cart-item-price">
+                                <div class="price-breakdown">${formatDetailedPrice(item)}</div>
+                                <div class="price-total">${formatPrice(item.price)} × ${item.quantity} = ${formatPrice(itemTotal)}</div>
+                            </div>
                         </div>
                         <div class="cart-item-actions">
                             <div class="quantity-control">
@@ -3037,6 +3072,15 @@
             async function renderCheckoutDetails(orderType) {
                 const detailsContainer = document.getElementById('checkout-details');
                 
+                if (!state.currentBranch) {
+                    detailsContainer.innerHTML = `
+                        <div class="error-message">
+                            <p>${translate('please_select_branch')}</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
                 switch(orderType) {
                     case 'dine-in':
                         // Load branch tables
@@ -3163,18 +3207,30 @@
                         
                         <h4>${translate('order_items')}</h4>
                         <div class="order-items">
-                            ${orderData.items ? orderData.items.map(item => `
-                                <div class="order-item">
-                                    <div class="order-item-name">${getTranslation(item.name, item.name_translation_key)}</div>
-                                    <div class="order-item-details">
-                                        ${item.customizations ? `<div class="order-item-customizations">${formatCustomizations(item.customizations)}</div>` : ''}
-                                        <div class="order-item-price-qty">
-                                            <span>${formatPrice(item.price_at_order)} × ${item.quantity}</span>
-                                            <span>${formatPrice(item.item_total)}</span>
+                            ${orderData.items ? orderData.items.map(item => {
+                                const customizationText = formatCustomizations(item.customizations);
+                                const hasCustomizations = customizationText && customizationText.trim() !== '';
+                                
+                                return `
+                                    <div class="order-item">
+                                        <div class="order-item-name">${getTranslation(item.name, item.name_translation_key)}</div>
+                                        <div class="order-item-details">
+                                            ${hasCustomizations ? `<div class="order-item-customizations">${customizationText}</div>` : ''}
+                                            <div class="order-item-price-qty">
+                                                <div class="price-breakdown">${formatDetailedPrice({
+                                                    price: item.price_at_order,
+                                                    base_price: item.price_at_order, // This might need adjustment based on actual data structure
+                                                    customizations: item.customizations
+                                                })}</div>
+                                                <div class="price-total">
+                                                    <span>${formatPrice(item.price_at_order)} × ${item.quantity}</span>
+                                                    <span>${formatPrice(item.item_total)}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            `).join('') : ''}
+                                `;
+                            }).join('') : ''}
                         </div>
                         
                         <div class="order-summary">
@@ -3502,7 +3558,12 @@
             
             async function loadCustomizations(branchMenuId) {
                 try {
-                    const customizations = await apiService.getCustomizations(branchMenuId);
+                    const response = await apiService.getCustomizations(branchMenuId);
+                    
+                    // The API returns data in a wrapper format with 'data' field
+                    const customizations = response.data || response;
+                    console.log('Loaded customizations:', customizations);
+                    
                     renderCustomizationOptions(customizations);
                 } catch (error) {
                     console.error('Failed to load customizations:', error);
@@ -3515,6 +3576,7 @@
                 const customizationSection = document.getElementById('customization-section');
                 
                 if (!customizations.groups || customizations.groups.length === 0) {
+                    console.log('No customization groups found, hiding section');
                     customizationSection.style.display = 'none';
                     return;
                 }
@@ -3525,7 +3587,7 @@
                     const groupElement = document.createElement('div');
                     groupElement.className = 'customization-group';
                     groupElement.innerHTML = `
-                        <h4 class="customization-group-title">${getTranslation(group.name, group.name_translation_key)}</h4>
+                        <h4 class="customization-group-title">${group.name && typeof group.name === 'object' ? (group.name[state.language] || group.name['en-US'] || 'Customization') : getTranslation(group.name, group.name_translation_key)}</h4>
                         <div class="customization-options-list" data-group-id="${group.id}" data-group-type="${group.type}">
                             <!-- Options will be added here -->
                         </div>
@@ -3545,7 +3607,7 @@
                         optionElement.innerHTML = `
                             <div class="customization-option-label">
                                 <input type="${inputType}" name="${inputName}" value="${option.id}">
-                                <span>${getTranslation(option.name, option.name_translation_key)}</span>
+                                <span>${option.name && typeof option.name === 'object' ? (option.name[state.language] || option.name['en-US'] || 'Option') : getTranslation(option.name, option.name_translation_key)}</span>
                             </div>
                             <span class="customization-price">${option.price_adjustment > 0 ? `+${formatPrice(option.price_adjustment)}` : translate('free')}</span>
                         `;
@@ -3557,6 +3619,8 @@
                     
                     customizationSection.appendChild(groupElement);
                 });
+                
+                customizationSection.style.display = 'block';
             }
             
             function handleCustomizationOptionClick(e) {
@@ -3713,6 +3777,9 @@
                     return;
                 }
                 
+                console.log('Adding to cart - current customizations:', state.currentCustomizations);
+                console.log('Adding to cart - current item:', state.currentItem);
+                
                 // Calculate total price with customizations
                 let totalPrice = state.currentItem.price;
                 Object.values(state.currentCustomizations).forEach(group => {
@@ -3736,7 +3803,7 @@
                     state.cart[existingIndex].quantity += state.currentQuantity;
                 } else {
                     // Add new item to cart
-                    state.cart.push({
+                    const cartItem = {
                         branch_menu_id: state.currentItem.branch_menu_id,
                         item_id: state.currentItem.item_id,
                         name: state.currentItem.name,
@@ -3746,7 +3813,10 @@
                         image_url: state.currentItem.image_url,
                         customizations: state.currentCustomizations,
                         quantity: state.currentQuantity
-                    });
+                    };
+                    
+                    console.log('Adding cart item:', cartItem);
+                    state.cart.push(cartItem);
                 }
                 
                 saveCart();
@@ -3886,10 +3956,140 @@
                     });
             }
             
+            // Auto-select first available branch if none is selected
+            async function ensureBranchSelected() {
+                if (state.currentBranch) {
+                    return true;
+                }
+                
+                try {
+                    const branches = await apiService.getBranches();
+                    const availableBranches = branches.data || branches;
+                    
+                    if (availableBranches && availableBranches.length > 0) {
+                        state.currentBranch = availableBranches[0];
+                        console.log('Auto-selected branch:', state.currentBranch);
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Failed to auto-select branch:', error);
+                }
+                
+                return false;
+            }
+            
+            // Validate customizations against API before placing order
+            async function validateCustomizationsWithAPI(cartItems) {
+                const validationResults = [];
+                
+                for (const item of cartItems) {
+                    if (item.customizations && Object.keys(item.customizations).length > 0) {
+                        try {
+                            console.log(`Validating customizations for item ${item.branch_menu_id}`);
+                            
+                            // Get the available customization options from API
+                            const response = await apiService.getCustomizations(item.branch_menu_id);
+                            const availableOptions = response.data || response;
+                            console.log(`Available options for item ${item.branch_menu_id}:`, availableOptions);
+                            
+                            // Transform our customizations to API format
+                            const transformedCustomizations = transformCustomizationsForAPI(item.customizations, item.branch_menu_id);
+                            console.log(`Transformed customizations for item ${item.branch_menu_id}:`, transformedCustomizations);
+                            
+                            // Validate each transformed customization
+                            for (const customization of transformedCustomizations) {
+                                console.log(`Validating customization:`, customization);
+                                
+                                // Find the group in available options
+                                const group = availableOptions.groups?.find(g => g.id === customization.group_id);
+                                if (!group) {
+                                    validationResults.push({
+                                        item_id: item.branch_menu_id,
+                                        error: `Group ${customization.group_id} not found in available options`
+                                    });
+                                    continue;
+                                }
+                                
+                                // Validate selected options exist in the group
+                                for (const optionId of customization.selected_options) {
+                                    const optionExists = group.options?.some(opt => opt.id === optionId);
+                                    if (!optionExists) {
+                                        validationResults.push({
+                                            item_id: item.branch_menu_id,
+                                            error: `Option ${optionId} not found in group ${customization.group_id}`
+                                        });
+                                    }
+                                }
+                                
+                                // Validate group type constraints
+                                if (group.type === 'radio' && customization.selected_options.length > 1) {
+                                    validationResults.push({
+                                        item_id: item.branch_menu_id,
+                                        error: `Radio group ${customization.group_id} cannot have multiple selections`
+                                    });
+                                }
+                                
+                                if (group.required && customization.selected_options.length === 0) {
+                                    validationResults.push({
+                                        item_id: item.branch_menu_id,
+                                        error: `Required group ${customization.group_id} has no selections`
+                                    });
+                                }
+                            }
+                            
+                        } catch (error) {
+                            validationResults.push({
+                                item_id: item.branch_menu_id,
+                                error: `Failed to validate customizations: ${error.message}`
+                            });
+                        }
+                    }
+                }
+                
+                return validationResults;
+            }
+            
+            // Transform customizations from frontend format to API format
+            function transformCustomizationsForAPI(customizations, branchMenuId) {
+                if (!customizations || typeof customizations !== 'object') {
+                    console.log('No customizations to transform');
+                    return [];
+                }
+                
+                console.log('Transforming customizations for branch_menu_id', branchMenuId, ':', customizations);
+                
+                const apiCustomizations = [];
+                
+                Object.entries(customizations).forEach(([groupId, groupData]) => {
+                    if (Array.isArray(groupData)) {
+                        // Checkbox group - multiple selections
+                        if (groupData.length > 0) {
+                            apiCustomizations.push({
+                                group_id: groupId,
+                                selected_options: groupData.map(option => option.optionId)
+                            });
+                            console.log(`Added checkbox group ${groupId}:`, groupData.map(option => option.optionId));
+                        }
+                    } else if (groupData && groupData.optionId) {
+                        // Radio group - single selection
+                        apiCustomizations.push({
+                            group_id: groupId,
+                            selected_options: [groupData.optionId]
+                        });
+                        console.log(`Added radio group ${groupId}:`, [groupData.optionId]);
+                    }
+                });
+                
+                console.log('Transformed API customizations:', apiCustomizations);
+                return apiCustomizations;
+            }
+            
             // Order placement
-            function placeOrder() {
-                if (!state.currentBranch) {
-                    showError('Please select a branch first');
+            async function placeOrder() {
+                // Ensure we have a branch selected
+                const hasBranch = await ensureBranchSelected();
+                if (!hasBranch) {
+                    showError('No available branches. Please contact support.');
                     return;
                 }
                 
@@ -3906,7 +4106,7 @@
                     items: state.cart.map(item => ({
                         item_id: item.item_id,
                         quantity: item.quantity,
-                        customizations: item.customizations
+                        customizations: transformCustomizationsForAPI(item.customizations, item.branch_menu_id)
                     }))
                 };
                 
@@ -3953,35 +4153,59 @@
                 
                 saveUserData();
                 
+                // Validate customizations before placing order
+                console.log('Validating customizations for cart items...');
+                const validationErrors = await validateCustomizationsWithAPI(state.cart);
+                
+                if (validationErrors.length > 0) {
+                    console.error('Customization validation errors:', validationErrors);
+                    const errorMessage = validationErrors.map(error => error.error).join(', ');
+                    showError('Invalid customizations: ' + errorMessage);
+                    return;
+                }
+                
+                console.log('Customization validation passed');
+                console.log('Placing order with data:', orderData);
+                
                 apiService.createOrder(orderData)
                     .then(response => {
-                        // Clear cart
-                        state.cart = [];
-                        saveCart();
-                        updateCartUI();
+                        console.log('Order response:', response);
                         
-                        // Save to order history
-                        state.orderHistory.push({
-                            order_uid: response.data.order_uid,
-                            date: new Date(),
-                            items: orderData.items,
-                            total: response.data.final_amount,
-                            status: 'pending'
-                        });
-                        
-                        saveUserData();
-                        
-                        // Show success message
-                        showToast(translate('order_placed_success'));
-                        
-                        // Redirect to order tracking
-                        setTimeout(() => {
-                            window.location.hash = `order/${response.data.order_uid}`;
-                        }, 1500);
+                        // Only clear cart on successful order
+                        if (response && response.data) {
+                            // Clear cart
+                            state.cart = [];
+                            saveCart();
+                            updateCartUI();
+                            
+                            // Save to order history
+                            state.orderHistory.push({
+                                order_uid: response.data.order_uid,
+                                date: new Date(),
+                                items: orderData.items,
+                                total: response.data.final_amount || 0,
+                                status: 'pending'
+                            });
+                            
+                            saveUserData();
+                            
+                            // Show success message
+                            showToast(translate('order_placed_success'));
+                            
+                            // Redirect to order tracking
+                            setTimeout(() => {
+                                window.location.hash = `order/${response.data.order_uid}`;
+                            }, 1500);
+                        } else {
+                            // Handle error case - don't clear cart
+                            console.error('Invalid order response:', response);
+                            showError('Failed to place order. Invalid response from server.');
+                        }
                     })
                     .catch(error => {
                         console.error('Failed to place order:', error);
-                        showError(translate('order_failed'));
+                        console.error('Error details:', error.message);
+                        showError(translate('order_failed') + ': ' + (error.message || 'Unknown error'));
                     });
             }
             
@@ -4020,8 +4244,68 @@
             }
             
             function formatCustomizations(customizations) {
-                // This would be implemented based on the customization structure
-                return translate('customized');
+                if (!customizations || typeof customizations !== 'object' || Object.keys(customizations).length === 0) {
+                    return '';
+                }
+                
+                const customizationTexts = [];
+                
+                Object.entries(customizations).forEach(([groupId, groupData]) => {
+                    if (Array.isArray(groupData)) {
+                        // Checkbox group - multiple selections
+                        if (groupData.length > 0) {
+                            const optionNames = groupData.map(option => {
+                                // Try to get a readable name from the option
+                                if (option.optionId) {
+                                    return option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1).replace(/_/g, ' ');
+                                }
+                                return '';
+                            }).filter(name => name);
+                            
+                            if (optionNames.length > 0) {
+                                customizationTexts.push(optionNames.join(', '));
+                            }
+                        }
+                    } else if (groupData && groupData.optionId) {
+                        // Radio group - single selection
+                        const optionName = groupData.optionId.charAt(0).toUpperCase() + groupData.optionId.slice(1).replace(/_/g, ' ');
+                        customizationTexts.push(optionName);
+                    }
+                });
+                
+                return customizationTexts.length > 0 ? customizationTexts.join(', ') : '';
+            }
+            
+            function formatDetailedPrice(item) {
+                if (!item.customizations || typeof item.customizations !== 'object' || Object.keys(item.customizations).length === 0) {
+                    return formatPrice(item.price);
+                }
+                
+                let customizationPrice = 0;
+                const customizationDetails = [];
+                
+                Object.entries(item.customizations).forEach(([groupId, groupData]) => {
+                    if (Array.isArray(groupData)) {
+                        // Checkbox group - multiple selections
+                        groupData.forEach(option => {
+                            if (option.priceAdjustment && option.priceAdjustment > 0) {
+                                customizationPrice += option.priceAdjustment;
+                                customizationDetails.push(`+${formatPrice(option.priceAdjustment)} (${option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1).replace(/_/g, ' ')})`);
+                            }
+                        });
+                    } else if (groupData && groupData.priceAdjustment && groupData.priceAdjustment > 0) {
+                        // Radio group - single selection
+                        customizationPrice += groupData.priceAdjustment;
+                        customizationDetails.push(`+${formatPrice(groupData.priceAdjustment)} (${groupData.optionId.charAt(0).toUpperCase() + groupData.optionId.slice(1).replace(/_/g, ' ')})`);
+                    }
+                });
+                
+                if (customizationPrice === 0) {
+                    return formatPrice(item.price);
+                }
+                
+                const basePrice = item.base_price || (item.price - customizationPrice);
+                return `${formatPrice(basePrice)} ${customizationDetails.join(' ')} = ${formatPrice(item.price)}`;
             }
             
             function showLoading() {
