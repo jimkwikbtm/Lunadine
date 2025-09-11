@@ -1581,6 +1581,133 @@
             margin-bottom: var(--spacing-8);
         }
         
+        /* ===== ORDER TRACKING ===== */
+        .order-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-16);
+            margin-bottom: var(--spacing-24);
+        }
+        
+        .no-items {
+            text-align: center;
+            color: var(--uber-gray-600);
+            font-style: italic;
+            padding: var(--spacing-16);
+        }
+        
+        .order-item-card {
+            display: flex;
+            background-color: var(--uber-white);
+            border-radius: var(--radius-12);
+            overflow: hidden;
+            box-shadow: var(--shadow-1);
+            transition: var(--transition-normal);
+        }
+        
+        .order-item-card:hover {
+            box-shadow: var(--shadow-2);
+        }
+        
+        .order-item-image {
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+        }
+        
+        .order-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .order-item-content {
+            flex: 1;
+            padding: var(--spacing-16);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .order-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-8);
+        }
+        
+        .order-item-name {
+            font-size: var(--font-size-16);
+            font-weight: 600;
+            color: var(--uber-gray-900);
+            margin: 0;
+            flex: 1;
+        }
+        
+        .order-item-quantity {
+            margin-left: var(--spacing-8);
+        }
+        
+        .quantity-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--uber-green);
+            color: var(--uber-white);
+            font-size: var(--font-size-12);
+            font-weight: 600;
+            padding: var(--spacing-4) var(--spacing-8);
+            border-radius: var(--radius-full);
+            min-width: 24px;
+            height: 24px;
+        }
+        
+        .order-item-customizations {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-8);
+            margin-bottom: var(--spacing-12);
+            font-size: var(--font-size-14);
+            color: var(--uber-gray-600);
+        }
+        
+        .order-item-customizations i {
+            color: var(--uber-gray-400);
+            font-size: var(--font-size-12);
+        }
+        
+        .order-item-footer {
+            margin-top: auto;
+        }
+        
+        .order-item-price {
+            font-size: var(--font-size-14);
+            color: var(--uber-gray-700);
+            font-weight: 500;
+        }
+        
+        .order-actions {
+            margin-top: var(--spacing-16);
+            text-align: center;
+        }
+        
+        .btn-danger {
+            background-color: var(--uber-red);
+            color: var(--uber-white);
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        /* ===== ORDER INFO ===== */
+        .order-info {
+            margin-bottom: var(--spacing-16);
+        }
+        
+        .order-info p {
+            margin-bottom: var(--spacing-8);
+        }
+        
         /* ===== FEEDBACK ===== */
         .feedback-section {
             margin-top: var(--spacing-32);
@@ -2397,11 +2524,12 @@
                 setupEventListeners();
                 loadUserData();
                 setupRouter();
+                
+                // Load translations from API FIRST before loading any data that requires translations
+                await loadTranslationsFromAPI();
+                
                 loadBranches();
                 updateCartUI();
-                
-                // Load translations from API
-                await loadTranslationsFromAPI();
             }
             
             // Router setup for SPA navigation
@@ -2682,8 +2810,23 @@
             async function loadOrder(orderId) {
                 try {
                     showToast(translate('loading_order'));
-                    const order = await apiService.getOrder(orderId);
-                    renderOrderTracking(order);
+                    
+                    // Fetch both order details and order items
+                    const [orderResponse, itemsResponse] = await Promise.all([
+                        apiService.getOrder(orderId),
+                        apiService.getOrderItems(orderId)
+                    ]);
+                    
+                    const order = orderResponse.data || orderResponse;
+                    const items = itemsResponse.data || itemsResponse || [];
+                    
+                    // Combine order and items data
+                    const completeOrder = {
+                        ...order,
+                        items: items
+                    };
+                    
+                    renderOrderTracking({ data: completeOrder });
                 } catch (error) {
                     console.error('Failed to load order:', error);
                 }
@@ -2722,7 +2865,9 @@
             
             // Translation helper functions
             function getTranslation(defaultText, translationKey) {
-                if (translationKey && state.translations[state.language][translationKey]) {
+                if (translationKey && 
+                    state.translations[state.language] && 
+                    state.translations[state.language][translationKey]) {
                     return state.translations[state.language][translationKey];
                 }
                 return defaultText;
@@ -3206,31 +3351,38 @@
                         </div>
                         
                         <h4>${translate('order_items')}</h4>
-                        <div class="order-items">
-                            ${orderData.items ? orderData.items.map(item => {
+                        <div class="order-items-list">
+                            ${orderData.items && orderData.items.length > 0 ? orderData.items.map(item => {
                                 const customizationText = formatCustomizations(item.customizations);
                                 const hasCustomizations = customizationText && customizationText.trim() !== '';
                                 
                                 return `
-                                    <div class="order-item">
-                                        <div class="order-item-name">${getTranslation(item.name, item.name_translation_key)}</div>
-                                        <div class="order-item-details">
-                                            ${hasCustomizations ? `<div class="order-item-customizations">${customizationText}</div>` : ''}
-                                            <div class="order-item-price-qty">
-                                                <div class="price-breakdown">${formatDetailedPrice({
-                                                    price: item.price_at_order,
-                                                    base_price: item.price_at_order, // This might need adjustment based on actual data structure
-                                                    customizations: item.customizations
-                                                })}</div>
-                                                <div class="price-total">
-                                                    <span>${formatPrice(item.price_at_order)} × ${item.quantity}</span>
-                                                    <span>${formatPrice(item.item_total)}</span>
+                                    <div class="order-item-card">
+                                        <div class="order-item-image">
+                                            <img src="${item.image_url || '/images/food-default.jpg'}" alt="${getTranslation(item.name, item.name_translation_key)}">
+                                        </div>
+                                        <div class="order-item-content">
+                                            <div class="order-item-header">
+                                                <h5 class="order-item-name">${getTranslation(item.name, item.name_translation_key)}</h5>
+                                                <div class="order-item-quantity">
+                                                    <span class="quantity-badge">×${item.quantity}</span>
+                                                </div>
+                                            </div>
+                                            ${hasCustomizations ? `
+                                            <div class="order-item-customizations">
+                                                <i class="fas fa-cog"></i>
+                                                <span>${customizationText}</span>
+                                            </div>
+                                            ` : ''}
+                                            <div class="order-item-footer">
+                                                <div class="order-item-price">
+                                                    ${formatPrice(item.price_at_order)} × ${item.quantity} = ${formatPrice(item.item_total)}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 `;
-                            }).join('') : ''}
+                            }).join('') : '<p class="no-items">No items found</p>'}
                         </div>
                         
                         <div class="order-summary">
@@ -3260,9 +3412,28 @@
                                 <span>${translate('total')}:</span>
                                 <span>${formatPrice(orderData.final_amount)}</span>
                             </div>
+                            
+                            ${orderData.status === 'pending' ? `
+                            <div class="order-actions">
+                                <button class="btn btn-danger" id="cancel-order-btn">
+                                    <i class="fas fa-times"></i>
+                                    ${translate('cancel_order')}
+                                </button>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                 `;
+                
+                // Add cancel order event listener if order is pending
+                if (orderData.status === 'pending') {
+                    const cancelBtn = document.getElementById('cancel-order-btn');
+                    if (cancelBtn) {
+                        cancelBtn.addEventListener('click', () => {
+                            cancelOrder(orderData.order_uid);
+                        });
+                    }
+                }
                 
                 // Add feedback section for completed orders
                 if (orderData.status === 'completed') {
@@ -4228,6 +4399,11 @@
                         saveUserData();
                         renderOrderHistory();
                     }
+                    
+                    // Redirect to order history after cancellation
+                    setTimeout(() => {
+                        window.location.hash = '#orders';
+                    }, 1500);
                 } catch (error) {
                     hideLoading();
                     console.error('Failed to cancel order:', error);
@@ -4248,9 +4424,35 @@
                     return '';
                 }
                 
+                // Check if customizations is in API format (array of objects) or frontend format (object with groups)
+                let customizationData;
+                if (Array.isArray(customizations)) {
+                    // API format: [{group_id: "x", selected_options: ["a", "b"]}]
+                    customizationData = {};
+                    
+                    customizations.forEach(group => {
+                        if (group.group_id && group.selected_options && Array.isArray(group.selected_options)) {
+                            if (group.selected_options.length === 1) {
+                                // Single selection (radio) - store as object
+                                customizationData[group.group_id] = {
+                                    optionId: group.selected_options[0]
+                                };
+                            } else {
+                                // Multiple selections (checkbox) - store as array
+                                customizationData[group.group_id] = group.selected_options.map(optionId => ({
+                                    optionId: optionId
+                                }));
+                            }
+                        }
+                    });
+                } else {
+                    // Frontend format: {groupId: {optionId: "x"} or [{optionId: "x"}, {optionId: "y"}]}
+                    customizationData = customizations;
+                }
+                
                 const customizationTexts = [];
                 
-                Object.entries(customizations).forEach(([groupId, groupData]) => {
+                Object.entries(customizationData).forEach(([groupId, groupData]) => {
                     if (Array.isArray(groupData)) {
                         // Checkbox group - multiple selections
                         if (groupData.length > 0) {
