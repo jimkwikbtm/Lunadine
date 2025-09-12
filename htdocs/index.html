@@ -377,8 +377,8 @@
         }
         
         .branch-image {
-            height: 200px;
             width: 100%;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
         }
         
@@ -646,6 +646,57 @@
             font-size: var(--font-size-14);
             color: var(--uber-gray-600);
             line-height: 1.4;
+            margin-bottom: var(--spacing-8);
+        }
+        
+        .promotion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-12);
+        }
+        
+        .promo-code-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-8);
+            background-color: var(--uber-gray-100);
+            padding: var(--spacing-6) var(--spacing-12);
+            border-radius: var(--radius-8);
+        }
+        
+        .promo-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: var(--uber-green);
+            font-size: var(--font-size-14);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .copy-code-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--uber-gray-600);
+            padding: var(--spacing-4);
+            border-radius: var(--radius-4);
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .copy-code-btn:hover {
+            background-color: var(--uber-gray-200);
+            color: var(--uber-green);
+        }
+        
+        .promo-condition {
+            font-size: var(--font-size-12);
+            color: var(--uber-gray-500);
+            font-style: italic;
+            margin-top: var(--spacing-4);
         }
         
         /* ===== CART VIEW ===== */
@@ -1572,6 +1623,115 @@
             border-top: 1px solid var(--uber-gray-200);
         }
         
+        .promo-code-section {
+            margin-bottom: var(--spacing-20);
+            padding: var(--spacing-16);
+            background-color: var(--uber-gray-50);
+            border-radius: var(--radius-8);
+            border: 1px solid var(--uber-gray-200);
+        }
+        
+        .promo-code-input-group {
+            display: flex;
+            gap: var(--spacing-8);
+            margin-bottom: var(--spacing-12);
+        }
+        
+        .promo-code-input {
+            flex: 1;
+            padding: var(--spacing-12) var(--spacing-16);
+            border: 1px solid var(--uber-gray-300);
+            border-radius: var(--radius-8);
+            font-size: var(--font-size-16);
+            transition: var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .promo-code-input:focus {
+            outline: none;
+            border-color: var(--uber-green);
+            box-shadow: 0 0 0 3px rgba(6, 193, 103, 0.2);
+        }
+        
+        .apply-promo-btn {
+            padding: var(--spacing-12) var(--spacing-20);
+            background-color: var(--uber-green);
+            color: var(--uber-white);
+            border: none;
+            border-radius: var(--radius-8);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            white-space: nowrap;
+        }
+        
+        .apply-promo-btn:hover {
+            background-color: var(--uber-green-dark);
+        }
+        
+        .apply-promo-btn:disabled {
+            background-color: var(--uber-gray-300);
+            cursor: not-allowed;
+        }
+        
+        .promo-code-status {
+            font-size: var(--font-size-14);
+            padding: var(--spacing-8) var(--spacing-12);
+            border-radius: var(--radius-6);
+            margin-top: var(--spacing-8);
+        }
+        
+        .promo-code-status.success {
+            background-color: rgba(6, 193, 103, 0.1);
+            color: var(--uber-green);
+            border: 1px solid rgba(6, 193, 103, 0.3);
+        }
+        
+        .promo-code-status.error {
+            background-color: rgba(255, 65, 54, 0.1);
+            color: var(--uber-red);
+            border: 1px solid rgba(255, 65, 54, 0.3);
+        }
+        
+        .applied-promo-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-12) var(--spacing-16);
+            background-color: rgba(6, 193, 103, 0.1);
+            border: 1px solid rgba(6, 193, 103, 0.3);
+            border-radius: var(--radius-8);
+            margin-bottom: var(--spacing-12);
+        }
+        
+        .applied-promo-code {
+            font-weight: 600;
+            color: var(--uber-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .remove-promo-btn {
+            background: none;
+            border: none;
+            color: var(--uber-red);
+            cursor: pointer;
+            font-size: var(--font-size-14);
+            padding: var(--spacing-4);
+            border-radius: var(--radius-4);
+            transition: var(--transition-fast);
+        }
+        
+        .remove-promo-btn:hover {
+            background-color: rgba(255, 65, 54, 0.1);
+        }
+        
+        .discount-row {
+            color: var(--uber-green);
+            font-weight: 600;
+        }
+        
         /* Order Info */
         .order-info {
             margin-bottom: var(--spacing-16);
@@ -2113,6 +2273,11 @@
                         <div class="checkout-form" id="checkout-form">
                             <!-- Checkout form will be dynamically loaded here -->
                         </div>
+                        
+                        <!-- Order Summary -->
+                        <div class="order-summary" id="checkout-order-summary">
+                            <!-- Order summary will be dynamically loaded here -->
+                        </div>
                     </div>
                 </div>
             </section>
@@ -2253,6 +2418,7 @@
                 currentQuantity: 1,
                 currentCustomizations: {},
                 currentRating: 0,
+                appliedPromo: null, // { code, type, value, discount_amount }
                 translations: {
                     'en-US': {
                         'app_name': 'Luna Dine',
@@ -2272,6 +2438,16 @@
                         'add_to_cart': 'Add to Cart',
                         'proceed_to_checkout': 'Proceed to Checkout',
                         'place_order': 'Place Order',
+                        'promo_code': 'Promo Code',
+                        'apply_promo': 'Apply',
+                        'remove': 'Remove',
+                        'promo_applied': 'Promo code applied successfully!',
+                        'promo_invalid': 'Invalid promo code',
+                        'promo_expired': 'Promo code has expired',
+                        'promo_usage_limit': 'Promo code usage limit exceeded',
+                        'min_order_not_met': 'Minimum order value not met',
+                        'discount': 'Discount',
+                        'order_summary': 'Order Summary',
                         'empty_cart': 'Your cart is empty',
                         'empty_favorites': 'Your favorites will appear here',
                         'browse_menu': 'Browse Menu',
@@ -2384,6 +2560,16 @@
                         'add_to_cart': 'কার্টে যোগ করুন',
                         'proceed_to_checkout': 'চেকআউট করতে এগিয়ান',
                         'place_order': 'অর্ডার দিন',
+                        'promo_code': 'প্রমো কোড',
+                        'apply_promo': 'প্রয়োগ করুন',
+                        'remove': 'সরান',
+                        'promo_applied': 'প্রমো কোড সফলভাবে প্রয়োগ করা হয়েছে!',
+                        'promo_invalid': 'অবৈধ প্রমো কোড',
+                        'promo_expired': 'প্রমো কোডের মেয়াদ শেষ হয়েছে',
+                        'promo_usage_limit': 'প্রমো কোড ব্যবহারের সীমা অতিক্রান্ত হয়েছে',
+                        'min_order_not_met': 'ন্যূনতম অর্ডার মান পূরণ হয়নি',
+                        'discount': 'ছাড়',
+                        'order_summary': 'অর্ডার সারাংশ',
                         'empty_cart': 'আপনার কার্ট খালি',
                         'empty_favorites': 'আপনার পছন্দসমূহ এখানে প্রদর্শিত হবে',
                         'browse_menu': 'মেনু ব্রাউজ করুন',
@@ -2523,10 +2709,12 @@
             async function init() {
                 setupEventListeners();
                 loadUserData();
-                setupRouter();
                 
                 // Load translations from API FIRST before loading any data that requires translations
                 await loadTranslationsFromAPI();
+                
+                // Setup router AFTER translations are loaded
+                setupRouter();
                 
                 loadBranches();
                 updateCartUI();
@@ -2548,7 +2736,18 @@
                         break;
                     case 'menu':
                         if (param) {
-                            loadMenu(param);
+                            // Ensure branches are loaded before loading menu
+                            if (state.branches.length === 0) {
+                                // If branches aren't loaded yet, load them first then proceed
+                                loadBranches().then(() => {
+                                    loadMenu(param);
+                                }).catch(error => {
+                                    console.error('Failed to load branches for menu:', error);
+                                    showToast('Failed to load branch data');
+                                });
+                            } else {
+                                loadMenu(param);
+                            }
                         } else if (state.currentBranch) {
                             loadMenu(state.currentBranch.branch_id);
                         } else {
@@ -2764,6 +2963,11 @@
                 try {
                     showToast(translate('loading_menu'));
                     
+                    // Ensure translations are loaded before proceeding
+                    if (!state.translations[state.language] || Object.keys(state.translations[state.language]).length === 0) {
+                        await loadTranslationsFromAPI();
+                    }
+                    
                     // Check if we already have the branch data
                     let branch = state.branches.find(b => b.branch_id == branchId);
                     
@@ -2776,7 +2980,14 @@
                     branch.settings = settings.data || settings;
                     
                     state.currentBranch = branch;
-                    elements.menuBranchName.textContent = `${translate('menu')} - ${getTranslation(branch.internal_name, branch.name_translation_key)}`;
+                    let branchDisplayName = branch.internal_name || 'Branch';
+                    
+                    // Try to get translated name if translation key exists
+                    if (branch.name_translation_key && state.translations[state.language] && state.translations[state.language][branch.name_translation_key]) {
+                        branchDisplayName = state.translations[state.language][branch.name_translation_key];
+                    }
+                    
+                    elements.menuBranchName.textContent = `${translate('menu')} - ${branchDisplayName}`;
                     
                     const menuData = await apiService.getBranchMenu(branchId);
                     state.menuData = menuData.data || menuData;
@@ -2899,48 +3110,25 @@
                 elements.branchesContainer.innerHTML = '';
                 
                 for (const branch of state.branches) {
-                    try {
-                        // Load banners for each branch
-                        const banners = await apiService.getBranchBanners(branch.branch_id);
-                        const bannerUrl = banners.data?.[0]?.image_url || branch.cover_photo_url || '/images/branch-default.jpg';
-                        
-                        const branchCard = document.createElement('div');
-                        branchCard.className = 'branch-card';
-                        branchCard.innerHTML = `
-                            <img src="${bannerUrl}" alt="${branch.internal_name}" class="branch-image">
-                            <div class="branch-content">
-                                <h3 class="branch-name">${getTranslation(branch.internal_name, branch.name_translation_key)}</h3>
-                                <p class="branch-address">${branch.address}</p>
-                                <button class="btn" data-branch-id="${branch.branch_id}">${translate('view_menu')}</button>
-                            </div>
-                        `;
-                        
-                        branchCard.querySelector('button').addEventListener('click', () => {
-                            window.location.hash = `menu/${branch.branch_id}`;
-                        });
-                        
-                        elements.branchesContainer.appendChild(branchCard);
-                    } catch (error) {
-                        console.error('Failed to load banners for branch:', error);
-                        
-                        // Fallback to branch card without banner
-                        const branchCard = document.createElement('div');
-                        branchCard.className = 'branch-card';
-                        branchCard.innerHTML = `
-                            <img src="${branch.cover_photo_url || '/images/branch-default.jpg'}" alt="${branch.internal_name}" class="branch-image">
-                            <div class="branch-content">
-                                <h3 class="branch-name">${getTranslation(branch.internal_name, branch.name_translation_key)}</h3>
-                                <p class="branch-address">${branch.address}</p>
-                                <button class="btn" data-branch-id="${branch.branch_id}">${translate('view_menu')}</button>
-                            </div>
-                        `;
-                        
-                        branchCard.querySelector('button').addEventListener('click', () => {
-                            window.location.hash = `menu/${branch.branch_id}`;
-                        });
-                        
-                        elements.branchesContainer.appendChild(branchCard);
-                    }
+                    // Use branch logo instead of banners
+                    const logoUrl = branch.logo_url || branch.cover_photo_url || '/images/branch-default.jpg';
+                    
+                    const branchCard = document.createElement('div');
+                    branchCard.className = 'branch-card';
+                    branchCard.innerHTML = `
+                        <img src="${logoUrl}" alt="${branch.internal_name}" class="branch-image">
+                        <div class="branch-content">
+                            <h3 class="branch-name">${getTranslation(branch.internal_name, branch.name_translation_key)}</h3>
+                            <p class="branch-address">${branch.address}</p>
+                            <button class="btn" data-branch-id="${branch.branch_id}">${translate('view_menu')}</button>
+                        </div>
+                    `;
+                    
+                    branchCard.querySelector('button').addEventListener('click', () => {
+                        window.location.hash = `menu/${branch.branch_id}`;
+                    });
+                    
+                    elements.branchesContainer.appendChild(branchCard);
                 }
             }
             
@@ -2972,7 +3160,7 @@
                     const categorySection = document.createElement('div');
                     categorySection.id = `category-${category.category_id}`;
                     categorySection.innerHTML = `
-                        <h3>${category.name}</h3>
+                        <h3>${getTranslation('Category', category.category_name)}</h3>
                     `;
                     
                     const itemsGrid = document.createElement('div');
@@ -2985,17 +3173,17 @@
                         itemCard.className = 'menu-item-card';
                         itemCard.innerHTML = `
                             <div class="menu-item-image-container">
-                                <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.name}" class="menu-item-image">
+                                <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.item_name}" class="menu-item-image">
                                 ${item.is_featured ? '<span class="menu-item-badge">Featured</span>' : ''}
                             </div>
                             <div class="menu-item-content">
                                 <div class="menu-item-header">
-                                    <h4 class="menu-item-name">${getTranslation(item.name, item.name_translation_key)}</h4>
+                                    <h4 class="menu-item-name">${getTranslation(item.item_name, item.name_translation_key)}</h4>
                                     <div class="menu-item-price">${formatPrice(item.price)}</div>
                                 </div>
-                                <p class="menu-item-desc">${getTranslation(item.description, item.description_translation_key) || translate('delicious_menu_item')}</p>
+                                <p class="menu-item-desc">${getTranslation(item.item_description, item.description_translation_key) || translate('delicious_menu_item')}</p>
                                 <div class="menu-item-footer">
-                                    <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time || 15} ${translate('mins')}</span>
+                                    <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
                                     <button class="btn-favorite ${isFavorite ? 'active' : ''}" data-item-id="${item.branch_menu_id}">
                                         <i class="fas fa-heart"></i>
                                     </button>
@@ -3036,15 +3224,47 @@
                 state.promotions.forEach(promo => {
                     const promoCard = document.createElement('div');
                     promoCard.className = 'promotion-card';
+                    
+                    const promoCode = promo.code || 'PROMO';
+                    const promoTitle = getTranslation('Special Offer', promo.description_translation_key);
+                    const promoDescription = promo.type === 'PERCENTAGE' 
+                        ? `${promo.value}% off` 
+                        : `${formatPrice(promo.value)} off`;
+                    
                     promoCard.innerHTML = `
-                        <img src="${promo.image_url || '/images/promo-default.jpg'}" alt="${promo.title}" class="promotion-image">
                         <div class="promotion-content">
-                            <h4 class="promotion-title">${promo.title}</h4>
-                            <p class="promotion-description">${promo.description}</p>
+                            <div class="promotion-header">
+                                <h4 class="promotion-title">${promoTitle}</h4>
+                                <div class="promo-code-container">
+                                    <span class="promo-code">${promoCode}</span>
+                                    <button class="copy-code-btn" data-code="${promoCode}" title="Copy promo code">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="promotion-description">${promoDescription}</p>
+                            ${promo.min_order_value ? `<p class="promo-condition">Min order: ${formatPrice(promo.min_order_value)}</p>` : ''}
                         </div>
                     `;
                     
                     elements.promotionsGrid.appendChild(promoCard);
+                });
+                
+                // Add event listeners to copy buttons
+                document.querySelectorAll('.copy-code-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const code = this.getAttribute('data-code');
+                        navigator.clipboard.writeText(code).then(() => {
+                            showToast(`Promo code "${code}" copied!`);
+                            const originalIcon = this.innerHTML;
+                            this.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                this.innerHTML = originalIcon;
+                            }, 2000);
+                        }).catch(() => {
+                            showToast('Failed to copy promo code');
+                        });
+                    });
                 });
             }
             
@@ -3290,6 +3510,19 @@
                 // Add customer info fields common to all order types
                 detailsContainer.innerHTML += `
                     <h3>${translate('payment')} ${translate('information')}</h3>
+                    
+                    <!-- Promo Code Section -->
+                    <div class="promo-code-section">
+                        <h4>${translate('promo_code')}</h4>
+                        <div id="promo-code-container">
+                            <div class="promo-code-input-group">
+                                <input type="text" class="promo-code-input" id="promo-code-input" placeholder="${translate('promo_code')}" maxlength="20">
+                                <button class="apply-promo-btn" id="apply-promo-btn">${translate('apply_promo')}</button>
+                            </div>
+                            <div id="promo-status"></div>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label class="form-label">${translate('payment_method')}</label>
                         <select class="form-select" id="payment-method">
@@ -3304,11 +3537,314 @@
                     </div>
                 `;
                 
+                // Add promo code functionality
+                setTimeout(() => {
+                    setupPromoCodeFunctionality();
+                }, 100);
+                
+                // Render order summary
+                renderCheckoutOrderSummary();
+                
                 // Set up place order button
                 const placeOrderBtn = document.getElementById('place-order-btn');
                 if (placeOrderBtn) {
                     placeOrderBtn.addEventListener('click', placeOrder);
                 }
+            }
+            
+            function setupPromoCodeFunctionality() {
+                console.log('setupPromoCodeFunctionality called');
+                
+                const promoInput = document.getElementById('promo-code-input');
+                const applyBtn = document.getElementById('apply-promo-btn');
+                const promoStatus = document.getElementById('promo-status');
+                
+                console.log('Elements found in setup:', {
+                    promoInput: !!promoInput,
+                    applyBtn: !!applyBtn,
+                    promoStatus: !!promoStatus
+                });
+                
+                if (!promoInput || !applyBtn || !promoStatus) {
+                    console.error('Required elements not found in setup');
+                    return;
+                }
+                
+                // Update promo code section based on current state
+                updatePromoCodeSection();
+                
+                // Add event listener for apply button
+                applyBtn.addEventListener('click', applyPromoCode);
+                console.log('Event listener added to apply button');
+                
+                // Add event listener for Enter key on input
+                promoInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        console.log('Enter key pressed, applying promo code');
+                        applyPromoCode();
+                    }
+                });
+                console.log('Event listener added to promo input');
+            }
+            
+            function updatePromoCodeSection() {
+                const promoContainer = document.getElementById('promo-code-container');
+                const promoStatus = document.getElementById('promo-status');
+                
+                if (!promoContainer || !promoStatus) return;
+                
+                if (state.appliedPromo) {
+                    // Show applied promo info
+                    promoContainer.innerHTML = `
+                        <div class="applied-promo-info">
+                            <span>
+                                <strong>${translate('promo_code')}:</strong> 
+                                <span class="applied-promo-code">${state.appliedPromo.code}</span>
+                                (${state.appliedPromo.type === 'PERCENTAGE' ? state.appliedPromo.value + '%' : formatPrice(state.appliedPromo.value)})
+                            </span>
+                            <button class="remove-promo-btn" id="remove-promo-btn">${translate('remove')}</button>
+                        </div>
+                    `;
+                    promoStatus.innerHTML = `<div class="promo-code-status success">${translate('promo_applied')}</div>`;
+                    
+                    // Add event listener to remove button
+                    const removeBtn = document.getElementById('remove-promo-btn');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', removePromoCode);
+                    }
+                } else {
+                    // Show input form
+                    promoContainer.innerHTML = `
+                        <div class="promo-code-input-group">
+                            <input type="text" class="promo-code-input" id="promo-code-input" placeholder="${translate('promo_code')}" maxlength="20">
+                            <button class="apply-promo-btn" id="apply-promo-btn">${translate('apply_promo')}</button>
+                        </div>
+                    `;
+                    promoStatus.innerHTML = '';
+                    
+                    // Re-attach event listeners
+                    const newPromoInput = document.getElementById('promo-code-input');
+                    const newApplyBtn = document.getElementById('apply-promo-btn');
+                    
+                    if (newPromoInput && newApplyBtn) {
+                        newApplyBtn.addEventListener('click', applyPromoCode);
+                        newPromoInput.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter') {
+                                applyPromoCode();
+                            }
+                        });
+                    }
+                }
+            }
+            
+            async function applyPromoCode() {
+                console.log('applyPromoCode function called');
+                
+                const promoInput = document.getElementById('promo-code-input');
+                const applyBtn = document.getElementById('apply-promo-btn');
+                const promoStatus = document.getElementById('promo-status');
+                
+                console.log('Elements found:', {
+                    promoInput: !!promoInput,
+                    applyBtn: !!applyBtn,
+                    promoStatus: !!promoStatus
+                });
+                
+                if (!promoInput || !applyBtn) {
+                    console.error('Required elements not found');
+                    return;
+                }
+                
+                const promoCode = promoInput.value.trim().toUpperCase();
+                console.log('Promo code entered:', promoCode);
+                
+                if (!promoCode) {
+                    console.log('No promo code entered');
+                    if (promoStatus) showPromoStatus('error', translate('promo_invalid'));
+                    return;
+                }
+                
+                // Disable button during processing
+                applyBtn.disabled = true;
+                applyBtn.textContent = '...';
+                
+                try {
+                    console.log('Starting promo code validation...');
+                    
+                    // Get promotions for current branch
+                    if (!state.currentBranch) {
+                        console.log('No current branch selected');
+                        if (promoStatus) showPromoStatus('error', 'Please select a branch first');
+                        return;
+                    }
+                    
+                    console.log('Current branch:', state.currentBranch);
+                    console.log('Fetching promotions for branch:', state.currentBranch.branch_id);
+                    
+                    const promotions = await apiService.getPromotions(state.currentBranch.branch_id);
+                    const promoList = promotions.data || promotions;
+                    
+                    console.log('Promotions received:', promoList);
+                    
+                    // Find the promo code
+                    const promo = promoList.find(p => 
+                        p.code === promoCode && 
+                        p.is_active && 
+                        (!p.start_date || new Date(p.start_date) <= new Date()) &&
+                        (!p.end_date || new Date(p.end_date) >= new Date()) &&
+                        (!p.usage_limit || p.usage_count < p.usage_limit)
+                    );
+                    
+                    console.log('Found promo:', promo);
+                    
+                    if (!promo) {
+                        console.log('Promo not found or invalid');
+                        if (promoStatus) showPromoStatus('error', translate('promo_invalid'));
+                        return;
+                    }
+                    
+                    // Check minimum order value
+                    const cartSubtotal = calculateCartSubtotal();
+                    console.log('Cart subtotal:', cartSubtotal, 'Min order value:', promo.min_order_value);
+                    
+                    if (promo.min_order_value && cartSubtotal < promo.min_order_value) {
+                        console.log('Minimum order value not met');
+                        if (promoStatus) showPromoStatus('error', `${translate('min_order_not_met')} (${formatPrice(promo.min_order_value)})`);
+                        return;
+                    }
+                    
+                    // Calculate discount
+                    let discountAmount = 0;
+                    if (promo.type === 'PERCENTAGE') {
+                        discountAmount = (cartSubtotal * promo.value) / 100;
+                        if (promo.max_discount_amount && discountAmount > promo.max_discount_amount) {
+                            discountAmount = promo.max_discount_amount;
+                        }
+                    } else if (promo.type === 'FIXED_AMOUNT') {
+                        discountAmount = promo.value;
+                    }
+                    
+                    console.log('Discount calculated:', discountAmount);
+                    
+                    // Apply the promo
+                    state.appliedPromo = {
+                        code: promo.code,
+                        type: promo.type,
+                        value: promo.value,
+                        discount_amount: discountAmount,
+                        promo_id: promo.promo_id
+                    };
+                    
+                    console.log('Promo applied:', state.appliedPromo);
+                    
+                    if (promoStatus) showPromoStatus('success', translate('promo_applied'));
+                    updatePromoCodeSection();
+                    
+                    // Update order summary if it exists
+                    updateOrderSummary();
+                    
+                    // Show success toast as fallback
+                    showToast(`Promo code "${promoCode}" applied successfully!`);
+                    
+                } catch (error) {
+                    console.error('Error applying promo code:', error);
+                    if (promoStatus) showPromoStatus('error', translate('promo_invalid'));
+                    showToast('Failed to apply promo code');
+                } finally {
+                    // Re-enable button
+                    applyBtn.disabled = false;
+                    applyBtn.textContent = translate('apply_promo');
+                }
+            }
+            
+            function removePromoCode() {
+                state.appliedPromo = null;
+                updatePromoCodeSection();
+                updateOrderSummary();
+            }
+            
+            function showPromoStatus(type, message) {
+                const promoStatus = document.getElementById('promo-status');
+                if (!promoStatus) return;
+                
+                promoStatus.innerHTML = `<div class="promo-code-status ${type}">${message}</div>`;
+            }
+            
+            function calculateCartSubtotal() {
+                return state.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            }
+            
+            function updateOrderSummary() {
+                // This function will be called to update the order summary with discount
+                // The order summary is rendered in the placeOrder function, so we just need
+                // to ensure it reflects the current state including promo discount
+                if (state.currentView === 'checkout') {
+                    // Re-render checkout details to update order summary
+                    const activeOrderType = document.querySelector('.order-type-btn.active');
+                    if (activeOrderType) {
+                        renderCheckoutDetails(activeOrderType.getAttribute('data-type'));
+                    }
+                    // Also update the checkout order summary
+                    renderCheckoutOrderSummary();
+                }
+            }
+            
+            function renderCheckoutOrderSummary() {
+                const orderSummaryContainer = document.getElementById('checkout-order-summary');
+                if (!orderSummaryContainer) return;
+                
+                if (state.cart.length === 0) {
+                    orderSummaryContainer.innerHTML = '';
+                    return;
+                }
+                
+                // Calculate order totals
+                const subtotal = calculateCartSubtotal();
+                const serviceChargePercentage = parseFloat(state.currentBranch?.settings?.service_charge_percentage) || 0;
+                const vatPercentage = parseFloat(state.currentBranch?.settings?.vat_percentage) || 0;
+                
+                const serviceCharge = subtotal * (serviceChargePercentage / 100);
+                const taxableAmount = subtotal + serviceCharge;
+                const vat = taxableAmount * (vatPercentage / 100);
+                
+                // Calculate discount
+                let discountAmount = 0;
+                if (state.appliedPromo) {
+                    discountAmount = state.appliedPromo.discount_amount;
+                }
+                
+                // Calculate final total
+                const total = subtotal + serviceCharge + vat - discountAmount;
+                
+                orderSummaryContainer.innerHTML = `
+                    <h3>${translate('order_summary')}</h3>
+                    <div class="summary-row">
+                        <span>${translate('subtotal')}:</span>
+                        <span>${formatPrice(subtotal)}</span>
+                    </div>
+                    ${serviceCharge > 0 ? `
+                    <div class="summary-row">
+                        <span>${translate('service_charge')}${serviceChargePercentage > 0 ? ` (${serviceChargePercentage}%)` : ''}:</span>
+                        <span>${formatPrice(serviceCharge)}</span>
+                    </div>
+                    ` : ''}
+                    ${vat > 0 ? `
+                    <div class="summary-row">
+                        <span>${translate('tax')}${vatPercentage > 0 ? ` (${vatPercentage}%)` : ''}:</span>
+                        <span>${formatPrice(vat)}</span>
+                    </div>
+                    ` : ''}
+                    ${state.appliedPromo ? `
+                    <div class="summary-row discount-row">
+                        <span>${translate('discount')} (${state.appliedPromo.code}):</span>
+                        <span>-${formatPrice(discountAmount)}</span>
+                    </div>
+                    ` : ''}
+                    <div class="summary-row summary-total">
+                        <span>${translate('total')}:</span>
+                        <span>${formatPrice(total)}</span>
+                    </div>
+                `;
             }
             
             // Helper functions to get charge percentages from order data
@@ -3456,6 +3992,12 @@
                                 <span>${translate('subtotal')}:</span>
                                 <span>${formatPrice(orderData.items_subtotal)}</span>
                             </div>
+                            ${state.appliedPromo ? `
+                            <div class="summary-row discount-row">
+                                <span>${translate('discount')} (${state.appliedPromo.code}):</span>
+                                <span>-${formatPrice(state.appliedPromo.discount_amount)}</span>
+                            </div>
+                            ` : ''}
                             ${orderData.service_charge_amount ? `
                             <div class="summary-row">
                                 <span>${translate('service_charge')}${getServiceChargePercentage(orderData)}:</span>
@@ -4381,6 +4923,12 @@
                 const specialInstructions = document.getElementById('special-instructions');
                 orderData.special_instructions = specialInstructions ? specialInstructions.value : '';
                 
+                // Add promo code if applied
+                if (state.appliedPromo) {
+                    orderData.promo_id = state.appliedPromo.promo_id;
+                    orderData.discount_amount = state.appliedPromo.discount_amount;
+                }
+                
                 // Save customer info for future orders
                 state.userInfo = {
                     name: document.getElementById('customer-name')?.value || '',
@@ -4414,6 +4962,9 @@
                             state.cart = [];
                             saveCart();
                             updateCartUI();
+                            
+                            // Clear applied promo code
+                            state.appliedPromo = null;
                             
                             // Save to order history
                             state.orderHistory.push({
