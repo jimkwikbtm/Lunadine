@@ -2242,7 +2242,7 @@
             <!-- Cart View -->
             <section id="cart-view" class="view">
                 <div class="container">
-                    <h2 class="section-title" data-translate="your_cart">Your Cart</h2>
+                    <h2 class="section-title" id="cart-branch-name" data-translate="your_cart">Your Cart</h2>
                     
                     <div class="cart-container" id="cart-container">
                         <!-- Cart items will be dynamically loaded here -->
@@ -2252,7 +2252,7 @@
             <!-- Checkout View -->
             <section id="checkout-view" class="view">
                 <div class="container">
-                    <h2 class="section-title" data-translate="checkout">Checkout</h2>
+                    <h2 class="section-title" id="checkout-branch-name" data-translate="checkout">Checkout</h2>
                     
                     <div class="checkout-container">
                         <div class="checkout-steps">
@@ -2445,7 +2445,9 @@
                         'promo_invalid': 'Invalid promo code',
                         'promo_expired': 'Promo code has expired',
                         'promo_usage_limit': 'Promo code usage limit exceeded',
+                        'promo_not_active': 'Promo code is not yet active',
                         'min_order_not_met': 'Minimum order value not met',
+                        'please_select_branch': 'Please select a branch first',
                         'discount': 'Discount',
                         'order_summary': 'Order Summary',
                         'empty_cart': 'Your cart is empty',
@@ -2466,6 +2468,7 @@
                         'order_type': 'Order Type',
                         'details': 'Details',
                         'payment': 'Payment',
+                        'branch': 'Branch',
                         'dine_in': 'Dine In',
                         'takeaway': 'Takeaway',
                         'delivery': 'Delivery',
@@ -2540,7 +2543,8 @@
                         'loading_promotions': 'Loading promotions...',
                         'loading_order': 'Loading order...',
                         'loading_tables': 'Loading tables...',
-                        'loading_feedback': 'Loading feedback...'
+                        'loading_feedback': 'Loading feedback...',
+                        'unknown_branch': 'Unknown Branch'
                     },
                     'bn-BD': {
                         'app_name': 'লুনা ডাইন',
@@ -2567,7 +2571,9 @@
                         'promo_invalid': 'অবৈধ প্রমো কোড',
                         'promo_expired': 'প্রমো কোডের মেয়াদ শেষ হয়েছে',
                         'promo_usage_limit': 'প্রমো কোড ব্যবহারের সীমা অতিক্রান্ত হয়েছে',
+                        'promo_not_active': 'প্রমো কোড এখনও সক্রিয় নয়',
                         'min_order_not_met': 'ন্যূনতম অর্ডার মান পূরণ হয়নি',
+                        'please_select_branch': 'অনুগ্রহ করে প্রথমে একটি শাখা নির্বাচন করুন',
                         'discount': 'ছাড়',
                         'order_summary': 'অর্ডার সারাংশ',
                         'empty_cart': 'আপনার কার্ট খালি',
@@ -2588,6 +2594,7 @@
                         'order_type': 'অর্ডারের ধরণ',
                         'details': 'বিবরণ',
                         'payment': 'পেমেন্ট',
+                        'branch': 'শাখা',
                         'dine_in': 'ডাইন ইন',
                         'takeaway': 'টেকঅওয়ে',
                         'delivery': 'ডেলিভারি',
@@ -2662,7 +2669,8 @@
                         'loading_promotions': 'প্রচারগুলি লোড হচ্ছে...',
                         'loading_order': 'অর্ডার লোড হচ্ছে...',
                         'loading_tables': 'টেবিলগুলি লোড হচ্ছে...',
-                        'loading_feedback': 'মতামত লোড হচ্ছে...'
+                        'loading_feedback': 'মতামত লোড হচ্ছে...',
+                        'unknown_branch': 'অজানা শাখা'
                     }
                 }
             };
@@ -2691,6 +2699,8 @@
                 loadingOverlay: document.getElementById('loading-overlay'),
                 menuSearch: document.getElementById('menu-search'),
                 menuBranchName: document.getElementById('menu-branch-name'),
+                cartBranchName: document.getElementById('cart-branch-name'),
+                checkoutBranchName: document.getElementById('checkout-branch-name'),
                 favoritesContainer: document.getElementById('favorites-container'),
                 languageDropdown: document.getElementById('language-dropdown'),
                 checkoutForm: document.getElementById('checkout-form'),
@@ -2715,6 +2725,9 @@
                 
                 // Setup router AFTER translations are loaded
                 setupRouter();
+                
+                // Update branch name displays after loading user data and translations
+                updateBranchNameDisplays();
                 
                 loadBranches();
                 updateCartUI();
@@ -2743,7 +2756,7 @@
                                     loadMenu(param);
                                 }).catch(error => {
                                     console.error('Failed to load branches for menu:', error);
-                                    showToast('Failed to load branch data');
+                                    showError('Failed to load branch data');
                                 });
                             } else {
                                 loadMenu(param);
@@ -2959,6 +2972,46 @@
                 }
             }
             
+            // Helper function to update branch name displays
+            function updateBranchNameDisplays() {
+                if (!state.currentBranch) {
+                    resetBranchNameDisplays();
+                    return;
+                }
+                
+                const branchDisplayName = getTranslation(state.currentBranch.internal_name, state.currentBranch.name_translation_key) || state.currentBranch.internal_name || 'Branch';
+                
+                // Update menu page
+                if (elements.menuBranchName) {
+                    elements.menuBranchName.textContent = `${translate('menu')} - ${branchDisplayName}`;
+                }
+                
+                // Update cart page
+                if (elements.cartBranchName) {
+                    elements.cartBranchName.textContent = `${translate('your_cart')} - ${branchDisplayName}`;
+                }
+                
+                // Update checkout page
+                if (elements.checkoutBranchName) {
+                    elements.checkoutBranchName.textContent = `${translate('checkout')} - ${branchDisplayName}`;
+                }
+            }
+            
+            // Helper function to reset branch name displays to default
+            function resetBranchNameDisplays() {
+                if (elements.menuBranchName) {
+                    elements.menuBranchName.textContent = translate('menu');
+                }
+                
+                if (elements.cartBranchName) {
+                    elements.cartBranchName.textContent = translate('your_cart');
+                }
+                
+                if (elements.checkoutBranchName) {
+                    elements.checkoutBranchName.textContent = translate('checkout');
+                }
+            }
+            
             async function loadMenu(branchId) {
                 try {
                     showToast(translate('loading_menu'));
@@ -2980,14 +3033,7 @@
                     branch.settings = settings.data || settings;
                     
                     state.currentBranch = branch;
-                    let branchDisplayName = branch.internal_name || 'Branch';
-                    
-                    // Try to get translated name if translation key exists
-                    if (branch.name_translation_key && state.translations[state.language] && state.translations[state.language][branch.name_translation_key]) {
-                        branchDisplayName = state.translations[state.language][branch.name_translation_key];
-                    }
-                    
-                    elements.menuBranchName.textContent = `${translate('menu')} - ${branchDisplayName}`;
+                    updateBranchNameDisplays();
                     
                     const menuData = await apiService.getBranchMenu(branchId);
                     state.menuData = menuData.data || menuData;
@@ -3262,7 +3308,7 @@
                                 this.innerHTML = originalIcon;
                             }, 2000);
                         }).catch(() => {
-                            showToast('Failed to copy promo code');
+                            showError('Failed to copy promo code');
                         });
                     });
                 });
@@ -3270,6 +3316,9 @@
             
             function renderCart() {
                 elements.cartContainer.innerHTML = '';
+                
+                // Update cart page title with branch name
+                updateBranchNameDisplays();
                 
                 if (state.cart.length === 0) {
                     elements.cartContainer.innerHTML = `
@@ -3390,6 +3439,9 @@
             }
             
             async function renderCheckout() {
+                // Update checkout page title with branch name
+                updateBranchNameDisplays();
+                
                 elements.checkoutForm.innerHTML = `
                     <div class="order-type-selector">
                         <div class="order-type-btn active" data-type="dine-in">
@@ -3660,7 +3712,9 @@
                 
                 if (!promoCode) {
                     console.log('No promo code entered');
-                    if (promoStatus) showPromoStatus('error', translate('promo_invalid'));
+                    const errorMsg = translate('promo_invalid');
+                    if (promoStatus) showPromoStatus('error', errorMsg);
+                    showError(errorMsg);
                     return;
                 }
                 
@@ -3674,7 +3728,9 @@
                     // Get promotions for current branch
                     if (!state.currentBranch) {
                         console.log('No current branch selected');
-                        if (promoStatus) showPromoStatus('error', 'Please select a branch first');
+                        const errorMsg = translate('please_select_branch');
+                        if (promoStatus) showPromoStatus('error', errorMsg);
+                        showError(errorMsg);
                         return;
                     }
                     
@@ -3699,7 +3755,44 @@
                     
                     if (!promo) {
                         console.log('Promo not found or invalid');
-                        if (promoStatus) showPromoStatus('error', translate('promo_invalid'));
+                        
+                        // Check specific reasons for failure
+                        const inactivePromo = promoList.find(p => p.code === promoCode && !p.is_active);
+                        if (inactivePromo) {
+                            const errorMsg = translate('promo_invalid');
+                            if (promoStatus) showPromoStatus('error', errorMsg);
+                            showError(errorMsg);
+                            return;
+                        }
+                        
+                        const expiredPromo = promoList.find(p => p.code === promoCode && p.end_date && new Date(p.end_date) < new Date());
+                        if (expiredPromo) {
+                            const errorMsg = translate('promo_expired');
+                            if (promoStatus) showPromoStatus('error', errorMsg);
+                            showError(errorMsg);
+                            return;
+                        }
+                        
+                        const notStartedPromo = promoList.find(p => p.code === promoCode && p.start_date && new Date(p.start_date) > new Date());
+                        if (notStartedPromo) {
+                            const errorMsg = translate('promo_not_active');
+                            if (promoStatus) showPromoStatus('error', errorMsg);
+                            showError(errorMsg);
+                            return;
+                        }
+                        
+                        const usageLimitExceeded = promoList.find(p => p.code === promoCode && p.usage_limit && p.usage_count >= p.usage_limit);
+                        if (usageLimitExceeded) {
+                            const errorMsg = translate('promo_usage_limit');
+                            if (promoStatus) showPromoStatus('error', errorMsg);
+                            showError(errorMsg);
+                            return;
+                        }
+                        
+                        // If none of the specific reasons match, it's an invalid code
+                        const errorMsg = translate('promo_invalid');
+                        if (promoStatus) showPromoStatus('error', errorMsg);
+                        showError(errorMsg);
                         return;
                     }
                     
@@ -3709,7 +3802,9 @@
                     
                     if (promo.min_order_value && cartSubtotal < promo.min_order_value) {
                         console.log('Minimum order value not met');
-                        if (promoStatus) showPromoStatus('error', `${translate('min_order_not_met')} (${formatPrice(promo.min_order_value)})`);
+                        const errorMsg = `${translate('min_order_not_met')} (${formatPrice(promo.min_order_value)})`;
+                        if (promoStatus) showPromoStatus('error', errorMsg);
+                        showError(errorMsg);
                         return;
                     }
                     
@@ -3719,6 +3814,7 @@
                         discountAmount = (cartSubtotal * promo.value) / 100;
                         if (promo.max_discount_amount && discountAmount > promo.max_discount_amount) {
                             discountAmount = promo.max_discount_amount;
+                            console.log('Discount amount limited by max discount:', discountAmount);
                         }
                     } else if (promo.type === 'FIXED_AMOUNT') {
                         discountAmount = promo.value;
@@ -3737,7 +3833,8 @@
                     
                     console.log('Promo applied:', state.appliedPromo);
                     
-                    if (promoStatus) showPromoStatus('success', translate('promo_applied'));
+                    const successMsg = translate('promo_applied');
+                    if (promoStatus) showPromoStatus('success', successMsg);
                     updatePromoCodeSection();
                     
                     // Update order summary if it exists
@@ -3748,8 +3845,9 @@
                     
                 } catch (error) {
                     console.error('Error applying promo code:', error);
-                    if (promoStatus) showPromoStatus('error', translate('promo_invalid'));
-                    showToast('Failed to apply promo code');
+                    const errorMsg = translate('promo_invalid');
+                    if (promoStatus) showPromoStatus('error', errorMsg);
+                    showError(errorMsg);
                 } finally {
                     // Re-enable button
                     applyBtn.disabled = false;
@@ -3949,7 +4047,12 @@
                             <p><strong>${translate('order_type')}:</strong> ${translate(orderData.order_type)}</p>
                             <p><strong>${translate('status')}:</strong> ${translate(orderData.status)}</p>
                             <p><strong>${translate('placed_at')}:</strong> ${new Date(orderData.created_at).toLocaleString()}</p>
-                            ${orderData.table_id ? `<p><strong>${translate('table_number')}:</strong> ${orderData.table_id}</p>` : ''}
+                            ${orderData.branch_name_translation_key ? `
+                                <p><strong>${translate('branch')}:</strong> ${getTranslation(orderData.branch_name, orderData.branch_name_translation_key) || orderData.branch_name || translate('unknown_branch')}</p>
+                            ` : orderData.branch_name ? `
+                                <p><strong>${translate('branch')}:</strong> ${orderData.branch_name}</p>
+                            ` : ''}
+                            ${orderData.table_identifier ? `<p><strong>${translate('table_number')}:</strong> ${orderData.table_identifier}</p>` : ''}
                         </div>
                         
                         <h4>${translate('order_items')}</h4>
@@ -3992,10 +4095,10 @@
                                 <span>${translate('subtotal')}:</span>
                                 <span>${formatPrice(orderData.items_subtotal)}</span>
                             </div>
-                            ${state.appliedPromo ? `
+                            ${orderData.promo_id && orderData.discount_amount > 0 ? `
                             <div class="summary-row discount-row">
-                                <span>${translate('discount')} (${state.appliedPromo.code}):</span>
-                                <span>-${formatPrice(state.appliedPromo.discount_amount)}</span>
+                                <span>${translate('discount')} ${orderData.promo_code ? `(${orderData.promo_code})` : ''}:</span>
+                                <span>-${formatPrice(orderData.discount_amount)}</span>
                             </div>
                             ` : ''}
                             ${orderData.service_charge_amount ? `
@@ -4532,6 +4635,7 @@
                     if (!state.currentBranch || state.currentBranch.branch_id !== table.data.branch_id) {
                         const branch = await apiService.getBranch(table.data.branch_id);
                         state.currentBranch = branch.data || branch;
+                        updateBranchNameDisplays();
                     }
                     
                     hideLoading();
@@ -4541,6 +4645,10 @@
                     // If we're on the menu page, refresh it with the new branch
                     if (state.currentView === 'menu') {
                         loadMenu(state.currentBranch.branch_id);
+                    } else if (state.currentView === 'cart') {
+                        renderCart();
+                    } else if (state.currentView === 'checkout') {
+                        renderCheckout();
                     }
                 } catch (error) {
                     hideLoading();
@@ -4711,7 +4819,7 @@
             // Service requests
             function submitServiceRequest() {
                 if (!state.currentBranch) {
-                    showError('Please select a branch first');
+                    showError(translate('please_select_branch'));
                     return;
                 }
                 
@@ -5261,6 +5369,18 @@
                         option.classList.add('active');
                         
                         showToast(translate('language_changed'));
+                        
+                        // Update branch name displays with new language
+                        updateBranchNameDisplays();
+                        
+                        // Refresh current view if needed
+                        if (state.currentView === 'menu' && state.currentBranch) {
+                            loadMenu(state.currentBranch.branch_id);
+                        } else if (state.currentView === 'cart') {
+                            renderCart();
+                        } else if (state.currentView === 'checkout') {
+                            renderCheckout();
+                        }
                     });
                 });
                 
