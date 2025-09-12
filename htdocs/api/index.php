@@ -861,6 +861,8 @@ function createOrder(PDO $db)
     $paymentMethod = $data['payment_method'] ?? 'cash';
     $deliveryAddress = $data['delivery_address'] ?? null;
     $specialInstructions = $data['special_instructions'] ?? null;
+    $promoId = isset($data['promo_id']) ? (int)$data['promo_id'] : null;
+    $discountAmount = isset($data['discount_amount']) ? (float)$data['discount_amount'] : 0.00;
 
     // Fetch branch settings for charges
     $cfgStmt = $db->prepare(
@@ -888,18 +890,20 @@ SQL;
         $orderUid = 'ORD-' . strtoupper(uniqid());
         $db->prepare(
             'INSERT INTO Orders
-              (order_uid, branch_id, table_id, order_type, status,
-               items_subtotal, subtotal_after_discount,
+              (order_uid, branch_id, table_id, promo_id, order_type, status,
+               items_subtotal, discount_amount, subtotal_after_discount,
                service_charge_amount, vat_amount,
                delivery_charge_amount, final_amount,
                payment_status, payment_method, delivery_address, notes, created_at)
              VALUES
-              (?, ?, ?, ?, "pending", 0, 0, 0, 0, 0, 0, "unpaid", ?, ?, ?, datetime("now","localtime"))'
+              (?, ?, ?, ?, ?, "pending", 0, ?, 0, 0, 0, 0, 0, "unpaid", ?, ?, ?, datetime("now","localtime"))'
         )->execute([
             $orderUid,
             $data['branch_id'],
             $tableId,
+            $promoId,
             $data['order_type'] ?? 'takeaway',
+            $discountAmount,
             $paymentMethod,
             $deliveryAddress,
             $specialInstructions
@@ -1001,9 +1005,11 @@ SQL;
         }
 
         // 4) Recalculate totals & update Orders
-        $svcAmt = round($subTotal * $svcPct / 100, 2);
-        $vatAmt = round(($subTotal + $svcAmt) * $vatPct / 100, 2);
-        $final  = round($subTotal + $svcAmt + $vatAmt, 2);
+        $discountAmount = max(0, min($discountAmount, $subTotal)); // Ensure discount doesn't exceed subtotal
+        $subtotalAfterDiscount = $subTotal - $discountAmount;
+        $svcAmt = round($subtotalAfterDiscount * $svcPct / 100, 2);
+        $vatAmt = round(($subtotalAfterDiscount + $svcAmt) * $vatPct / 100, 2);
+        $final  = round($subtotalAfterDiscount + $svcAmt + $vatAmt, 2);
         
         // Create applied_rates_snapshot with the percentages used
         $appliedRatesSnapshot = json_encode([
@@ -1015,6 +1021,7 @@ SQL;
         $db->prepare(
             'UPDATE Orders SET
                items_subtotal          = ?,
+               discount_amount         = ?,
                subtotal_after_discount = ?,
                service_charge_amount   = ?,
                vat_amount              = ?,
@@ -1026,7 +1033,8 @@ SQL;
              WHERE order_id = ?'
         )->execute([
             $subTotal,
-            $subTotal,
+            $discountAmount,
+            $subtotalAfterDiscount,
             $svcAmt,
             $vatAmt,
             $final,
@@ -1102,7 +1110,19 @@ function validateCustomization($customization, $availableOptions) {
 function getOrder(PDO $db, string $orderUid)
 {
     $order = getCachedData("order_$orderUid", function() use ($db, $orderUid) {
-        $stmt = $db->prepare('SELECT * FROM Orders WHERE order_uid = ?');
+        $stmt = $db->prepare('
+            SELECT o.*, 
+                   p.code as promo_code, p.type as promo_type, p.value as promo_value,
+                   b.internal_name as branch_name,
+                   bs.display_name_translation_key as branch_name_translation_key,
+                   t.table_identifier as table_identifier
+            FROM Orders o 
+            LEFT JOIN Promotions p ON o.promo_id = p.promo_id 
+            LEFT JOIN Branches b ON o.branch_id = b.branch_id
+            LEFT JOIN BranchSettings bs ON o.branch_id = bs.branch_id
+            LEFT JOIN Tables t ON o.table_id = t.table_id
+            WHERE o.order_uid = ?
+        ');
         $stmt->execute([$orderUid]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     });
