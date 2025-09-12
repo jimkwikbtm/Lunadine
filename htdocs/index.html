@@ -2390,6 +2390,24 @@
                 </div>
             </div>
         </div>
+        <!-- Confirmation Modal -->
+        <div class="modal-overlay" id="confirmation-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title" data-translate="confirm_action">Confirm Action</h3>
+                    <button class="modal-close" data-modal="confirmation-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmation-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" id="confirmation-cancel-btn" data-translate="cancel">Cancel</button>
+                    <button class="btn btn-danger" id="confirmation-confirm-btn" data-translate="confirm">Confirm</button>
+                </div>
+            </div>
+        </div>
         <!-- Loading Overlay -->
         <div class="loading-overlay" id="loading-overlay">
             <div class="spinner"></div>
@@ -2404,6 +2422,7 @@
                 currentBranch: null,
                 currentTable: null,
                 cart: [],
+                branchCarts: {}, // Store separate carts for different branches
                 favorites: [],
                 orderHistory: [],
                 language: 'en-US',
@@ -2495,6 +2514,9 @@
                         'order_items': 'Order Items',
                         'view_details': 'View Details',
                         'cancel_order': 'Cancel Order',
+                        'confirm_action': 'Confirm Action',
+                        'confirm': 'Confirm',
+                        'cancel': 'Cancel',
                         'delivery_charge': 'Delivery Charge',
                         'pending': 'Pending',
                         'confirmed': 'Confirmed',
@@ -2621,6 +2643,9 @@
                         'order_items': 'অর্ডার আইটেম',
                         'view_details': 'বিবরণ দেখুন',
                         'cancel_order': 'অর্ডার বাতিল করুন',
+                        'confirm_action': 'ক্রিয়া নিশ্চিত করুন',
+                        'confirm': 'নিশ্চিত করুন',
+                        'cancel': 'বাতিল করুন',
                         'delivery_charge': 'ডেলিভারি চার্জ',
                         'pending': 'মুলতুবি',
                         'confirmed': 'নিশ্চিত',
@@ -2733,6 +2758,137 @@
                 updateCartUI();
             }
             
+            // URL helper functions
+            function normalizeString(str) {
+                // Normalize Unicode strings for consistent comparison
+                return str.normalize('NFC').trim();
+            }
+            
+            function getBranchUrlName(branch) {
+                const displayName = getTranslation(branch.internal_name, branch.name_translation_key) || branch.internal_name || 'Branch';
+                return normalizeString(displayName).replace(/\s+/g, ''); // Remove spaces
+            }
+            
+            function encodeUrlName(name) {
+                // Properly encode URL components while preserving Unicode characters
+                return encodeURIComponent(name);
+            }
+            
+            function decodeUrlName(encodedName) {
+                // Decode URL components back to original string
+                return decodeURIComponent(encodedName);
+            }
+            
+            function findBranchByUrlName(urlName) {
+                // Try to find branch by comparing URL names
+                // Handle both encoded and decoded versions
+                const normalizedUrlName = normalizeString(urlName);
+                
+                return state.branches.find(branch => {
+                    const branchUrlName = getBranchUrlName(branch);
+                    const normalizedBranchName = normalizeString(branchUrlName);
+                    
+                    console.log('Comparing:', {
+                        urlName: normalizedUrlName,
+                        branchName: normalizedBranchName,
+                        exactMatch: normalizedBranchName === normalizedUrlName
+                    }); // Debug log
+                    
+                    // Try exact match first
+                    if (normalizedBranchName === normalizedUrlName) {
+                        return true;
+                    }
+                    
+                    // Try decoded match (for URLs that were encoded by browser)
+                    try {
+                        const decodedUrlName = normalizeString(decodeUrlName(urlName));
+                        if (normalizedBranchName === decodedUrlName) {
+                            console.log('Found match via decoding:', decodedUrlName); // Debug log
+                            return true;
+                        }
+                    } catch (e) {
+                        // Ignore decoding errors
+                    }
+                    
+                    // Try encoded match (for comparison with encoded URLs)
+                    try {
+                        const encodedBranchName = encodeUrlName(branchUrlName);
+                        if (encodedBranchName === urlName) {
+                            console.log('Found match via encoding:', encodedBranchName); // Debug log
+                            return true;
+                        }
+                    } catch (e) {
+                        // Ignore encoding errors
+                    }
+                    
+                    return false;
+                });
+            }
+            
+            function createBranchUrl(branch, page) {
+                const branchUrlName = getBranchUrlName(branch);
+                console.log('Creating URL for branch:', {
+                    branchName: branch.internal_name,
+                    urlName: branchUrlName,
+                    hasUnicode: /[\u0980-\u09FF\u0800-\uFFFF]/.test(branchUrlName) // Added Bengali range
+                }); // Debug log
+                
+                // For URLs with Unicode characters, we should encode them
+                // Bengali Unicode range: \u0980-\u09FF, Other Unicode: \u0800-\uFFFF
+                if (/[\u0980-\u09FF\u0800-\uFFFF]/.test(branchUrlName)) {
+                    // Contains Bengali or other Unicode characters
+                    const encodedName = encodeUrlName(branchUrlName);
+                    console.log('Encoded URL name:', encodedName); // Debug log
+                    return `#/${encodedName}/${page}`;
+                }
+                return `#/${branchUrlName}/${page}`;
+            }
+            
+            // Test function for URL handling (can be called from browser console)
+            window.testUrlHandling = function() {
+                console.log('=== URL Handling Test ===');
+                console.log('Current branches:', state.branches);
+                console.log('Current language:', state.language);
+                
+                state.branches.forEach(branch => {
+                    const urlName = getBranchUrlName(branch);
+                    const url = createBranchUrl(branch, 'menu');
+                    const found = findBranchByUrlName(urlName);
+                    
+                    console.log('Branch test:', {
+                        branchName: branch.internal_name,
+                        urlName: urlName,
+                        generatedUrl: url,
+                        found: !!found,
+                        translations: {
+                            internal: branch.internal_name,
+                            translated: getTranslation(branch.internal_name, branch.name_translation_key),
+                            key: branch.name_translation_key
+                        }
+                    });
+                });
+            };
+            
+            function redirectToNewFormat() {
+                const hash = window.location.hash.substring(1);
+                
+                // Check if it's a legacy format that needs redirection
+                if (!hash.startsWith('/') && hash.includes('/')) {
+                    const [route, param] = hash.split('/');
+                    
+                    // Handle legacy menu URLs with branch ID
+                    if (route === 'menu' && param && !isNaN(param)) {
+                        const branch = state.branches.find(b => b.branch_id == param);
+                        if (branch) {
+                            window.location.hash = createBranchUrl(branch, 'menu');
+                            return true;
+                        }
+                    }
+                }
+                
+                return false;
+            }
+            
             // Router setup for SPA navigation
             function setupRouter() {
                 window.addEventListener('hashchange', handleRouteChange);
@@ -2740,7 +2896,70 @@
             }
             
             function handleRouteChange() {
+                // First, check if we need to redirect from legacy format
+                if (redirectToNewFormat()) {
+                    return; // Stop processing if redirection occurred
+                }
+                
                 const hash = window.location.hash.substring(1);
+                
+                // Handle new URL format: /BranchName/page
+                if (hash.startsWith('/')) {
+                    const parts = hash.split('/').filter(part => part.length > 0);
+                    
+                    if (parts.length >= 2) {
+                        let branchUrlName = parts[0];
+                        const page = parts[1];
+                        
+                        // Try to decode the branch URL name (for Bengali characters)
+                        try {
+                            branchUrlName = decodeUrlName(branchUrlName);
+                        } catch (e) {
+                            console.warn('Failed to decode branch URL name:', branchUrlName, e);
+                        }
+                        
+                        console.log('Looking for branch with URL name:', branchUrlName); // Debug log
+                        console.log('Available branches:', state.branches.map(b => ({
+                            id: b.branch_id,
+                            name: getBranchUrlName(b)
+                        }))); // Debug log
+                        
+                        const branch = findBranchByUrlName(branchUrlName);
+                        
+                        if (branch) {
+                            console.log('Found branch:', branch); // Debug log
+                            // Set the current branch
+                            state.currentBranch = branch;
+                            updateBranchNameDisplays();
+                            updateCurrentCart();
+                            updateCartUI();
+                            
+                            switch(page) {
+                                case 'menu':
+                                    loadMenu(branch.branch_id);
+                                    break;
+                                case 'cart':
+                                    showView('cart');
+                                    renderCart();
+                                    break;
+                                case 'checkout':
+                                    showView('checkout');
+                                    renderCheckout();
+                                    break;
+                                default:
+                                    console.warn('Unknown page:', page);
+                                    showView('home');
+                            }
+                            return;
+                        } else {
+                            console.error('Branch not found for URL name:', branchUrlName);
+                            console.error('Available branch URL names:', state.branches.map(b => getBranchUrlName(b)));
+                            showError('Branch not found');
+                        }
+                    }
+                }
+                
+                // Handle legacy URL format for backward compatibility
                 const [route, param] = hash.split('/');
                 
                 switch(route) {
@@ -3035,6 +3254,10 @@
                     state.currentBranch = branch;
                     updateBranchNameDisplays();
                     
+                    // Update cart to show current branch's cart
+                    updateCurrentCart();
+                    updateCartUI();
+                    
                     const menuData = await apiService.getBranchMenu(branchId);
                     state.menuData = menuData.data || menuData;
                     
@@ -3100,11 +3323,12 @@
                             ...state.translations[state.language],
                             ...apiTranslations
                         };
-                        applyTranslations();
                     }
                 } catch (error) {
                     console.error('Failed to load translations from API:', error);
                     // Fall back to local translations
+                } finally {
+                    // Always apply translations to update the UI
                     applyTranslations();
                 }
             }
@@ -3171,7 +3395,7 @@
                     `;
                     
                     branchCard.querySelector('button').addEventListener('click', () => {
-                        window.location.hash = `menu/${branch.branch_id}`;
+                        window.location.hash = createBranchUrl(branch, 'menu');
                     });
                     
                     elements.branchesContainer.appendChild(branchCard);
@@ -3320,13 +3544,20 @@
                 // Update cart page title with branch name
                 updateBranchNameDisplays();
                 
+                // Update current cart to ensure we're showing the right branch's cart
+                updateCurrentCart();
+                
                 if (state.cart.length === 0) {
+                    const browseMenuUrl = state.currentBranch ? 
+                        createBranchUrl(state.currentBranch, 'menu') : 
+                        '#menu';
+                    
                     elements.cartContainer.innerHTML = `
                         <div class="empty-cart">
                             <i class="fas fa-shopping-cart"></i>
                             <h3>${translate('empty_cart')}</h3>
                             <p>${translate('add_some_delicious_items')}</p>
-                            <a href="#menu" class="btn">${translate('browse_menu')}</a>
+                            <a href="${browseMenuUrl}" class="btn">${translate('browse_menu')}</a>
                         </div>
                     `;
                     return;
@@ -3434,7 +3665,11 @@
                 });
                 
                 document.getElementById('checkout-btn').addEventListener('click', () => {
-                    window.location.hash = 'checkout';
+                    if (state.currentBranch) {
+                        window.location.hash = createBranchUrl(state.currentBranch, 'checkout');
+                    } else {
+                        window.location.hash = 'checkout';
+                    }
                 });
             }
             
@@ -4263,12 +4498,16 @@
                 elements.orderHistoryContainer.innerHTML = '';
                 
                 if (state.orderHistory.length === 0) {
+                    const browseMenuUrl = state.currentBranch ? 
+                        createBranchUrl(state.currentBranch, 'menu') : 
+                        '#menu';
+                    
                     elements.orderHistoryContainer.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-receipt"></i>
                             <h3>${translate('no_orders')}</h3>
                             <p>${translate('no_orders_message')}</p>
-                            <a href="#menu" class="btn">${translate('browse_menu')}</a>
+                            <a href="${browseMenuUrl}" class="btn">${translate('browse_menu')}</a>
                         </div>
                     `;
                     return;
@@ -4330,12 +4569,16 @@
                 elements.favoritesContainer.innerHTML = '';
                 
                 if (state.favorites.length === 0) {
+                    const browseMenuUrl = state.currentBranch ? 
+                        createBranchUrl(state.currentBranch, 'menu') : 
+                        '#menu';
+                    
                     elements.favoritesContainer.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-heart"></i>
                             <h3>${translate('empty_favorites')}</h3>
                             <p>${translate('start_adding_favorites')}</p>
-                            <a href="#menu" class="btn">${translate('browse_menu')}</a>
+                            <a href="${browseMenuUrl}" class="btn">${translate('browse_menu')}</a>
                         </div>
                     `;
                     return;
@@ -4636,6 +4879,10 @@
                         const branch = await apiService.getBranch(table.data.branch_id);
                         state.currentBranch = branch.data || branch;
                         updateBranchNameDisplays();
+                        
+                        // Update cart to show current branch's cart
+                        updateCurrentCart();
+                        updateCartUI();
                     }
                     
                     hideLoading();
@@ -4658,9 +4905,32 @@
             }
             
             // Cart management
+            function getBranchCart(branchId) {
+                if (!state.branchCarts[branchId]) {
+                    state.branchCarts[branchId] = [];
+                }
+                return state.branchCarts[branchId];
+            }
+            
+            function getCurrentBranchCart() {
+                if (!state.currentBranch) {
+                    return [];
+                }
+                return getBranchCart(state.currentBranch.branch_id);
+            }
+            
+            function updateCurrentCart() {
+                state.cart = getCurrentBranchCart();
+            }
+            
             function addToCart() {
                 if (!state.currentItem) {
                     showError('No item selected');
+                    return;
+                }
+                
+                if (!state.currentBranch) {
+                    showError(translate('please_select_branch'));
                     return;
                 }
                 
@@ -4679,15 +4949,18 @@
                     }
                 });
                 
+                // Get current branch cart
+                const currentCart = getCurrentBranchCart();
+                
                 // Check if item already exists in cart with same customizations
-                const existingIndex = state.cart.findIndex(cartItem => 
+                const existingIndex = currentCart.findIndex(cartItem => 
                     cartItem.branch_menu_id === state.currentItem.branch_menu_id && 
                     JSON.stringify(cartItem.customizations) === JSON.stringify(state.currentCustomizations)
                 );
                 
                 if (existingIndex >= 0) {
                     // Update quantity if already exists
-                    state.cart[existingIndex].quantity += state.currentQuantity;
+                    currentCart[existingIndex].quantity += state.currentQuantity;
                 } else {
                     // Add new item to cart
                     const cartItem = {
@@ -4699,14 +4972,17 @@
                         base_price: state.currentItem.price,
                         image_url: state.currentItem.image_url,
                         customizations: state.currentCustomizations,
-                        quantity: state.currentQuantity
+                        quantity: state.currentQuantity,
+                        branch_id: state.currentBranch.branch_id,
+                        branch_name: state.currentBranch.internal_name
                     };
                     
                     console.log('Adding cart item:', cartItem);
-                    state.cart.push(cartItem);
+                    currentCart.push(cartItem);
                 }
                 
                 saveCart();
+                updateCurrentCart();
                 updateCartUI();
                 hideModal('item-detail-modal');
                 showToast(translate('item_added'));
@@ -4719,6 +4995,7 @@
                     removeCartItem(index);
                 } else {
                     saveCart();
+                    updateCurrentCart();
                     updateCartUI();
                     
                     if (state.currentView === 'cart') {
@@ -4728,8 +5005,22 @@
             }
             
             function removeCartItem(index) {
+                const branchId = state.cart[index].branch_id;
                 state.cart.splice(index, 1);
+                
+                // Update branch cart
+                const branchCart = getBranchCart(branchId);
+                const branchCartIndex = branchCart.findIndex(item => 
+                    item.branch_menu_id === state.cart[index]?.branch_menu_id && 
+                    JSON.stringify(item.customizations) === JSON.stringify(state.cart[index]?.customizations)
+                );
+                
+                if (branchCartIndex >= 0) {
+                    branchCart.splice(branchCartIndex, 1);
+                }
+                
                 saveCart();
+                updateCurrentCart();
                 updateCartUI();
                 
                 if (state.currentView === 'cart') {
@@ -4738,14 +5029,23 @@
             }
             
             function saveCart() {
+                localStorage.setItem('lunaDineBranchCarts', JSON.stringify(state.branchCarts));
                 localStorage.setItem('lunaDineCart', JSON.stringify(state.cart));
             }
             
             function loadCart() {
+                const branchCartsData = localStorage.getItem('lunaDineBranchCarts');
+                if (branchCartsData) {
+                    state.branchCarts = JSON.parse(branchCartsData);
+                }
+                
                 const cartData = localStorage.getItem('lunaDineCart');
                 if (cartData) {
                     state.cart = JSON.parse(cartData);
                 }
+                
+                // Ensure current cart is synchronized
+                updateCurrentCart();
             }
             
             function updateCartUI() {
@@ -4814,6 +5114,33 @@
             
             function hideModal(modalId) {
                 document.getElementById(modalId).classList.remove('active');
+            }
+            
+            // Confirmation modal management
+            let confirmationCallback = null;
+            
+            function showConfirmationModal(message, onConfirm) {
+                const messageElement = document.getElementById('confirmation-message');
+                const modal = document.getElementById('confirmation-modal');
+                
+                if (messageElement && modal) {
+                    messageElement.textContent = message;
+                    confirmationCallback = onConfirm;
+                    showModal('confirmation-modal');
+                }
+            }
+            
+            function handleConfirmationConfirm() {
+                if (confirmationCallback) {
+                    confirmationCallback();
+                    confirmationCallback = null;
+                }
+                hideModal('confirmation-modal');
+            }
+            
+            function handleConfirmationCancel() {
+                confirmationCallback = null;
+                hideModal('confirmation-modal');
             }
             
             // Service requests
@@ -5066,10 +5393,14 @@
                         
                         // Only clear cart on successful order
                         if (response && response.data) {
-                            // Clear cart
-                            state.cart = [];
-                            saveCart();
-                            updateCartUI();
+                            // Clear current branch cart
+                            if (state.currentBranch) {
+                                state.branchCarts[state.currentBranch.branch_id] = [];
+                                state.cart = [];
+                                saveCart();
+                                updateCurrentCart();
+                                updateCartUI();
+                            }
                             
                             // Clear applied promo code
                             state.appliedPromo = null;
@@ -5107,10 +5438,18 @@
             
             // Order cancellation
             async function cancelOrder(orderId) {
-                if (!confirm(translate('confirm_cancel_order'))) {
-                    return;
-                }
-                
+                // Show confirmation modal instead of alert
+                showConfirmationModal(
+                    translate('confirm_cancel_order'),
+                    () => {
+                        // This function will be called when user confirms
+                        performOrderCancellation(orderId);
+                    }
+                );
+            }
+            
+            // Function to actually perform the order cancellation
+            async function performOrderCancellation(orderId) {
                 try {
                     showLoading();
                     const response = await apiService.cancelOrder(orderId);
@@ -5283,17 +5622,34 @@
                 elements.navLinks.forEach(link => {
                     link.addEventListener('click', (e) => {
                         e.preventDefault();
-                        window.location.hash = link.getAttribute('href').substring(1);
+                        const viewName = link.getAttribute('data-view');
+                        
+                        // Handle branch-specific URLs for menu, cart, and checkout
+                        if (viewName === 'menu' && state.currentBranch) {
+                            window.location.hash = createBranchUrl(state.currentBranch, 'menu');
+                        } else if (viewName === 'cart' && state.currentBranch) {
+                            window.location.hash = createBranchUrl(state.currentBranch, 'cart');
+                        } else {
+                            window.location.hash = link.getAttribute('href').substring(1);
+                        }
                     });
                 });
                 
                 // Cart toggle
                 elements.cartToggle.addEventListener('click', () => {
-                    window.location.hash = 'cart';
+                    if (state.currentBranch) {
+                        window.location.hash = createBranchUrl(state.currentBranch, 'cart');
+                    } else {
+                        window.location.hash = 'cart';
+                    }
                 });
                 
                 elements.cartFab.addEventListener('click', () => {
-                    window.location.hash = 'cart';
+                    if (state.currentBranch) {
+                        window.location.hash = createBranchUrl(state.currentBranch, 'cart');
+                    } else {
+                        window.location.hash = 'cart';
+                    }
                 });
                 
                 // QR Scanner
@@ -5330,6 +5686,18 @@
                     });
                 });
                 
+                // Confirmation modal buttons
+                const confirmBtn = document.getElementById('confirmation-confirm-btn');
+                const cancelBtn = document.getElementById('confirmation-cancel-btn');
+                
+                if (confirmBtn) {
+                    confirmBtn.addEventListener('click', handleConfirmationConfirm);
+                }
+                
+                if (cancelBtn) {
+                    cancelBtn.addEventListener('click', handleConfirmationCancel);
+                }
+                
                 // Add to cart button in item detail modal
                 elements.addToCartDetailBtn.addEventListener('click', addToCart);
                 
@@ -5354,11 +5722,26 @@
                 document.querySelectorAll('.language-option').forEach(option => {
                     option.addEventListener('click', async () => {
                         const lang = option.getAttribute('data-lang');
+                        console.log('Language changed to:', lang); // Debug log
                         state.language = lang;
                         saveUserData();
                         
                         // Load translations from API
                         await loadTranslationsFromAPI();
+                        
+                        // Debug: Check branch translations
+                        console.log('Branch translations after language change:');
+                        state.branches.forEach(branch => {
+                            const translatedName = getTranslation(branch.internal_name, branch.name_translation_key);
+                            const urlName = getBranchUrlName(branch);
+                            console.log({
+                                branchId: branch.branch_id,
+                                internalName: branch.internal_name,
+                                translationKey: branch.name_translation_key,
+                                translatedName: translatedName,
+                                urlName: urlName
+                            });
+                        });
                         
                         languageDropdown.classList.remove('show');
                         
@@ -5373,13 +5756,45 @@
                         // Update branch name displays with new language
                         updateBranchNameDisplays();
                         
-                        // Refresh current view if needed
-                        if (state.currentView === 'menu' && state.currentBranch) {
-                            loadMenu(state.currentBranch.branch_id);
-                        } else if (state.currentView === 'cart') {
-                            renderCart();
-                        } else if (state.currentView === 'checkout') {
-                            renderCheckout();
+                        // Refresh current view with new language and update URL
+                        switch (state.currentView) {
+                            case 'home':
+                                renderBranches();
+                                break;
+                            case 'menu':
+                                if (state.currentBranch) {
+                                    // Update URL to reflect new language branch name
+                                    window.location.hash = createBranchUrl(state.currentBranch, 'menu');
+                                    loadMenu(state.currentBranch.branch_id);
+                                }
+                                break;
+                            case 'cart':
+                                if (state.currentBranch) {
+                                    // Update URL to reflect new language branch name
+                                    window.location.hash = createBranchUrl(state.currentBranch, 'cart');
+                                }
+                                renderCart();
+                                break;
+                            case 'checkout':
+                                if (state.currentBranch) {
+                                    // Update URL to reflect new language branch name
+                                    window.location.hash = createBranchUrl(state.currentBranch, 'checkout');
+                                }
+                                renderCheckout();
+                                break;
+                            case 'orders':
+                                renderOrderHistory();
+                                break;
+                            case 'order-tracking':
+                                // Re-render the current order if available
+                                const currentOrderId = window.location.hash.split('/')[1];
+                                if (currentOrderId) {
+                                    loadOrder(currentOrderId);
+                                }
+                                break;
+                            case 'favorites':
+                                renderFavorites();
+                                break;
                         }
                     });
                 });
