@@ -188,6 +188,10 @@
             color: var(--uber-green);
         }
         
+        .nav-link.active i {
+            color: var(--uber-green);
+        }
+        
         .nav-link.active::after {
             content: '';
             position: absolute;
@@ -196,6 +200,25 @@
             right: 0;
             height: 2px;
             background-color: var(--uber-green);
+        }
+        
+        .nav-link i {
+            margin-right: var(--spacing-8);
+            font-size: var(--font-size-18);
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-link:hover i {
+            color: var(--uber-green);
+            transform: scale(1.1);
+        }
+        
+        .nav-link i {
+            transition: var(--transition-fast);
         }
         
         .header-actions {
@@ -245,6 +268,99 @@
         #main-content {
             min-height: calc(100vh - 64px);
             padding-bottom: 80px;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background-color: var(--uber-gray-900);
+            color: var(--uber-white);
+            padding: var(--spacing-48) 0 var(--spacing-32);
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-40);
+            margin-bottom: var(--spacing-32);
+        }
+        
+        .footer-section h3 {
+            color: var(--uber-green);
+            font-size: var(--font-size-20);
+            margin-bottom: var(--spacing-16);
+            font-weight: 600;
+        }
+        
+        .footer-section p,
+        .footer-section li {
+            color: var(--uber-gray-300);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-8);
+        }
+        
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: var(--spacing-8);
+        }
+        
+        .footer-section a {
+            color: var(--uber-gray-300);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+        
+        .footer-section a:hover {
+            color: var(--uber-green);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid var(--uber-gray-700);
+            padding-top: var(--spacing-24);
+            text-align: center;
+            color: var(--uber-gray-400);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: var(--spacing-16);
+            margin-top: var(--spacing-16);
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--uber-gray-800);
+            color: var(--uber-gray-300);
+            border-radius: var(--radius-full);
+            transition: var(--transition-fast);
+        }
+        
+        .social-links a:hover {
+            background-color: var(--uber-green);
+            color: var(--uber-white);
+        }
+        
+        .business-hours {
+            margin-top: var(--spacing-16);
+        }
+        
+        .business-hours .day {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-4);
+            font-size: var(--font-size-14);
+        }
+        
+        .business-hours .day .hours {
+            color: var(--uber-green);
         }
         
         .view {
@@ -562,6 +678,35 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        
+        .item-actions {
+            display: flex;
+            gap: var(--spacing-8);
+        }
+        
+        .btn-add-to-cart {
+            background-color: var(--uber-green);
+            color: var(--uber-white);
+            border: none;
+            border-radius: var(--radius-full);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: var(--font-size-14);
+        }
+        
+        .btn-add-to-cart:hover {
+            background-color: var(--uber-green-dark);
+            transform: scale(1.1);
+        }
+        
+        .btn-add-to-cart i {
+            margin: 0;
         }
         
         .prep-time {
@@ -1127,6 +1272,27 @@
             display: flex;
             justify-content: flex-end;
             gap: var(--spacing-12);
+        }
+        
+        .conflict-details {
+            background-color: var(--uber-gray-100);
+            padding: var(--spacing-16);
+            border-radius: var(--radius-8);
+            margin: var(--spacing-16) 0;
+        }
+        
+        .conflict-details p {
+            margin: var(--spacing-4) 0;
+            font-size: var(--font-size-14);
+        }
+        
+        .conflict-details strong {
+            color: var(--uber-gray-800);
+        }
+        
+        .conflict-details span {
+            color: var(--uber-green);
+            font-weight: 500;
         }
         
         /* ===== ITEM DETAIL MODAL ===== */
@@ -2155,12 +2321,19 @@
                 </a>
                 <nav class="nav">
                     <a href="#home" class="nav-link active" data-view="home">
+                        <i class="fas fa-home"></i>
                         <span data-translate="nav_home">Home</span>
                     </a>
                     <a href="#menu" class="nav-link" data-view="menu">
+                        <i class="fas fa-utensils"></i>
                         <span data-translate="nav_menu">Menu</span>
                     </a>
+                    <a href="#favorites" class="nav-link" data-view="favorites">
+                        <i class="fas fa-heart"></i>
+                        <span data-translate="nav_favorites">Favorites</span>
+                    </a>
                     <a href="#orders" class="nav-link" data-view="orders">
+                        <i class="fas fa-receipt"></i>
                         <span data-translate="nav_orders">My Orders</span>
                     </a>
                 </nav>
@@ -2312,6 +2485,19 @@
                 </div>
             </section>
         </main>
+        
+        <!-- Footer Section -->
+        <footer class="footer" id="footer">
+            <div class="container">
+                <div class="footer-content" id="footer-content">
+                    <!-- Footer content will be dynamically loaded here -->
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 <span id="footer-restaurant-name">Luna Dine</span>. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+        
         <!-- Floating Action Buttons -->
         <div class="fab-container">
             <button id="qr-scanner-btn" class="fab">
@@ -2408,6 +2594,30 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Branch Conflict Alert Modal -->
+        <div class="modal-overlay" id="branch-conflict-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title" data-translate="branch_conflict">Branch Conflict</h3>
+                    <button class="modal-close" data-modal="branch-conflict-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="branch-conflict-message" data-translate="branch_conflict_message">You have items in the cart from another branch. Adding this item will clear the existing items in the cart.</p>
+                    <div class="conflict-details">
+                        <p><strong data-translate="current_cart_branch">Current Cart Branch:</strong> <span id="current-branch-name"></span></p>
+                        <p><strong data-translate="new_item_branch">New Item Branch:</strong> <span id="new-branch-name"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" id="branch-conflict-cancel-btn" data-translate="cancel">Cancel</button>
+                    <button class="btn btn-danger" id="branch-conflict-confirm-btn" data-translate="clear_and_add">Clear & Add</button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Loading Overlay -->
         <div class="loading-overlay" id="loading-overlay">
             <div class="spinner"></div>
@@ -2438,11 +2648,14 @@
                 currentCustomizations: {},
                 currentRating: 0,
                 appliedPromo: null, // { code, type, value, discount_amount }
+                restaurantDetails: null, // Restaurant details for footer
+                pendingCartItem: null, // For branch conflict resolution
                 translations: {
                     'en-US': {
                         'app_name': 'Luna Dine',
                         'nav_home': 'Home',
                         'nav_menu': 'Menu',
+                        'nav_favorites': 'Favorites',
                         'nav_orders': 'My Orders',
                         'welcome': 'Welcome to Luna Dine',
                         'hero_subtitle': 'Experience culinary excellence under the moonlight. Enjoy carefully crafted dishes that blend tradition and innovation.',
@@ -2528,6 +2741,31 @@
                         'delicious_menu_item': 'Delicious menu item',
                         'delicious_menu_item_description': 'A delicious menu item prepared with care.',
                         'start_adding_favorites': 'Start adding your favorite items to see them here.',
+                        'about_us': 'About Us',
+                        'contact_us': 'Contact Us',
+                        'business_hours': 'Business Hours',
+                        'quick_links': 'Quick Links',
+                        'privacy_policy': 'Privacy Policy',
+                        'terms_of_service': 'Terms of Service',
+                        'footer_default_description': 'Experience culinary excellence under the moonlight. Luna Dine offers a unique dining experience with carefully crafted dishes that blend tradition and innovation.',
+                        'footer_default_tagline': 'Dine Under the Stars',
+                        'footer_default_address': 'House 15, Road 7, Dhanmondi, Dhaka-1205, Bangladesh',
+                        'footer_default_phone': '+8801234567890',
+                        'footer_default_email': 'hello@lunadine.com',
+                        'monday': 'Monday',
+                        'tuesday': 'Tuesday',
+                        'wednesday': 'Wednesday',
+                        'thursday': 'Thursday',
+                        'friday': 'Friday',
+                        'saturday': 'Saturday',
+                        'sunday': 'Sunday',
+                        'branch_conflict': 'Branch Conflict',
+                        'branch_conflict_message': 'You have items in the cart from another branch. Adding this item will clear the existing items in the cart.',
+                        'current_cart_branch': 'Current Cart Branch:',
+                        'new_item_branch': 'New Item Branch:',
+                        'clear_and_add': 'Clear & Add',
+                        'item_branch_not_available': 'Item branch information not available',
+                        'branch_not_found': 'Branch not found for this item',
                         'order_placed_success': 'Order placed successfully!',
                         'order_failed': 'Failed to place order. Please try again.',
                         'service_request_submitted': 'Service request submitted successfully.',
@@ -2572,6 +2810,7 @@
                         'app_name': 'লুনা ডাইন',
                         'nav_home': 'হোম',
                         'nav_menu': 'মেনু',
+                        'nav_favorites': 'পছন্দসমূহ',
                         'nav_orders': 'আমার অর্ডারসমূহ',
                         'welcome': 'লুনা ডাইনেতে স্বাগতম',
                         'hero_subtitle': 'চাঁদের আলোয় রন্ধন শৈলীর অভিজ্ঞতা উপভোগ করুন। ঐতিহ্য এবং উদ্ভাবনার মিশ্রণে তৈরি সাবধানভাবে প্রস্তুত খাবার উপভোগ করুন।',
@@ -2657,6 +2896,31 @@
                         'delicious_menu_item': 'সুস্বাদু মেনু আইটেম',
                         'delicious_menu_item_description': 'যত্ন সহকারে প্রস্তুত একটি সুস্বাদু মেনু আইটেম।',
                         'start_adding_favorites': 'আপনার পছন্দের আইটেমগুলি এখানে দেখতে শুরু করুন।',
+                        'about_us': 'আমাদের সম্পর্কে',
+                        'contact_us': 'যোগাযোগ করুন',
+                        'business_hours': 'ব্যবসায়িক সময়',
+                        'quick_links': 'দ্রুত লিঙ্ক',
+                        'privacy_policy': 'গোপনীয়তা নীতি',
+                        'terms_of_service': 'সেবার শর্তাবলী',
+                        'footer_default_description': 'চাঁদের আলোয় রন্ধন শৈলীর অভিজ্ঞতা উপভোগ করুন। লুনা ডাইন ঐতিহ্য এবং উদ্ভাবনার মিশ্রণে তৈরি সাবধানভাবে প্রস্তুত খাবারের অনন্য ডাইনিং অভিজ্ঞতা অফার করে।',
+                        'footer_default_tagline': 'নক্ষত্রের নিচে ডাইন করুন',
+                        'footer_default_address': 'বাড়ি ১৫, রোড ৭, ধানমন্ডি, ঢাকা-১২০৫, বাংলাদেশ',
+                        'footer_default_phone': '+৮৮০১২৩৪৫৬৭৮৯০',
+                        'footer_default_email': 'hello@lunadine.com',
+                        'monday': 'সোমবার',
+                        'tuesday': 'মঙ্গলবার',
+                        'wednesday': 'বুধবার',
+                        'thursday': 'বৃহস্পতিবার',
+                        'friday': 'শুক্রবার',
+                        'saturday': 'শনিবার',
+                        'sunday': 'রবিবার',
+                        'branch_conflict': 'শাখা দ্বন্দ্ব',
+                        'branch_conflict_message': 'আপনার কার্টে অন্য শাখা থেকে আইটেম রয়েছে। এই আইটেমটি যোগ করলে বিদ্যমান আইটেমগুলি কার্ট থেকে সরানো হবে।',
+                        'current_cart_branch': 'বর্তমান কার্ট শাখা:',
+                        'new_item_branch': 'নতুন আইটেম শাখা:',
+                        'clear_and_add': 'সাফ করে যোগ করুন',
+                        'item_branch_not_available': 'আইটেম শাখার তথ্য পাওয়া যায়নি',
+                        'branch_not_found': 'এই আইটেমের শাখা পাওয়া যায়নি',
                         'order_placed_success': 'অর্ডার সফলভাবে স্থাপন করা হয়েছে!',
                         'order_failed': 'অর্ডার স্থাপন করতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।',
                         'service_request_submitted': 'পরিষেবা অনুরোধ সফলভাবে জমা দেওয়া হয়েছে।',
@@ -2737,7 +3001,16 @@
                 qrScannerContainer: document.getElementById('qr-scanner-container'),
                 qrScannerClose: document.getElementById('qr-scanner-close'),
                 qrCodeInput: document.getElementById('qr-code-input'),
-                qrCodeSubmit: document.getElementById('qr-code-submit')
+                qrCodeSubmit: document.getElementById('qr-code-submit'),
+                footer: document.getElementById('footer'),
+                footerContent: document.getElementById('footer-content'),
+                footerRestaurantName: document.getElementById('footer-restaurant-name'),
+                branchConflictModal: document.getElementById('branch-conflict-modal'),
+                branchConflictMessage: document.getElementById('branch-conflict-message'),
+                currentBranchName: document.getElementById('current-branch-name'),
+                newBranchName: document.getElementById('new-branch-name'),
+                branchConflictCancelBtn: document.getElementById('branch-conflict-cancel-btn'),
+                branchConflictConfirmBtn: document.getElementById('branch-conflict-confirm-btn')
             };
             
             // Initialize the application
@@ -2745,23 +3018,87 @@
                 setupEventListeners();
                 loadUserData();
                 
+                // Detect language from URL BEFORE loading translations
+                const detectedLanguage = detectLanguageFromUrl();
+                if (detectedLanguage !== state.language) {
+                    console.log('Setting language based on URL:', detectedLanguage); // Debug log
+                    state.language = detectedLanguage;
+                    saveUserData();
+                    
+                    // Update HTML lang attribute for proper language setting
+                    document.documentElement.lang = detectedLanguage;
+                    document.documentElement.dir = detectedLanguage === 'bn-BD' ? 'ltr' : 'ltr';
+                }
+                
                 // Load translations from API FIRST before loading any data that requires translations
                 await loadTranslationsFromAPI();
-                
-                // Setup router AFTER translations are loaded
-                setupRouter();
                 
                 // Update branch name displays after loading user data and translations
                 updateBranchNameDisplays();
                 
-                loadBranches();
+                // Load branches data BEFORE setting up router
+                await loadBranches();
+                
+                // Load restaurant details for footer
+                await loadRestaurantDetails();
+                
+                // Setup router AFTER all data is loaded
+                setupRouter();
+                
                 updateCartUI();
+            }
+            
+            // Language detection from URL
+            function detectLanguageFromUrl() {
+                const hash = window.location.hash.substring(1);
+                
+                // Handle new URL format: /BranchName/page
+                if (hash.startsWith('/')) {
+                    const parts = hash.split('/').filter(part => part.length > 0);
+                    
+                    if (parts.length >= 2) {
+                        let branchUrlName = parts[0];
+                        
+                        // Try to decode the branch URL name
+                        try {
+                            branchUrlName = decodeUrlName(branchUrlName);
+                        } catch (e) {
+                            // Ignore decoding errors
+                        }
+                        
+                        // Check if the URL contains Bengali characters
+                        // Bengali Unicode range: \u0980-\u09FF
+                        if (/[\u0980-\u09FF]/.test(branchUrlName)) {
+                            console.log('Detected Bengali characters in URL, setting language to bn-BD'); // Debug log
+                            return 'bn-BD';
+                        }
+                    }
+                }
+                
+                // Default to English if no Bengali characters found
+                return 'en-US';
             }
             
             // URL helper functions
             function normalizeString(str) {
                 // Normalize Unicode strings for consistent comparison
-                return str.normalize('NFC').trim();
+                // Special handling for Bengali characters to ensure proper normalization
+                if (!str) return '';
+                
+                // First, decode if it's already encoded (for URLs coming from browser)
+                try {
+                    str = decodeUrlName(str);
+                } catch (e) {
+                    // If decoding fails, continue with original string
+                }
+                
+                // Normalize Unicode and trim
+                let normalized = str.normalize('NFC').trim();
+                
+                // Remove extra spaces and normalize spacing for Bengali text
+                normalized = normalized.replace(/\s+/g, ' ');
+                
+                return normalized;
             }
             
             function getBranchUrlName(branch) {
@@ -2781,8 +3118,10 @@
             
             function findBranchByUrlName(urlName) {
                 // Try to find branch by comparing URL names
-                // Handle both encoded and decoded versions
+                // Handle both encoded and decoded versions for Bengali characters
                 const normalizedUrlName = normalizeString(urlName);
+                
+                console.log('Searching for branch with URL name:', urlName, 'normalized:', normalizedUrlName); // Debug log
                 
                 return state.branches.find(branch => {
                     const branchUrlName = getBranchUrlName(branch);
@@ -2796,6 +3135,7 @@
                     
                     // Try exact match first
                     if (normalizedBranchName === normalizedUrlName) {
+                        console.log('Found exact match for:', branchUrlName); // Debug log
                         return true;
                     }
                     
@@ -2819,6 +3159,22 @@
                         }
                     } catch (e) {
                         // Ignore encoding errors
+                    }
+                    
+                    // Special handling for Bengali: try comparing with and without spaces
+                    // Sometimes Bengali URLs might have different spacing
+                    const branchNameNoSpaces = normalizedBranchName.replace(/\s+/g, '');
+                    const urlNameNoSpaces = normalizedUrlName.replace(/\s+/g, '');
+                    
+                    if (branchNameNoSpaces === urlNameNoSpaces) {
+                        console.log('Found match via space removal:', branchNameNoSpaces); // Debug log
+                        return true;
+                    }
+                    
+                    // Try partial matching for Bengali characters (in case of normalization differences)
+                    if (normalizedBranchName.includes(normalizedUrlName) || normalizedUrlName.includes(normalizedBranchName)) {
+                        console.log('Found partial match between:', normalizedBranchName, 'and', normalizedUrlName); // Debug log
+                        return true;
                     }
                     
                     return false;
@@ -2901,6 +3257,13 @@
                     return; // Stop processing if redirection occurred
                 }
                 
+                // Safety check: if branches are not loaded yet, wait and try again
+                if (state.branches.length === 0) {
+                    console.log('Branches not loaded yet, delaying route handling...');
+                    setTimeout(handleRouteChange, 100);
+                    return;
+                }
+                
                 const hash = window.location.hash.substring(1);
                 
                 // Handle new URL format: /BranchName/page
@@ -2911,12 +3274,21 @@
                         let branchUrlName = parts[0];
                         const page = parts[1];
                         
+                        console.log('Processing URL parts:', parts); // Debug log
+                        console.log('Original branch URL name:', branchUrlName); // Debug log
+                        
                         // Try to decode the branch URL name (for Bengali characters)
                         try {
-                            branchUrlName = decodeUrlName(branchUrlName);
+                            const decodedName = decodeUrlName(branchUrlName);
+                            console.log('Decoded branch URL name:', decodedName); // Debug log
+                            branchUrlName = decodedName;
                         } catch (e) {
                             console.warn('Failed to decode branch URL name:', branchUrlName, e);
                         }
+                        
+                        // Additional normalization for Bengali text
+                        branchUrlName = normalizeString(branchUrlName);
+                        console.log('Normalized branch URL name:', branchUrlName); // Debug log
                         
                         console.log('Looking for branch with URL name:', branchUrlName); // Debug log
                         console.log('Available branches:', state.branches.map(b => ({
@@ -3176,6 +3548,10 @@
                 
                 getTranslations(languageCode) {
                     return this.get(`translations/${languageCode}`);
+                },
+                
+                getRestaurant() {
+                    return this.get('restaurant');
                 }
             };
             
@@ -4603,9 +4979,14 @@
                             <p class="menu-item-desc">${getTranslation(item.description, item.description_translation_key) || translate('delicious_menu_item')}</p>
                             <div class="menu-item-footer">
                                 <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time || 15} ${translate('mins')}</span>
-                                <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
-                                    <i class="fas fa-heart"></i>
-                                </button>
+                                <div class="item-actions">
+                                    <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                    <button class="btn-add-to-cart" data-item-id="${item.branch_menu_id}">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -4624,6 +5005,13 @@
                         renderFavorites(); // Re-render to update the list
                     });
                     
+                    // Add direct add to cart event
+                    const addToCartBtn = itemCard.querySelector('.btn-add-to-cart');
+                    addToCartBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        addFavoriteItemToCart(item);
+                    });
+                    
                     favoritesGrid.appendChild(itemCard);
                 });
                 
@@ -4635,6 +5023,24 @@
                 state.currentItem = item;
                 state.currentQuantity = 1;
                 state.currentCustomizations = {};
+                
+                // Set the current branch based on the item's branch_id
+                if (item.branch_id) {
+                    const itemBranch = state.branches.find(branch => branch.branch_id === item.branch_id);
+                    if (itemBranch) {
+                        state.currentBranch = itemBranch;
+                        console.log('Set current branch from item:', itemBranch.internal_name);
+                        
+                        // Update branch name displays to reflect the new current branch
+                        updateBranchNameDisplays();
+                        updateCurrentCart();
+                        updateCartUI();
+                    } else {
+                        console.warn('Branch not found for item branch_id:', item.branch_id);
+                    }
+                } else {
+                    console.warn('Item does not have branch_id:', item);
+                }
                 
                 elements.itemDetailContent.innerHTML = `
                     <div class="item-detail-container">
@@ -4934,6 +5340,28 @@
                     return;
                 }
                 
+                // Check for branch conflict
+                const hasConflict = checkBranchConflict(state.currentItem);
+                
+                if (hasConflict) {
+                    // Show branch conflict modal instead of adding directly
+                    showBranchConflictModal(state.currentItem, () => {
+                        // This callback will be executed if user confirms
+                        performAddToCart();
+                    });
+                    return;
+                }
+                
+                // No conflict, proceed with normal add to cart
+                performAddToCart();
+            }
+            
+            function performAddToCart() {
+                if (!state.currentItem || !state.currentBranch) {
+                    showError('Invalid item or branch');
+                    return;
+                }
+                
                 console.log('Adding to cart - current customizations:', state.currentCustomizations);
                 console.log('Adding to cart - current item:', state.currentItem);
                 
@@ -5026,6 +5454,41 @@
                 if (state.currentView === 'cart') {
                     renderCart();
                 }
+            }
+            
+            function addFavoriteItemToCart(item) {
+                if (!item.branch_id) {
+                    showError(translate('item_branch_not_available'));
+                    return;
+                }
+                
+                // Find the branch for this item
+                const itemBranch = state.branches.find(branch => branch.branch_id === item.branch_id);
+                if (!itemBranch) {
+                    showError(translate('branch_not_found'));
+                    return;
+                }
+                
+                // Set current item and branch
+                state.currentItem = item;
+                state.currentBranch = itemBranch;
+                state.currentQuantity = 1;
+                state.currentCustomizations = {};
+                
+                // Check for branch conflict
+                const hasConflict = checkBranchConflict(item);
+                
+                if (hasConflict) {
+                    // Show branch conflict modal
+                    showBranchConflictModal(item, () => {
+                        // This callback will be executed if user confirms
+                        performAddToCart();
+                    });
+                    return;
+                }
+                
+                // No conflict, proceed with normal add to cart
+                performAddToCart();
             }
             
             function saveCart() {
@@ -5726,8 +6189,15 @@
                         state.language = lang;
                         saveUserData();
                         
+                        // Update HTML lang attribute for proper language setting
+                        document.documentElement.lang = lang;
+                        document.documentElement.dir = lang === 'bn-BD' ? 'ltr' : 'ltr';
+                        
                         // Load translations from API
                         await loadTranslationsFromAPI();
+                        
+                        // Re-render footer with new language
+                        renderFooter();
                         
                         // Debug: Check branch translations
                         console.log('Branch translations after language change:');
@@ -5812,6 +6282,27 @@
                         filterMenuItems(e.target.value);
                     }, 300));
                 }
+                
+                // Branch conflict modal buttons
+                if (elements.branchConflictCancelBtn) {
+                    elements.branchConflictCancelBtn.addEventListener('click', () => {
+                        resolveBranchConflict(false);
+                    });
+                }
+                
+                if (elements.branchConflictConfirmBtn) {
+                    elements.branchConflictConfirmBtn.addEventListener('click', () => {
+                        resolveBranchConflict(true);
+                    });
+                }
+                
+                // Modal close buttons for branch conflict modal
+                const branchConflictCloseBtns = document.querySelectorAll('[data-modal="branch-conflict-modal"]');
+                branchConflictCloseBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        resolveBranchConflict(false);
+                    });
+                });
             }
             
             // Search and filter
@@ -5833,6 +6324,207 @@
                         }
                     });
                 });
+            }
+            
+            // Restaurant details management
+            async function loadRestaurantDetails() {
+                try {
+                    console.log('Loading restaurant details...'); // Debug log
+                    const response = await apiService.getRestaurant();
+                    state.restaurantDetails = response.data || response;
+                    renderFooter();
+                } catch (error) {
+                    console.error('Failed to load restaurant details:', error);
+                    // Use default values if API fails
+                    renderFooter();
+                }
+            }
+            
+            function renderFooter() {
+                // Safety check: ensure footer elements exist
+                if (!elements.footerContent || !elements.footerRestaurantName) {
+                    console.warn('Footer elements not found, skipping footer render');
+                    return;
+                }
+                
+                const restaurant = state.restaurantDetails || {};
+                
+                // Update footer restaurant name
+                elements.footerRestaurantName.textContent = restaurant.name || 'Luna Dine';
+                
+                // Generate footer HTML
+                const footerHTML = `
+                    <!-- About Section -->
+                    <div class="footer-section">
+                        <h3>${translate('about_us')}</h3>
+                        <p>${restaurant.description || translate('footer_default_description')}</p>
+                        <p>${restaurant.tagline || translate('footer_default_tagline')}</p>
+                        <div class="social-links">
+                            ${restaurant.social_media_links ? Object.entries(restaurant.social_media_links).map(([platform, url]) => `
+                                <a href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${platform}">
+                                    <i class="fab fa-${platform}"></i>
+                                </a>
+                            `).join('') : `
+                                <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            `}
+                        </div>
+                    </div>
+                    
+                    <!-- Contact Section -->
+                    <div class="footer-section">
+                        <h3>${translate('contact_us')}</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> ${restaurant.address || translate('footer_default_address')}</p>
+                        <p><i class="fas fa-phone"></i> ${restaurant.support_phone || translate('footer_default_phone')}</p>
+                        <p><i class="fas fa-envelope"></i> ${restaurant.support_email || translate('footer_default_email')}</p>
+                        ${restaurant.website_url ? `<p><i class="fas fa-globe"></i> <a href="${restaurant.website_url}" target="_blank" rel="noopener noreferrer">${restaurant.website_url}</a></p>` : ''}
+                    </div>
+                    
+                    <!-- Business Hours Section -->
+                    <div class="footer-section">
+                        <h3>${translate('business_hours')}</h3>
+                        <div class="business-hours">
+                            ${restaurant.business_hours ? Object.entries(restaurant.business_hours).map(([day, hours]) => `
+                                <div class="day">
+                                    <span class="day-name">${translate(day.toLowerCase())}</span>
+                                    <span class="hours">${hours}</span>
+                                </div>
+                            `).join('') : `
+                                <div class="day">
+                                    <span class="day-name">${translate('monday')}</span>
+                                    <span class="hours">11:00-23:00</span>
+                                </div>
+                                <div class="day">
+                                    <span class="day-name">${translate('tuesday')}</span>
+                                    <span class="hours">11:00-23:00</span>
+                                </div>
+                                <div class="day">
+                                    <span class="day-name">${translate('wednesday')}</span>
+                                    <span class="hours">11:00-23:00</span>
+                                </div>
+                                <div class="day">
+                                    <span class="day-name">${translate('thursday')}</span>
+                                    <span class="hours">11:00-23:00</span>
+                                </div>
+                                <div class="day">
+                                    <span class="day-name">${translate('friday')}</span>
+                                    <span class="hours">11:00-23:00</span>
+                                </div>
+                                <div class="day">
+                                    <span class="day-name">${translate('saturday')}</span>
+                                    <span class="hours">11:00-00:00</span>
+                                </div>
+                                <div class="day">
+                                    <span class="day-name">${translate('sunday')}</span>
+                                    <span class="hours">11:00-23:00</span>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Links Section -->
+                    <div class="footer-section">
+                        <h3>${translate('quick_links')}</h3>
+                        <ul>
+                            <li><a href="#home" data-view="home">${translate('nav_home')}</a></li>
+                            <li><a href="#menu" data-view="menu">${translate('nav_menu')}</a></li>
+                            <li><a href="#favorites" data-view="favorites">${translate('nav_favorites')}</a></li>
+                            <li><a href="#orders" data-view="orders">${translate('nav_orders')}</a></li>
+                            <li><a href="#" id="privacy-policy">${translate('privacy_policy')}</a></li>
+                            <li><a href="#" id="terms-service">${translate('terms_of_service')}</a></li>
+                        </ul>
+                    </div>
+                `;
+                
+                // Update footer content
+                elements.footerContent.innerHTML = footerHTML;
+                
+                // Add click event listeners to footer links
+                const footerLinks = elements.footerContent.querySelectorAll('a[data-view]');
+                footerLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const view = link.getAttribute('data-view');
+                        showView(view);
+                        window.scrollTo(0, 0);
+                    });
+                });
+            }
+            
+            // Branch conflict management functions
+            function checkBranchConflict(item) {
+                // Check if cart has items from a different branch
+                if (state.cart.length === 0) {
+                    return false; // No conflict if cart is empty
+                }
+                
+                const currentCartBranch = state.cart[0].branch_id;
+                const newItemBranch = item.branch_id;
+                
+                return currentCartBranch !== newItemBranch;
+            }
+            
+            function showBranchConflictModal(item, callback) {
+                if (!elements.branchConflictModal) {
+                    console.error('Branch conflict modal not found');
+                    return;
+                }
+                
+                // Store the pending item and callback
+                state.pendingCartItem = {
+                    item: item,
+                    callback: callback
+                };
+                
+                // Get branch names for display
+                const currentCartBranch = state.cart[0].branch_id;
+                const currentBranch = state.branches.find(b => b.branch_id === currentCartBranch);
+                const newBranch = state.branches.find(b => b.branch_id === item.branch_id);
+                
+                // Update modal content
+                if (elements.currentBranchName) {
+                    elements.currentBranchName.textContent = getTranslation(currentBranch?.internal_name, currentBranch?.name_translation_key) || 'Unknown Branch';
+                }
+                
+                if (elements.newBranchName) {
+                    elements.newBranchName.textContent = getTranslation(newBranch?.internal_name, newBranch?.name_translation_key) || 'Unknown Branch';
+                }
+                
+                // Show the modal
+                elements.branchConflictModal.classList.add('active');
+            }
+            
+            function resolveBranchConflict(confirmed) {
+                if (!elements.branchConflictModal) {
+                    console.error('Branch conflict modal not found');
+                    return;
+                }
+                
+                // Hide the modal
+                elements.branchConflictModal.classList.remove('active');
+                
+                if (confirmed && state.pendingCartItem) {
+                    // Clear ALL branch carts and main cart
+                    state.cart = [];
+                    state.currentCart = [];
+                    state.branchCarts = {}; // Clear all branch-specific carts
+                    updateCartUI();
+                    
+                    // Execute the callback (add the item)
+                    if (state.pendingCartItem.callback) {
+                        state.pendingCartItem.callback();
+                    }
+                }
+                
+                // Clear the pending item
+                state.pendingCartItem = null;
             }
             
             // Utility functions object
