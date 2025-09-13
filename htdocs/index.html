@@ -915,22 +915,538 @@
         /* ===== MENU SEARCH ===== */
         .menu-search {
             margin-bottom: var(--spacing-24);
+            position: relative;
+        }
+        
+        .menu-search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--uber-white), #fafafa);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius-24);
+            padding: var(--spacing-4);
+            transition: all var(--transition-fast);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+        
+        .menu-search-input-wrapper:focus-within {
+            border-color: var(--uber-green);
+            box-shadow: 0 4px 20px rgba(6, 193, 103, 0.15);
+            transform: translateY(-1px);
         }
         
         .menu-search input {
             width: 100%;
-            padding: var(--spacing-12) var(--spacing-16);
-            border: 1px solid var(--uber-gray-300);
-            border-radius: var(--radius-24);
+            padding: var(--spacing-12) var(--spacing-16) var(--spacing-12) var(--spacing-48);
+            border: none;
+            border-radius: var(--radius-20);
             font-size: var(--font-size-16);
+            font-weight: 500;
+            background: transparent;
+            color: var(--uber-gray-900);
             transition: var(--transition-fast);
-            background-color: var(--uber-white);
+            outline: none;
         }
         
-        .menu-search input:focus {
-            outline: none;
+        .menu-search input::placeholder {
+            color: var(--uber-gray-500);
+            font-weight: 400;
+        }
+        
+        .menu-search-icon {
+            position: absolute;
+            left: var(--spacing-16);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--uber-gray-500);
+            font-size: var(--font-size-16);
+            transition: var(--transition-fast);
+            pointer-events: none;
+        }
+        
+        .menu-search-input-wrapper:focus-within .menu-search-icon {
+            color: var(--uber-green);
+        }
+        
+        .menu-search-clear {
+            position: absolute;
+            right: var(--spacing-12);
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: var(--uber-gray-200);
+            border: none;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            opacity: 0;
+            pointer-events: none;
+            color: var(--uber-gray-600);
+            font-size: var(--font-size-12);
+        }
+        
+        .menu-search-clear.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .menu-search-clear:hover {
+            background: var(--uber-gray-300);
+            color: var(--uber-gray-900);
+        }
+        
+        .menu-search-input-wrapper:focus-within .menu-search-clear {
+            background: var(--uber-green);
+            color: var(--uber-white);
+        }
+        
+        .menu-search-input-wrapper:focus-within .menu-search-clear:hover {
+            background: var(--uber-green-dark);
+        }
+        
+        /* ===== COMPACT PROMOTIONS SECTION ===== */
+        .compact-promotions {
+            margin-bottom: var(--spacing-24);
+            position: relative;
+        }
+        
+        .compact-promotions-slider {
+            display: flex;
+            gap: var(--spacing-16);
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: var(--spacing-8) 0;
+            scroll-behavior: smooth;
+        }
+        
+        .compact-promotions-slider::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .compact-promotion-card {
+            flex-shrink: 0;
+            width: 280px;
+            background: linear-gradient(135deg, var(--uber-white), #fafafa);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius-12);
+            padding: var(--spacing-16);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .compact-promotion-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--uber-green), var(--uber-green-light), var(--uber-green));
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .compact-promotion-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(6, 193, 103, 0.15);
             border-color: var(--uber-green);
-            box-shadow: 0 0 0 3px rgba(6, 193, 103, 0.2);
+        }
+        
+        .compact-promotion-card:hover::before {
+            opacity: 1;
+        }
+        
+        .compact-promotion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-8);
+        }
+        
+        .compact-promotion-title {
+            font-size: var(--font-size-14);
+            font-weight: 600;
+            color: var(--uber-gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-6);
+        }
+        
+        .compact-promotion-title .promo-icon {
+            color: var(--uber-green);
+            font-size: var(--font-size-16);
+        }
+        
+        .compact-promotion-badge {
+            background: linear-gradient(135deg, var(--uber-red), #e63946);
+            color: var(--uber-white);
+            font-size: var(--font-size-10);
+            font-weight: 600;
+            padding: var(--spacing-2) var(--spacing-6);
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .compact-promotion-description {
+            font-size: var(--font-size-12);
+            color: var(--uber-gray-600);
+            line-height: 1.4;
+            margin-bottom: var(--spacing-12);
+        }
+        
+        .compact-promotion-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .compact-promotion-code {
+            background: linear-gradient(135deg, var(--uber-gray-100), var(--uber-gray-200));
+            color: var(--uber-gray-700);
+            font-size: var(--font-size-11);
+            font-weight: 600;
+            padding: var(--spacing-4) var(--spacing-8);
+            border-radius: var(--radius-6);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+        
+        .compact-promotion-validity {
+            font-size: var(--font-size-11);
+            color: var(--uber-gray-500);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-4);
+        }
+        
+        .compact-promotion-validity .validity-icon {
+            font-size: var(--font-size-10);
+        }
+        
+        .compact-promotions-empty {
+            text-align: center;
+            padding: var(--spacing-16);
+            color: var(--uber-gray-500);
+            font-size: var(--font-size-14);
+        }
+        
+        .compact-promotions-empty i {
+            font-size: var(--font-size-24);
+            color: var(--uber-gray-300);
+            margin-bottom: var(--spacing-8);
+            display: block;
+        }
+        
+        .compact-promotions-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--uber-white), #fafafa);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: var(--font-size-12);
+            color: var(--uber-gray-600);
+        }
+        
+        .compact-promotions-nav:hover {
+            background: linear-gradient(135deg, var(--uber-green), #05a654);
+            border-color: var(--uber-green);
+            color: var(--uber-white);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .compact-promotions-nav.prev {
+            left: var(--spacing-8);
+        }
+        
+        .compact-promotions-nav.next {
+            right: var(--spacing-8);
+        }
+        
+        .compact-promotions-nav.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-50%) scale(0.8);
+        }
+        
+  
+        
+        /* ===== STICKY CATEGORY TABS ===== */
+        .category-tabs-container {
+            margin-bottom: var(--spacing-32);
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.98), rgba(245, 245, 245, 0.95));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: var(--spacing-20) 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+            transition: var(--transition-normal);
+            display: block !important;
+        }
+        
+        .category-tabs-container.sticky {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.99), rgba(250, 250, 250, 0.97));
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+            top: 64px;
+        }
+        
+        .category-tabs-wrapper {
+            position: relative;
+            overflow: hidden;
+            padding: 0 var(--spacing-16);
+        }
+        
+        .category-tabs {
+            display: flex;
+            gap: var(--spacing-12);
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: var(--spacing-8) 0;
+            scroll-behavior: smooth;
+        }
+        
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category-tab {
+            flex-shrink: 0;
+            padding: var(--spacing-12) var(--spacing-24);
+            background: linear-gradient(135deg, var(--uber-white), #fafafa);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-14);
+            font-weight: 600;
+            color: var(--uber-gray-700);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            text-transform: capitalize;
+            letter-spacing: 0.3px;
+        }
+        
+        .category-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left var(--transition-normal);
+        }
+        
+        .category-tab:hover::before {
+            left: 100%;
+        }
+        
+        .category-tab:hover {
+            background: linear-gradient(135deg, var(--uber-white), #f5f5f5);
+            border-color: var(--uber-green);
+            color: var(--uber-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(6, 193, 103, 0.15);
+        }
+        
+        .category-tab.active {
+            background: linear-gradient(135deg, var(--uber-green), #05a654);
+            border-color: var(--uber-green);
+            color: var(--uber-white);
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(6, 193, 103, 0.25);
+            transform: translateY(-1px);
+        }
+        
+        .category-tab.active::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+        
+        .category-tab .item-count {
+            background: rgba(255, 255, 255, 0.25);
+            color: var(--uber-white);
+            padding: var(--spacing-2) var(--spacing-8);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-11);
+            margin-left: var(--spacing-8);
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+        
+        .category-tab:not(.active) .item-count {
+            background: linear-gradient(135deg, var(--uber-gray-200), var(--uber-gray-300));
+            color: var(--uber-gray-700);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-tab .category-icon {
+            margin-right: var(--spacing-8);
+            font-size: var(--font-size-14);
+            opacity: 0.8;
+        }
+        
+        .category-tab.active .category-icon {
+            opacity: 1;
+        }
+        
+        .category-tab.new::after {
+            content: 'New';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: linear-gradient(135deg, var(--uber-red), #e63946);
+            color: var(--uber-white);
+            font-size: var(--font-size-9);
+            padding: var(--spacing-2) var(--spacing-6);
+            border-radius: var(--radius-4);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(255, 65, 54, 0.3);
+            z-index: 2;
+        }
+        
+        .category-tabs-scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--uber-white), #fafafa);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            z-index: 2;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            font-size: var(--font-size-14);
+            color: var(--uber-gray-600);
+        }
+        
+        .category-tabs-scroll-btn:hover {
+            background: linear-gradient(135deg, var(--uber-green), #05a654);
+            border-color: var(--uber-green);
+            color: var(--uber-white);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 24px rgba(6, 193, 103, 0.3);
+        }
+        
+        .category-tabs-scroll-btn.prev {
+            left: var(--spacing-8);
+        }
+        
+        .category-tabs-scroll-btn.next {
+            right: var(--spacing-8);
+        }
+        
+        .category-tabs-scroll-btn.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-50%) scale(0.8);
+        }
+        
+        /* ===== MAIN CONTENT AREA ===== */
+        .menu-content-area {
+            min-height: 400px;
+            display: block !important;
+        }
+        
+        .menu-section {
+            margin-bottom: var(--spacing-48);
+        }
+        
+        .menu-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .menu-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-24);
+            padding-bottom: var(--spacing-12);
+            border-bottom: 2px solid var(--uber-gray-200);
+        }
+        
+        .menu-section-title {
+            font-size: var(--font-size-24);
+            font-weight: 600;
+            color: var(--uber-gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-8);
+        }
+        
+        .menu-section-title .section-icon {
+            color: var(--uber-green);
+            font-size: var(--font-size-20);
+        }
+        
+        .menu-section-subtitle {
+            color: var(--uber-gray-600);
+            font-size: var(--font-size-14);
+            font-weight: 400;
+        }
+        
+        .menu-section-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-24);
+        }
+        
+        .menu-section-empty {
+            text-align: center;
+            padding: var(--spacing-48) var(--spacing-24);
+            color: var(--uber-gray-500);
+        }
+        
+        .menu-section-empty i {
+            font-size: var(--font-size-48);
+            color: var(--uber-gray-300);
+            margin-bottom: var(--spacing-16);
+        }
+        
+        .menu-section-empty h3 {
+            font-size: var(--font-size-20);
+            margin-bottom: var(--spacing-8);
+            color: var(--uber-gray-600);
+        }
+        
+        .menu-section-empty p {
+            font-size: var(--font-size-16);
+            margin-bottom: var(--spacing-16);
+        }
+        
+        .menu-section-empty .btn {
+            margin-top: var(--spacing-8);
         }
         
         /* ===== MENU ITEMS GRID ===== */
@@ -3852,6 +4368,169 @@
             .menu-items-grid {
                 grid-template-columns: 1fr;
             }
+            
+            /* ===== NEW TABBED LAYOUT RESPONSIVE STYLES ===== */
+            .category-tabs-container {
+                margin-bottom: var(--spacing-24);
+                padding: var(--spacing-12) 0;
+                top: 70px;
+            }
+            
+            .category-tabs-container.sticky {
+                top: 60px;
+            }
+            
+            .category-tab {
+                padding: var(--spacing-8) var(--spacing-16);
+                font-size: var(--font-size-12);
+            }
+            
+            .category-tab .category-icon {
+                margin-right: var(--spacing-4);
+                font-size: var(--font-size-12);
+            }
+            
+            .category-tab .item-count {
+                margin-left: var(--spacing-4);
+                font-size: var(--font-size-10);
+                padding: var(--spacing-1) var(--spacing-4);
+            }
+            
+            .category-tabs-scroll-btn {
+                width: 28px;
+                height: 28px;
+                font-size: var(--font-size-12);
+            }
+            
+            .compact-promotions {
+                margin-bottom: var(--spacing-20);
+            }
+            
+            .compact-promotion-card {
+                width: 240px;
+                padding: var(--spacing-12);
+            }
+            
+            .compact-promotion-title {
+                font-size: var(--font-size-12);
+            }
+            
+            .compact-promotion-title .promo-icon {
+                font-size: var(--font-size-14);
+            }
+            
+            .compact-promotion-description {
+                font-size: var(--font-size-11);
+                margin-bottom: var(--spacing-8);
+            }
+            
+            .compact-promotion-code {
+                font-size: var(--font-size-10);
+                padding: var(--spacing-2) var(--spacing-6);
+            }
+            
+            .compact-promotion-validity {
+                font-size: var(--font-size-10);
+            }
+            
+            .compact-promotions-nav {
+                width: 28px;
+                height: 28px;
+                font-size: var(--font-size-11);
+            }
+            
+            .menu-search-input-wrapper {
+                padding: var(--spacing-2);
+            }
+            
+            .menu-search input {
+                padding: var(--spacing-10) var(--spacing-12) var(--spacing-10) var(--spacing-40);
+                font-size: var(--font-size-14);
+            }
+            
+            .menu-search-icon {
+                left: var(--spacing-12);
+                font-size: var(--font-size-14);
+            }
+            
+            .menu-search-clear {
+                width: 20px;
+                height: 20px;
+                right: var(--spacing-8);
+                font-size: var(--font-size-10);
+            }
+            
+            .menu-section {
+                margin-bottom: var(--spacing-32);
+            }
+            
+            .menu-section-header {
+                margin-bottom: var(--spacing-16);
+                padding-bottom: var(--spacing-8);
+            }
+            
+            .menu-section-title {
+                font-size: var(--font-size-20);
+            }
+            
+            .menu-section-title .section-icon {
+                font-size: var(--font-size-16);
+            }
+            
+            .menu-section-subtitle {
+                font-size: var(--font-size-12);
+            }
+            
+            .menu-section-items {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-16);
+            }
+            
+            .menu-section-empty {
+                padding: var(--spacing-32) var(--spacing-16);
+            }
+            
+            .menu-section-empty i {
+                font-size: var(--font-size-36);
+                margin-bottom: var(--spacing-12);
+            }
+            
+            .menu-section-empty h3 {
+                font-size: var(--font-size-18);
+                margin-bottom: var(--spacing-6);
+            }
+            
+            .menu-section-empty p {
+                font-size: var(--font-size-14);
+                margin-bottom: var(--spacing-12);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .menu-section-items {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: var(--spacing-16);
+            }
+            
+            .category-tab {
+                padding: var(--spacing-10) var(--spacing-16);
+                font-size: var(--font-size-13);
+            }
+            
+            .menu-mention-content {
+                flex-direction: row;
+                text-align: left;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .category-tabs-container {
+                top: 75px;
+            }
+            
+            .category-tabs-container.sticky {
+                top: 64px;
+            }
         }
     </style>
 </head>
@@ -4021,28 +4700,55 @@
                 <div class="container">
                     <h2 class="section-title" id="menu-branch-name" data-translate="menu">Menu</h2>
                     
-                    <div class="menu-container">
-                        <div class="categories-sidebar">
-                            <div id="categories-list">
-                                <!-- Categories will be dynamically loaded here -->
+                    <div class="menu-items-container">
+                        <div class="menu-search">
+                            <div class="menu-search-input-wrapper">
+                                <i class="fas fa-search menu-search-icon"></i>
+                                <input type="text" id="menu-search" data-translate-placeholder="search_menu" placeholder="Search menu items...">
+                                <button class="menu-search-clear" id="menu-search-clear" type="button">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                         
-                        <div class="menu-items-container">
-                            <div class="menu-search">
-                                <input type="text" id="menu-search" data-translate-placeholder="search_menu" placeholder="Search menu items...">
-                            </div>
-                            
-                            <div class="promotions-container" id="promotions-container" style="display: none;">
-                                <h3 data-translate="special_offers">Special Offers</h3>
-                                <div class="promotions-grid" id="promotions-grid">
-                                    <!-- Promotions will be dynamically loaded here -->
+                        <!-- Compact Promotions Section -->
+                        <div class="compact-promotions" id="compact-promotions">
+                            <!-- Promotions will be dynamically loaded here -->
+                        </div>
+                        
+                        <!-- Sticky Category Tabs Section -->
+                        <div class="category-tabs-container" id="category-tabs-container">
+                            <div class="category-tabs-wrapper">
+                                <button class="category-tabs-scroll-btn prev hidden" id="category-tabs-prev">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                
+                                <div class="category-tabs" id="category-tabs">
+                                    <!-- Category tabs will be dynamically loaded here -->
                                 </div>
+                                
+                                <button class="category-tabs-scroll-btn next hidden" id="category-tabs-next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
                             </div>
-                            
-                            <div class="menu-items-grid" id="menu-items-container">
-                                <!-- Menu items will be dynamically loaded here -->
+                        </div>
+                        
+                        <!-- Main Content Area -->
+                        <div class="menu-content-area" id="menu-content-area">
+                            <!-- Menu sections will be dynamically loaded here -->
+                        </div>
+                        
+                        <!-- Keep existing promotions container -->
+                        <div class="promotions-container" id="promotions-container" style="display: none;">
+                            <h3 data-translate="special_offers">Special Offers</h3>
+                            <div class="promotions-grid" id="promotions-grid">
+                                <!-- Promotions will be dynamically loaded here -->
                             </div>
+                        </div>
+                        
+                        <!-- Keep existing menu items grid as fallback -->
+                        <div class="menu-items-grid" id="menu-items-container" style="display: none;">
+                            <!-- Menu items will be dynamically loaded here -->
                         </div>
                     </div>
                 </div>
@@ -4440,7 +5146,11 @@
                         'loading_order': 'Loading order...',
                         'loading_tables': 'Loading tables...',
                         'loading_feedback': 'Loading feedback...',
-                        'unknown_branch': 'Unknown Branch'
+                        'unknown_branch': 'Unknown Branch',
+                        'all_items': 'All Items',
+                        'no_items_found': 'No items found',
+                        'try_different_category': 'Try selecting a different category',
+                        'view_all_items': 'View All Items'
                     },
                     'bn-BD': {
                         'app_name': 'লুনা ডাইন',
@@ -4596,7 +5306,11 @@
                         'loading_order': 'অর্ডার লোড হচ্ছে...',
                         'loading_tables': 'টেবিলগুলি লোড হচ্ছে...',
                         'loading_feedback': 'মতামত লোড হচ্ছে...',
-                        'unknown_branch': 'অজানা শাখা'
+                        'unknown_branch': 'অজানা শাখা',
+                        'all_items': 'সমস্ত আইটেম',
+                        'no_items_found': 'কোন আইটেম পাওয়া যায়নি',
+                        'try_different_category': 'অন্য ক্যাটাগরি নির্বাচন করুন',
+                        'view_all_items': 'সমস্ত আইটেম দেখুন'
                     }
                 }
             };
@@ -4608,7 +5322,6 @@
                 navLinks: document.querySelectorAll('.nav-link'),
                 branchesContainer: document.getElementById('branches-container'),
                 menuItemsContainer: document.getElementById('menu-items-container'),
-                categoriesList: document.getElementById('categories-list'),
                 cartContainer: document.getElementById('cart-container'),
                 cartToggle: document.getElementById('cart-toggle'),
                 cartFab: document.getElementById('cart-fab'),
@@ -4624,6 +5337,8 @@
                 otherRequest: document.getElementById('other-request'),
                 loadingOverlay: document.getElementById('loading-overlay'),
                 menuSearch: document.getElementById('menu-search'),
+                menuSearchClear: document.getElementById('menu-search-clear'),
+                compactPromotions: document.getElementById('compact-promotions'),
                 menuBranchName: document.getElementById('menu-branch-name'),
                 cartBranchName: document.getElementById('cart-branch-name'),
                 checkoutBranchName: document.getElementById('checkout-branch-name'),
@@ -4645,6 +5360,11 @@
                 branchConflictModal: document.getElementById('branch-conflict-modal'),
                 branchConflictMessage: document.getElementById('branch-conflict-message'),
                 currentBranchName: document.getElementById('current-branch-name'),
+                categoryTabsContainer: document.getElementById('category-tabs-container'),
+                categoryTabs: document.getElementById('category-tabs'),
+                categoryTabsPrev: document.getElementById('category-tabs-prev'),
+                categoryTabsNext: document.getElementById('category-tabs-next'),
+                menuContentArea: document.getElementById('menu-content-area'),
                 newBranchName: document.getElementById('new-branch-name'),
                 branchConflictCancelBtn: document.getElementById('branch-conflict-cancel-btn'),
                 branchConflictConfirmBtn: document.getElementById('branch-conflict-confirm-btn')
@@ -5342,12 +6062,14 @@
                     });
 
                        state.menuData = menuData;
+                    console.log('Menu data loaded:', state.menuData);
                     // Extract categories from menu data
                     state.categories = state.menuData.map(category => ({
                         id: category.category_id,
                         name: getTranslation(category.category_name, category.name_translation_key),
                         image: category.category_image
                     }));
+                    console.log('Categories extracted:', state.categories);
                     
                     // Load promotions for this branch
                     try {
@@ -5362,6 +6084,17 @@
                     
                     renderCategories();
                     renderMenuItems();
+                    
+                    // Debug: Check if elements exist
+                    setTimeout(() => {
+                        console.log('=== DEBUG INFO ===');
+                        console.log('menu-content-area element:', document.getElementById('menu-content-area'));
+                        console.log('category-tabs element:', document.getElementById('category-tabs'));
+                        console.log('category-tabs-container element:', document.getElementById('category-tabs-container'));
+                        console.log('state.menuData:', state.menuData);
+                        console.log('state.categories:', state.categories);
+                        console.log('=== END DEBUG ===');
+                    }, 500);
                 } catch (error) {
                     console.error('Failed to load menu:', error);
                 }
@@ -5977,28 +6710,297 @@
                 };
             }
             
-            function renderCategories() {
-                elements.categoriesList.innerHTML = '';
+    
+            
+            // ===== NEW TABBED LAYOUT FUNCTIONS =====
+            
+            // Debug function to manually trigger rendering
+            window.debugRenderMenu = function() {
+                console.log('Manual debug render triggered');
+                console.log('state.menuData:', state.menuData);
+                console.log('state.categories:', state.categories);
                 
+                if (state.menuData && state.menuData.length > 0) {
+                    renderCategoryTabs();
+                    renderMenuContentArea('all');
+                    setupStickyTabs();
+                    console.log('Manual render completed');
+                } else {
+                    console.error('No menu data available for rendering');
+                }
+            };
+            
+            function renderCategoryTabs() {
+                console.log('renderCategoryTabs called');
+                console.log('state.categories:', state.categories);
+                console.log('state.menuData:', state.menuData);
+                
+                const categoryTabs = document.getElementById('category-tabs');
+                if (!categoryTabs) {
+                    console.error('category-tabs element not found');
+                    return;
+                }
+                
+                categoryTabs.innerHTML = '';
+                
+                // Add "All Items" tab
+                const allTab = createCategoryTab({
+                    id: 'all',
+                    name: translate('all_items') || 'All Items',
+                    icon: 'fas fa-th-large',
+                    count: state.menuData ? state.menuData.reduce((total, cat) => total + (cat.items ? cat.items.length : 0), 0) : 0
+                }, true);
+                categoryTabs.appendChild(allTab);
+                
+                // Add category tabs
                 state.categories.forEach(category => {
-                    const categoryBtn = document.createElement('button');
-                    categoryBtn.className = 'category-btn';
-                    categoryBtn.textContent = category.name;
-                    categoryBtn.setAttribute('data-category-id', category.id);
+                    const categoryData = state.menuData ? state.menuData.find(cat => cat.category_id === category.id) : null;
+                    const itemCount = categoryData && categoryData.items ? categoryData.items.length : 0;
                     
-                    categoryBtn.addEventListener('click', () => {
-                        // Scroll to category
-                        const categoryElement = document.getElementById(`category-${category.id}`);
-                        if (categoryElement) {
-                            categoryElement.scrollIntoView({ behavior: 'smooth' });
-                        }
+                    const tab = createCategoryTab({
+                        id: category.id,
+                        name: category.name,
+                        icon: category.icon || 'fas fa-utensils',
+                        count: itemCount,
+                        isNew: category.is_new || false
                     });
-                    
-                    elements.categoriesList.appendChild(categoryBtn);
+                    categoryTabs.appendChild(tab);
+                });
+                
+                console.log('Category tabs rendered');
+                // Setup tab scrolling
+                setupTabScrolling();
+            }
+            
+            function createCategoryTab(category, isActive = false) {
+                const tab = document.createElement('button');
+                tab.className = `category-tab ${isActive ? 'active' : ''} ${category.isNew ? 'new' : ''}`;
+                tab.setAttribute('data-category-id', category.id);
+                
+                const icon = category.icon ? `<i class="${category.icon} category-icon"></i>` : '';
+                const count = category.count > 0 ? `<span class="item-count">${category.count}</span>` : '';
+                
+                tab.innerHTML = `${icon}${category.name}${count}`;
+                
+                tab.addEventListener('click', () => {
+                    selectCategoryTab(category.id);
+                });
+                
+                return tab;
+            }
+            
+            function selectCategoryTab(categoryId) {
+                // Update active tab
+                const tabs = document.querySelectorAll('.category-tab');
+                tabs.forEach(tab => {
+                    if (tab.getAttribute('data-category-id') === categoryId) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+                
+                // Filter and render menu content
+                renderMenuContentArea(categoryId);
+            }
+            
+            function renderMenuContentArea(categoryId = 'all') {
+                console.log('renderMenuContentArea called with categoryId:', categoryId);
+                console.log('state.menuData:', state.menuData);
+                console.log('state.categories:', state.categories);
+                
+                const contentArea = document.getElementById('menu-content-area');
+                if (!contentArea) {
+                    console.error('menu-content-area element not found');
+                    return;
+                }
+                
+                contentArea.innerHTML = '';
+                contentArea.style.display = 'block';
+                
+                let categoriesToShow = [];
+                
+                if (categoryId === 'all') {
+                    categoriesToShow = state.menuData || [];
+                    console.log('Showing all categories:', categoriesToShow.length);
+                } else {
+                    const categoryData = state.menuData ? state.menuData.find(cat => cat.category_id == categoryId) : null;
+                    if (categoryData) {
+                        categoriesToShow = [categoryData];
+                        console.log('Showing single category:', categoryData.category_name);
+                    }
+                }
+                
+                if (categoriesToShow.length === 0) {
+                    console.log('No categories to show');
+                    contentArea.innerHTML = `
+                        <div class="menu-section-empty">
+                            <i class="fas fa-utensils"></i>
+                            <h3>${translate('no_items_found') || 'No items found'}</h3>
+                            <p>${translate('try_different_category') || 'Try selecting a different category'}</p>
+                            <button class="btn" onclick="selectCategoryTab('all')">${translate('view_all_items') || 'View All Items'}</button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                console.log('Rendering', categoriesToShow.length, 'categories');
+                categoriesToShow.forEach(category => {
+                    const section = createMenuSection(category);
+                    contentArea.appendChild(section);
                 });
             }
             
+            function createMenuSection(category) {
+                const section = document.createElement('div');
+                section.className = 'menu-section';
+                section.id = `category-${category.category_id}`;
+                
+                const itemCount = category.items ? category.items.length : 0;
+                const subtitle = itemCount > 0 ? `${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : '';
+                
+                section.innerHTML = `
+                    <div class="menu-section-header">
+                        <div>
+                            <h3 class="menu-section-title">
+                                <i class="fas fa-utensils section-icon"></i>
+                                ${getTranslation(category.category_name, category.name_translation_key)}
+                            </h3>
+                            ${subtitle ? `<p class="menu-section-subtitle">${subtitle}</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="menu-section-items" id="section-items-${category.category_id}">
+                        <!-- Items will be rendered here -->
+                    </div>
+                `;
+                
+                // Add items to the section
+                const itemsContainer = section.querySelector(`#section-items-${category.category_id}`);
+                if (itemsContainer && category.items) {
+                    category.items.forEach(item => {
+                        const itemCard = createMenuItemCard(item);
+                        itemsContainer.appendChild(itemCard);
+                    });
+                }
+                
+                return section;
+            }
+            
+            function createMenuItemCard(item) {
+                const isFavorite = state.favorites.some(fav => fav.branch_menu_id === item.branch_menu_id);
+                
+                const itemCard = document.createElement('div');
+                itemCard.className = 'menu-item-card';
+                itemCard.innerHTML = `
+                    <div class="menu-item-image-container">
+                        <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.item_name}" class="menu-item-image">
+                        ${item.is_featured ? '<span class="menu-item-badge">Featured</span>' : ''}
+                    </div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h4 class="menu-item-name">${getTranslation(item.item_name, item.name_translation_key)}</h4>
+                            <div class="menu-item-price">${formatPrice(item.price)}</div>
+                        </div>
+                        <p class="menu-item-desc">${getTranslation(item.item_description, item.description_translation_key) || translate('delicious_menu_item')}</p>
+                        <div class="menu-item-footer">
+                            <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
+                            <button class="btn-favorite ${isFavorite ? 'active' : ''}" data-item-id="${item.branch_menu_id}">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click event to show item detail modal
+                itemCard.addEventListener('click', () => {
+                    showItemDetailModal(item);
+                });
+                
+                // Add favorite toggle event
+                const favoriteBtn = itemCard.querySelector('.btn-favorite');
+                favoriteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(item);
+                    favoriteBtn.classList.toggle('active');
+                });
+                
+                return itemCard;
+            }
+            
+            function setupStickyTabs() {
+                const tabsContainer = document.getElementById('category-tabs-container');
+                if (!tabsContainer) return;
+                
+                const header = document.querySelector('.header');
+                const headerHeight = header ? header.offsetHeight : 64;
+                
+                const handleScroll = () => {
+                    const scrollPosition = window.pageYOffset;
+                    
+                    if (scrollPosition > headerHeight) {
+                        tabsContainer.classList.add('sticky');
+                        tabsContainer.style.top = `${headerHeight}px`;
+                    } else {
+                        tabsContainer.classList.remove('sticky');
+                        tabsContainer.style.top = '80px';
+                    }
+                };
+                
+                window.addEventListener('scroll', handleScroll);
+                handleScroll(); // Initial call
+            }
+            
+            function setupTabScrolling() {
+                const tabsContainer = document.getElementById('category-tabs');
+                const prevBtn = document.getElementById('category-tabs-prev');
+                const nextBtn = document.getElementById('category-tabs-next');
+                
+                if (!tabsContainer || !prevBtn || !nextBtn) return;
+                
+                const updateScrollButtons = () => {
+                    const isAtStart = tabsContainer.scrollLeft <= 0;
+                    const isAtEnd = tabsContainer.scrollLeft >= tabsContainer.scrollWidth - tabsContainer.clientWidth;
+                    
+                    prevBtn.classList.toggle('hidden', isAtStart);
+                    nextBtn.classList.toggle('hidden', isAtEnd);
+                };
+                
+                prevBtn.addEventListener('click', () => {
+                    tabsContainer.scrollBy({
+                        left: -200,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                nextBtn.addEventListener('click', () => {
+                    tabsContainer.scrollBy({
+                        left: 200,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                tabsContainer.addEventListener('scroll', updateScrollButtons);
+                window.addEventListener('resize', updateScrollButtons);
+                
+                updateScrollButtons(); // Initial call
+            }
+            
+            // Update the existing renderCategories function to only render tabs
+            function renderCategories() {
+                console.log('renderCategories called');
+                console.log('state.categories:', state.categories);
+                
+                // Skip rendering original sidebar categories since we removed the sidebar
+                // Only render new category tabs
+                renderCategoryTabs();
+            }
+            
+            // Update the existing renderMenuItems function to also render content area
             function renderMenuItems() {
+                console.log('renderMenuItems called');
+                console.log('state.menuData:', state.menuData);
+                
+                // Render original menu items (for fallback)
                 elements.menuItemsContainer.innerHTML = '';
                 
                 state.menuData.forEach(category => {
@@ -6055,62 +7057,149 @@
                     categorySection.appendChild(itemsGrid);
                     elements.menuItemsContainer.appendChild(categorySection);
                 });
+                
+                // Render new content area
+                setTimeout(() => {
+                    renderMenuContentArea('all');
+                }, 100);
+                
+                // Setup sticky tabs
+                setTimeout(() => {
+                    setupStickyTabs();
+                }, 200);
             }
             
             function renderPromotions() {
+                console.log('renderPromotions called');
+                console.log('state.promotions:', state.promotions);
+                
                 if (!state.promotions || state.promotions.length === 0) {
-                    elements.promotionsContainer.style.display = 'none';
+                    if (elements.compactPromotions) {
+                        elements.compactPromotions.innerHTML = `
+                            <div class="compact-promotions-empty">
+                                <i class="fas fa-tag"></i>
+                                <p>No special offers available at the moment</p>
+                            </div>
+                        `;
+                    }
+                    if (elements.promotionsContainer) {
+                        elements.promotionsContainer.style.display = 'none';
+                    }
                     return;
                 }
                 
-                elements.promotionsContainer.style.display = 'block';
-                elements.promotionsGrid.innerHTML = '';
-                
-                state.promotions.forEach(promo => {
-                    const promoCard = document.createElement('div');
-                    promoCard.className = 'promotion-card';
-                    
-                    const promoCode = promo.code || 'PROMO';
-                    const promoTitle = getTranslation('Special Offer', promo.description_translation_key);
-                    const promoDescription = promo.type === 'PERCENTAGE' 
-                        ? `${promo.value}% off` 
-                        : `${formatPrice(promo.value)} off`;
-                    
-                    promoCard.innerHTML = `
-                        <div class="promotion-content">
-                            <div class="promotion-header">
-                                <h4 class="promotion-title">${promoTitle}</h4>
-                                <div class="promo-code-container">
-                                    <span class="promo-code">${promoCode}</span>
-                                    <button class="copy-code-btn" data-code="${promoCode}" title="Copy promo code">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <p class="promotion-description">${promoDescription}</p>
-                            ${promo.min_order_value ? `<p class="promo-condition">Min order: ${formatPrice(promo.min_order_value)}</p>` : ''}
+                // Render compact promotions
+                if (elements.compactPromotions) {
+                    elements.compactPromotions.innerHTML = `
+                        <div class="compact-promotions-slider" id="compact-promotions-slider">
+                            <!-- Promotions will be dynamically loaded here -->
                         </div>
+                        <button class="compact-promotions-nav prev hidden" id="compact-promotions-prev">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="compact-promotions-nav next hidden" id="compact-promotions-next">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     `;
                     
-                    elements.promotionsGrid.appendChild(promoCard);
-                });
-                
-                // Add event listeners to copy buttons
-                document.querySelectorAll('.copy-code-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const code = this.getAttribute('data-code');
-                        navigator.clipboard.writeText(code).then(() => {
-                            showToast(`Promo code "${code}" copied!`);
-                            const originalIcon = this.innerHTML;
-                            this.innerHTML = '<i class="fas fa-check"></i>';
-                            setTimeout(() => {
-                                this.innerHTML = originalIcon;
-                            }, 2000);
-                        }).catch(() => {
-                            showError('Failed to copy promo code');
+                    const slider = document.getElementById('compact-promotions-slider');
+                    if (slider) {
+                        state.promotions.forEach(promo => {
+                            const promoCard = createCompactPromotionCard(promo);
+                            slider.appendChild(promoCard);
                         });
+                    }
+                    
+                    // Setup navigation buttons
+                    setupCompactPromotionsNavigation();
+                }
+                
+                // Keep original promotions container for fallback (hidden)
+                if (elements.promotionsContainer) {
+                    elements.promotionsContainer.style.display = 'none';
+                }
+            }
+            
+            function createCompactPromotionCard(promo) {
+                const card = document.createElement('div');
+                card.className = 'compact-promotion-card';
+                
+                const isValid = new Date(promo.end_date) > new Date();
+                const validityText = isValid ? 'Valid until ' + new Date(promo.end_date).toLocaleDateString() : 'Expired';
+                const validityIcon = isValid ? 'fas fa-clock' : 'fas fa-times-circle';
+                
+                const promoTitle = getTranslation('Special Offer', promo.description_translation_key);
+                const promoDescription = promo.type === 'PERCENTAGE' 
+                    ? `${promo.value}% off` 
+                    : `${formatPrice(promo.value)} off`;
+                
+                card.innerHTML = `
+                    <div class="compact-promotion-header">
+                        <div class="compact-promotion-title">
+                            <i class="fas fa-tag promo-icon"></i>
+                            ${promoTitle}
+                        </div>
+                        ${isValid ? '<span class="compact-promotion-badge">Active</span>' : '<span class="compact-promotion-badge">Expired</span>'}
+                    </div>
+                    <div class="compact-promotion-description">
+                        ${promoDescription}
+                        ${promo.min_order_value ? `<br>Min order: ${formatPrice(promo.min_order_value)}` : ''}
+                    </div>
+                    <div class="compact-promotion-footer">
+                        <div class="compact-promotion-code">${promo.code || 'PROMO'}</div>
+                        <div class="compact-promotion-validity">
+                            <i class="${validityIcon} validity-icon"></i>
+                            ${validityText}
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    // Copy promo code to clipboard
+                    const promoCode = promo.code || 'PROMO';
+                    navigator.clipboard.writeText(promoCode).then(() => {
+                        showToast(`Promo code "${promoCode}" copied to clipboard!`);
+                    }).catch(() => {
+                        showToast(`Promo code: ${promoCode}`);
                     });
                 });
+                
+                return card;
+            }
+            
+            function setupCompactPromotionsNavigation() {
+                const slider = document.getElementById('compact-promotions-slider');
+                const prevBtn = document.getElementById('compact-promotions-prev');
+                const nextBtn = document.getElementById('compact-promotions-next');
+                
+                if (!slider || !prevBtn || !nextBtn) return;
+                
+                const updateNavButtons = () => {
+                    const isAtStart = slider.scrollLeft <= 0;
+                    const isAtEnd = slider.scrollLeft >= slider.scrollWidth - slider.clientWidth;
+                    
+                    prevBtn.classList.toggle('hidden', isAtStart);
+                    nextBtn.classList.toggle('hidden', isAtEnd);
+                };
+                
+                prevBtn.addEventListener('click', () => {
+                    slider.scrollBy({
+                        left: -300,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                nextBtn.addEventListener('click', () => {
+                    slider.scrollBy({
+                        left: 300,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                slider.addEventListener('scroll', updateNavButtons);
+                window.addEventListener('resize', updateNavButtons);
+                
+                updateNavButtons(); // Initial call
             }
             
             function renderCart() {
@@ -9017,8 +10106,25 @@
                 // Menu search
                 if (elements.menuSearch) {
                     elements.menuSearch.addEventListener('input', utils.debounce((e) => {
-                        filterMenuItems(e.target.value);
+                        const searchTerm = e.target.value;
+                        updateSearchClearButton(searchTerm);
+                        filterMenuItems(searchTerm);
                     }, 300));
+                    
+                    // Show/hide clear button based on input
+                    elements.menuSearch.addEventListener('input', (e) => {
+                        updateSearchClearButton(e.target.value);
+                    });
+                }
+                
+                // Search clear button
+                if (elements.menuSearchClear) {
+                    elements.menuSearchClear.addEventListener('click', () => {
+                        elements.menuSearch.value = '';
+                        updateSearchClearButton('');
+                        filterMenuItems('');
+                        elements.menuSearch.focus();
+                    });
                 }
                 
                 // Branch conflict modal buttons
@@ -9193,24 +10299,107 @@
             }
             
             // Search and filter
+            function updateSearchClearButton(searchTerm) {
+                if (elements.menuSearchClear) {
+                    if (searchTerm.trim()) {
+                        elements.menuSearchClear.classList.add('visible');
+                    } else {
+                        elements.menuSearchClear.classList.remove('visible');
+                    }
+                }
+            }
+            
             function filterMenuItems(searchTerm) {
-                const term = searchTerm.toLowerCase();
+                console.log('filterMenuItems called with:', searchTerm);
+                const term = searchTerm.toLowerCase().trim();
                 
+                if (!term) {
+                    // If search is empty, show all items and reset to current category
+                    selectCategoryTab('all');
+                    return;
+                }
+                
+                // Get all menu items from all categories
+                const allItems = [];
                 state.menuData.forEach(category => {
-                    category.items.forEach(item => {
-                        const itemElement = document.querySelector(`[data-item-id="${item.branch_menu_id}"]`);
-                        if (itemElement) {
-                            const itemName = getTranslation(item.name, item.name_translation_key).toLowerCase();
-                            const itemDesc = getTranslation(item.description, item.description_translation_key).toLowerCase();
-                            
-                            if (itemName.includes(term) || itemDesc.includes(term)) {
-                                itemElement.style.display = 'block';
-                            } else {
-                                itemElement.style.display = 'none';
-                            }
-                        }
-                    });
+                    if (category.items) {
+                        category.items.forEach(item => {
+                            allItems.push({
+                                ...item,
+                                categoryName: getTranslation(category.category_name, category.name_translation_key)
+                            });
+                        });
+                    }
                 });
+                
+                // Filter items based on search term
+                const filteredItems = allItems.filter(item => {
+                    const itemName = getTranslation(item.item_name, item.name_translation_key).toLowerCase();
+                    const itemDesc = getTranslation(item.item_description, item.description_translation_key).toLowerCase();
+                    const categoryName = item.categoryName.toLowerCase();
+                    
+                    return itemName.includes(term) || itemDesc.includes(term) || categoryName.includes(term);
+                });
+                
+                console.log('Filtered items:', filteredItems.length);
+                
+                // Show filtered results in the content area
+                const contentArea = document.getElementById('menu-content-area');
+                if (!contentArea) return;
+                
+                contentArea.innerHTML = '';
+                
+                if (filteredItems.length === 0) {
+                    contentArea.innerHTML = `
+                        <div class="menu-section-empty">
+                            <i class="fas fa-search"></i>
+                            <h3>No items found</h3>
+                            <p>No menu items match your search for "${searchTerm}"</p>
+                            <button class="btn" onclick="document.getElementById('menu-search').value = ''; filterMenuItems('');">Clear Search</button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Group filtered items by category
+                const groupedItems = {};
+                filteredItems.forEach(item => {
+                    if (!groupedItems[item.categoryName]) {
+                        groupedItems[item.categoryName] = [];
+                    }
+                    groupedItems[item.categoryName].push(item);
+                });
+                
+                // Create a search results section
+                const searchSection = document.createElement('div');
+                searchSection.className = 'menu-section';
+                searchSection.innerHTML = `
+                    <div class="menu-section-header">
+                        <div>
+                            <h3 class="menu-section-title">
+                                <i class="fas fa-search section-icon"></i>
+                                Search Results
+                            </h3>
+                            <p class="menu-section-subtitle">${filteredItems.length} item${filteredItems.length === 1 ? '' : 's'} found for "${searchTerm}"</p>
+                        </div>
+                    </div>
+                `;
+                
+                const itemsGrid = document.createElement('div');
+                itemsGrid.className = 'menu-section-items';
+                
+                // Add all filtered items
+                filteredItems.forEach(item => {
+                    const itemCard = createMenuItemCard(item);
+                    itemsGrid.appendChild(itemCard);
+                });
+                
+                searchSection.appendChild(itemsGrid);
+                contentArea.appendChild(searchSection);
+                
+                // Highlight the active search state in tabs
+                const tabs = document.querySelectorAll('.category-tab');
+                tabs.forEach(tab => tab.classList.remove('active'));
             }
             
             // Restaurant details management
