@@ -379,13 +379,32 @@
         
         /* ===== HERO SECTION ===== */
         .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80');
             background-size: cover;
             background-position: center;
             color: var(--uber-white);
-            padding: var(--spacing-64) 0;
+            padding: var(--spacing-80) 0 var(--spacing-64);
             text-align: center;
             margin-bottom: var(--spacing-48);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(6, 193, 103, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
         }
         
         .hero h1 {
@@ -393,15 +412,130 @@
             margin-bottom: var(--spacing-16);
             font-weight: 700;
             color: var(--uber-white);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 1s ease-out;
         }
         
-        .hero p {
+        .hero-subtitle {
             font-size: var(--font-size-20);
             margin-bottom: var(--spacing-24);
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
             font-weight: 400;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+        
+        .hero-dynamic-content {
+            min-height: 60px;
+            margin-bottom: var(--spacing-32);
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+        
+        .dynamic-tagline {
+            font-size: var(--font-size-24);
+            font-weight: 600;
+            color: var(--uber-green);
+            margin-bottom: var(--spacing-8);
+            opacity: 0;
+            animation: fadeInOut 7s infinite;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .featured-dish {
+            font-size: var(--font-size-18);
+            color: var(--uber-white);
+            opacity: 0.9;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeInOut 7s infinite 3.5s;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .hero-social-proof {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-32);
+            margin-bottom: var(--spacing-32);
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+        
+        .social-proof-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-8);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: var(--spacing-12) var(--spacing-20);
+            border-radius: var(--radius-24);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .social-proof-item i {
+            color: var(--uber-green);
+            font-size: var(--font-size-20);
+        }
+        
+        .social-proof-text {
+            font-size: var(--font-size-16);
+            font-weight: 500;
+        }
+        
+        .social-proof-number {
+            font-size: var(--font-size-18);
+            font-weight: 700;
+            color: var(--uber-green);
+        }
+        
+        .hero-cta {
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+        
+        .hero .btn {
+            background: linear-gradient(135deg, var(--uber-green), var(--uber-green-dark));
+            box-shadow: 0 4px 15px rgba(6, 193, 103, 0.4);
+            padding: var(--spacing-16) var(--spacing-32);
+            font-size: var(--font-size-18);
+            min-height: 56px;
+            transition: all var(--transition-normal);
+        }
+        
+        .hero .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 193, 103, 0.6);
+            background: linear-gradient(135deg, var(--uber-green-dark), #05a654);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(10px); }
+            10%, 40% { opacity: 1; transform: translateY(0); }
+            50%, 90% { opacity: 0; transform: translateY(-10px); }
+        }
+        
+        /* ===== CONTENT SECTIONS ===== */
+        .content-section {
+            position: relative;
+            z-index: 2;
+            background-color: var(--uber-gray-100);
+            border-radius: var(--radius-12);
+            padding: var(--spacing-48) var(--spacing-24);
+            margin-top: calc(-1 * var(--spacing-24));
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
         }
         
         /* ===== BUTTONS ===== */
@@ -479,44 +613,142 @@
         
         .branch-card {
             background-color: var(--uber-white);
-            border-radius: var(--radius-12);
+            border-radius: var(--radius-16);
             overflow: hidden;
             box-shadow: var(--shadow-2);
-            transition: var(--transition-normal);
+            transition: all var(--transition-normal);
             display: flex;
             flex-direction: column;
+            position: relative;
+            cursor: pointer;
         }
         
         .branch-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-3);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-4);
+        }
+        
+        .branch-image-container {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16 / 10;
         }
         
         .branch-image {
             width: 100%;
-            aspect-ratio: 1 / 1;
+            height: 100%;
             object-fit: cover;
+            transition: transform var(--transition-normal);
+        }
+        
+        .branch-card:hover .branch-image {
+            transform: scale(1.1);
+        }
+        
+        .branch-status-badge {
+            position: absolute;
+            top: var(--spacing-12);
+            right: var(--spacing-12);
+            padding: var(--spacing-6) var(--spacing-12);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-12);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .status-open {
+            background-color: rgba(6, 193, 103, 0.9);
+            color: var(--uber-white);
+        }
+        
+        .status-closing-soon {
+            background-color: rgba(255, 195, 0, 0.9);
+            color: var(--uber-white);
+        }
+        
+        .status-busy {
+            background-color: rgba(255, 65, 54, 0.9);
+            color: var(--uber-white);
+        }
+        
+        .status-closed {
+            background-color: rgba(108, 117, 125, 0.9);
+            color: var(--uber-white);
         }
         
         .branch-content {
-            padding: var(--spacing-20);
+            padding: var(--spacing-24);
             flex: 1;
             display: flex;
             flex-direction: column;
         }
         
+        .branch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-12);
+        }
+        
         .branch-name {
             font-size: var(--font-size-20);
-            margin-bottom: var(--spacing-8);
             color: var(--uber-gray-900);
+            font-weight: 700;
+            flex: 1;
+            margin: 0;
+        }
+        
+        .branch-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-4);
+            background-color: var(--uber-gray-100);
+            padding: var(--spacing-4) var(--spacing-8);
+            border-radius: var(--radius-8);
+            margin-left: var(--spacing-8);
+        }
+        
+        .branch-rating i {
+            color: #ffc107;
+            font-size: var(--font-size-14);
+        }
+        
+        .branch-rating span {
+            font-size: var(--font-size-14);
             font-weight: 600;
+            color: var(--uber-gray-700);
         }
         
         .branch-address {
             color: var(--uber-gray-600);
             margin-bottom: var(--spacing-16);
             font-size: var(--font-size-14);
+            line-height: 1.5;
             flex: 1;
+        }
+        
+        .branch-stats {
+            display: flex;
+            gap: var(--spacing-16);
+            margin-bottom: var(--spacing-20);
+            flex-wrap: wrap;
+        }
+        
+        .branch-stat {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-6);
+            font-size: var(--font-size-13);
+            color: var(--uber-gray-600);
+        }
+        
+        .branch-stat i {
+            color: var(--uber-green);
+            font-size: var(--font-size-14);
         }
         
         /* ===== MENU VIEW ===== */
@@ -2209,15 +2441,60 @@
             }
             
             .hero {
-                padding: var(--spacing-40) 0;
+                padding: var(--spacing-60) 0 var(--spacing-48);
+                background-attachment: scroll; /* Disable parallax on mobile for performance */
             }
             
             .hero h1 {
                 font-size: var(--font-size-32);
             }
             
-            .hero p {
+            .hero-subtitle {
                 font-size: var(--font-size-16);
+                margin-bottom: var(--spacing-20);
+            }
+            
+            .hero-dynamic-content {
+                min-height: 50px;
+                margin-bottom: var(--spacing-24);
+            }
+            
+            .dynamic-tagline {
+                font-size: var(--font-size-20);
+            }
+            
+            .featured-dish {
+                font-size: var(--font-size-16);
+            }
+            
+            .hero-social-proof {
+                gap: var(--spacing-16);
+                margin-bottom: var(--spacing-24);
+            }
+            
+            .social-proof-item {
+                padding: var(--spacing-8) var(--spacing-16);
+                min-width: 120px;
+            }
+            
+            .social-proof-text {
+                font-size: var(--font-size-14);
+            }
+            
+            .social-proof-number {
+                font-size: var(--font-size-16);
+            }
+            
+            .content-section {
+                padding: var(--spacing-32) var(--spacing-16);
+                margin-top: calc(-1 * var(--spacing-16));
+                border-radius: var(--radius-8);
+            }
+            
+            .hero .btn {
+                padding: var(--spacing-12) var(--spacing-24);
+                font-size: var(--font-size-16);
+                min-height: 48px;
             }
             
             .section-title {
@@ -2255,6 +2532,39 @@
             
             .branches-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .branch-card:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+            
+            .branch-image-container {
+                aspect-ratio: 4 / 3;
+            }
+            
+            .branch-content {
+                padding: var(--spacing-16);
+            }
+            
+            .branch-header {
+                flex-direction: column;
+                gap: var(--spacing-8);
+            }
+            
+            .branch-rating {
+                margin-left: 0;
+                align-self: flex-start;
+            }
+            
+            .branch-stats {
+                gap: var(--spacing-12);
+            }
+            
+            .branch-status-badge {
+                top: var(--spacing-8);
+                right: var(--spacing-8);
+                padding: var(--spacing-4) var(--spacing-8);
+                font-size: var(--font-size-11);
             }
             
             .cart-item {
@@ -2365,16 +2675,48 @@
             <!-- Home View -->
             <section id="home-view" class="view active">
                 <div class="hero">
-                    <div class="container">
+                    <div class="container hero-content">
                         <h1 data-translate="welcome">Welcome to Luna Dine</h1>
-                        <p data-translate="hero_subtitle">Experience culinary excellence under the moonlight. Enjoy carefully crafted dishes that blend tradition and innovation.</p>
-                        <a href="#menu" class="btn">
-                            <span data-translate="view_menu">View Menu</span>
-                        </a>
+                        <p class="hero-subtitle" data-translate="hero_subtitle">Experience culinary excellence under the moonlight. Enjoy carefully crafted dishes that blend tradition and innovation.</p>
+                        
+                        <div class="hero-dynamic-content">
+                            <div class="dynamic-tagline" id="dynamic-tagline">Taste the Moonlight Magic</div>
+                            <div class="featured-dish" id="featured-dish">Chef's Special: Grilled Salmon with Herbs</div>
+                        </div>
+                        
+                        <div class="hero-social-proof">
+                            <div class="social-proof-item">
+                                <i class="fas fa-users"></i>
+                                <div>
+                                    <div class="social-proof-number">1000+</div>
+                                    <div class="social-proof-text">Happy Customers</div>
+                                </div>
+                            </div>
+                            <div class="social-proof-item">
+                                <i class="fas fa-star"></i>
+                                <div>
+                                    <div class="social-proof-number">4.8</div>
+                                    <div class="social-proof-text">Customer Rating</div>
+                                </div>
+                            </div>
+                            <div class="social-proof-item">
+                                <i class="fas fa-utensils"></i>
+                                <div>
+                                    <div class="social-proof-number">50+</div>
+                                    <div class="social-proof-text">Signature Dishes</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="hero-cta">
+                            <a href="#menu" class="btn">
+                                <span data-translate="view_menu">View Menu</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="container">
+                <div class="container content-section">
                     <h2 class="section-title" data-translate="our_branches">Our Branches</h2>
                     <div class="branches-grid" id="branches-container">
                         <!-- Branches will be dynamically loaded here -->
@@ -3046,6 +3388,9 @@
                 setupRouter();
                 
                 updateCartUI();
+                
+                // Initialize hero section enhancements
+                heroEnhancements.init();
             }
             
             // Language detection from URL
@@ -3251,7 +3596,7 @@
                 handleRouteChange();
             }
             
-            function handleRouteChange() {
+            async function handleRouteChange() {
                 // First, check if we need to redirect from legacy format
                 if (redirectToNewFormat()) {
                     return; // Stop processing if redirection occurred
@@ -3300,8 +3645,9 @@
                         
                         if (branch) {
                             console.log('Found branch:', branch); // Debug log
-                            // Set the current branch
-                            state.currentBranch = branch;
+                            // Ensure branch settings are loaded
+                            const branchWithSettings = await ensureBranchSettings(branch);
+                            state.currentBranch = branchWithSettings;
                             updateBranchNameDisplays();
                             updateCurrentCart();
                             updateCartUI();
@@ -3759,23 +4105,143 @@
                     // Use branch logo instead of banners
                     const logoUrl = branch.logo_url || branch.cover_photo_url || '/images/branch-default.jpg';
                     
+                    // Generate branch status
+                    const branchStatus = getBranchStatus(branch);
+                    const statusClass = `status-${branchStatus.status}`;
+                    
+                    // Generate random stats for demo (in real app, these would come from API)
+                    const popularDishes = Math.floor(Math.random() * 8) + 3; // 3-10 dishes
+                    const avgRating = (Math.random() * 1.5 + 3.5).toFixed(1); // 3.5-5.0
+                    const deliveryTime = Math.floor(Math.random() * 20) + 15; // 15-35 min
+                    const distance = (Math.random() * 5 + 0.5).toFixed(1); // 0.5-5.5 km
+                    
                     const branchCard = document.createElement('div');
                     branchCard.className = 'branch-card';
                     branchCard.innerHTML = `
-                        <img src="${logoUrl}" alt="${branch.internal_name}" class="branch-image">
+                        <div class="branch-image-container">
+                            <img src="${logoUrl}" alt="${branch.internal_name}" class="branch-image">
+                            <div class="branch-status-badge ${statusClass}">${branchStatus.label}</div>
+                        </div>
                         <div class="branch-content">
-                            <h3 class="branch-name">${getTranslation(branch.internal_name, branch.name_translation_key)}</h3>
+                            <div class="branch-header">
+                                <h3 class="branch-name">${getTranslation(branch.internal_name, branch.name_translation_key)}</h3>
+                                <div class="branch-rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>${avgRating}</span>
+                                </div>
+                            </div>
                             <p class="branch-address">${branch.address}</p>
+                            <div class="branch-stats">
+                                <div class="branch-stat">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${branchStatus.displayTime || `${deliveryTime} min`}</span>
+                                </div>
+                                <div class="branch-stat">
+                                    <i class="fas fa-truck"></i>
+                                    <span>${deliveryTime} min</span>
+                                </div>
+                            </div>
                             <button class="btn" data-branch-id="${branch.branch_id}">${translate('view_menu')}</button>
                         </div>
                     `;
                     
-                    branchCard.querySelector('button').addEventListener('click', () => {
+                    // Add click event to the button
+                    const button = branchCard.querySelector('button');
+                    button.addEventListener('click', () => {
                         window.location.hash = createBranchUrl(branch, 'menu');
                     });
                     
                     elements.branchesContainer.appendChild(branchCard);
                 }
+            }
+            
+            // Helper function to determine branch status
+            function getBranchStatus(branch) {
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentDay = now.getDay();
+                
+                // Mock operating hours (in real app, these would come from branch data)
+                const operatingHours = {
+                    monday: { open: 8, close: 22 },
+                    tuesday: { open: 8, close: 22 },
+                    wednesday: { open: 8, close: 22 },
+                    thursday: { open: 8, close: 22 },
+                    friday: { open: 8, close: 23 },
+                    saturday: { open: 9, close: 23 },
+                    sunday: { open: 9, close: 21 }
+                };
+                
+                const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                const todayHours = operatingHours[days[currentDay]];
+                
+                if (!todayHours) {
+                    return {
+                        status: 'closed',
+                        label: 'Closed',
+                        description: 'Currently closed. Please check our operating hours.',
+                        displayTime: 'Closed Today'
+                    };
+                }
+                
+                if (currentHour < todayHours.open) {
+                    return {
+                        status: 'closed',
+                        label: 'Closed',
+                        description: `Opens at ${todayHours.open}:00 AM`,
+                        displayTime: `Opens at ${todayHours.open}:00`
+                    };
+                }
+                
+                if (currentHour >= todayHours.close - 1 && currentHour < todayHours.close) {
+                    return {
+                        status: 'closing-soon',
+                        label: 'Closing Soon',
+                        description: `Closing at ${todayHours.close > 12 ? todayHours.close - 12 : todayHours.close}:00 ${todayHours.close > 12 ? 'PM' : 'AM'}`,
+                        displayTime: `Closes ${todayHours.close > 12 ? todayHours.close - 12 : todayHours.close}:00 ${todayHours.close > 12 ? 'PM' : 'AM'}`
+                    };
+                }
+                
+                if (currentHour >= todayHours.close) {
+                    // Check tomorrow's hours for opening time
+                    const tomorrowIndex = (currentDay + 1) % 7;
+                    const tomorrowHours = operatingHours[days[tomorrowIndex]];
+                    
+                    if (tomorrowHours) {
+                        return {
+                            status: 'closed',
+                            label: 'Closed',
+                            description: 'Currently closed. Please visit us tomorrow.',
+                            displayTime: `Opens ${tomorrowHours.open}:00`
+                        };
+                    } else {
+                        return {
+                            status: 'closed',
+                            label: 'Closed',
+                            description: 'Currently closed. Please check our operating hours.',
+                            displayTime: 'Closed Tomorrow'
+                        };
+                    }
+                }
+                
+                // Random busy status for demo (in real app, this would be based on actual data)
+                const isBusy = Math.random() > 0.7; // 30% chance of being busy
+                
+                if (isBusy) {
+                    return {
+                        status: 'busy',
+                        label: 'Busy',
+                        description: 'Currently experiencing high order volume. Delivery may take longer.',
+                        displayTime: null // Will show delivery time instead
+                    };
+                }
+                
+                return {
+                    status: 'open',
+                    label: 'Open Now',
+                    description: 'Currently open and ready to serve you!',
+                    displayTime: null // Will show delivery time instead
+                };
             }
             
             function renderCategories() {
@@ -5019,7 +5485,7 @@
             }
             
             // Item Detail Modal
-            function showItemDetailModal(item) {
+            async function showItemDetailModal(item) {
                 state.currentItem = item;
                 state.currentQuantity = 1;
                 state.currentCustomizations = {};
@@ -5028,8 +5494,10 @@
                 if (item.branch_id) {
                     const itemBranch = state.branches.find(branch => branch.branch_id === item.branch_id);
                     if (itemBranch) {
-                        state.currentBranch = itemBranch;
-                        console.log('Set current branch from item:', itemBranch.internal_name);
+                        // Ensure branch settings are loaded
+                        const branchWithSettings = await ensureBranchSettings(itemBranch);
+                        state.currentBranch = branchWithSettings;
+                        console.log('Set current branch from item:', branchWithSettings.internal_name);
                         
                         // Update branch name displays to reflect the new current branch
                         updateBranchNameDisplays();
@@ -5456,7 +5924,26 @@
                 }
             }
             
-            function addFavoriteItemToCart(item) {
+            // Helper function to ensure branch settings are loaded
+            async function ensureBranchSettings(branch) {
+                if (!branch.settings) {
+                    try {
+                        const settings = await apiService.getBranchSettings(branch.branch_id);
+                        branch.settings = settings.data || settings;
+                        console.log('Loaded branch settings for:', branch.internal_name);
+                    } catch (error) {
+                        console.error('Failed to load branch settings:', error);
+                        // Set default settings if loading fails
+                        branch.settings = {
+                            vat_percentage: 0,
+                            service_charge_percentage: 0
+                        };
+                    }
+                }
+                return branch;
+            }
+            
+            async function addFavoriteItemToCart(item) {
                 if (!item.branch_id) {
                     showError(translate('item_branch_not_available'));
                     return;
@@ -5469,11 +5956,19 @@
                     return;
                 }
                 
+                // Ensure branch settings are loaded
+                const branchWithSettings = await ensureBranchSettings(itemBranch);
+                
                 // Set current item and branch
                 state.currentItem = item;
-                state.currentBranch = itemBranch;
+                state.currentBranch = branchWithSettings;
                 state.currentQuantity = 1;
                 state.currentCustomizations = {};
+                
+                // Update branch name displays and cart UI
+                updateBranchNameDisplays();
+                updateCurrentCart();
+                updateCartUI();
                 
                 // Check for branch conflict
                 const hasConflict = checkBranchConflict(item);
@@ -5526,7 +6021,22 @@
                 if (index >= 0) {
                     state.favorites.splice(index, 1);
                 } else {
-                    state.favorites.push(item);
+                    // Ensure the item has branch_id before adding to favorites
+                    const itemWithBranch = { ...item };
+                    
+                    // If item doesn't have branch_id, try to get it from current branch
+                    if (!itemWithBranch.branch_id && state.currentBranch) {
+                        itemWithBranch.branch_id = state.currentBranch.branch_id;
+                    }
+                    
+                    // If still no branch_id, try to find it from branches array
+                    if (!itemWithBranch.branch_id && state.branches.length > 0) {
+                        // Assume the item belongs to the first available branch
+                        // This is a fallback - ideally items should have branch_id
+                        itemWithBranch.branch_id = state.branches[0].branch_id;
+                    }
+                    
+                    state.favorites.push(itemWithBranch);
                 }
                 
                 saveFavorites();
@@ -5540,6 +6050,24 @@
                 const favoritesData = localStorage.getItem('lunaDineFavorites');
                 if (favoritesData) {
                     state.favorites = JSON.parse(favoritesData);
+                    
+                    // Ensure all loaded favorites have branch_id
+                    state.favorites = state.favorites.map(fav => {
+                        if (!fav.branch_id) {
+                            // Try to get branch_id from current branch
+                            if (state.currentBranch) {
+                                fav.branch_id = state.currentBranch.branch_id;
+                            }
+                            // If still no branch_id, try to find it from branches array
+                            else if (state.branches.length > 0) {
+                                fav.branch_id = state.branches[0].branch_id;
+                            }
+                        }
+                        return fav;
+                    });
+                    
+                    // Save the updated favorites back to localStorage
+                    saveFavorites();
                 }
             }
             
@@ -6526,6 +7054,112 @@
                 // Clear the pending item
                 state.pendingCartItem = null;
             }
+            
+            // Hero Section Enhancements
+            const heroEnhancements = {
+                // Dynamic content for taglines and featured dishes
+                taglines: [
+                    "Taste the Moonlight Magic",
+                    "Culinary Excellence Under Stars",
+                    "Where Tradition Meets Innovation",
+                    "Dine Under the Moonlight",
+                    "Exceptional Flavors Await"
+                ],
+                
+                featuredDishes: [
+                    "Chef's Special: Grilled Salmon with Herbs",
+                    "Today's Special: Truffle Mushroom Risotto",
+                    "Signature Dish: Moonlight Pasta",
+                    "House Favorite: Herb-Crusted Lamb",
+                    "Daily Special: Seasonal Vegetable Tart"
+                ],
+                
+                currentTaglineIndex: 0,
+                currentDishIndex: 0,
+                
+                init() {
+                    this.startDynamicContentRotation();
+                    this.animateSocialProof();
+                },
+                
+                startDynamicContentRotation() {
+                    const taglineElement = document.getElementById('dynamic-tagline');
+                    const dishElement = document.getElementById('featured-dish');
+                    
+                    if (!taglineElement || !dishElement) return;
+                    
+                    // Rotate taglines every 7 seconds
+                    setInterval(() => {
+                        this.currentTaglineIndex = (this.currentTaglineIndex + 1) % this.taglines.length;
+                        this.animateTextChange(taglineElement, this.taglines[this.currentTaglineIndex]);
+                    }, 7000);
+                    
+                    // Rotate featured dishes every 7 seconds with offset
+                    setInterval(() => {
+                        this.currentDishIndex = (this.currentDishIndex + 1) % this.featuredDishes.length;
+                        this.animateTextChange(dishElement, this.featuredDishes[this.currentDishIndex]);
+                    }, 7000);
+                },
+                
+                animateTextChange(element, newText) {
+                    // Fade out
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(10px)';
+                    
+                    setTimeout(() => {
+                        element.textContent = newText;
+                        // Fade in
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, 300);
+                },
+                
+                animateSocialProof() {
+                    const socialProofItems = document.querySelectorAll('.social-proof-item');
+                    
+                    if (!socialProofItems.length) return;
+                    
+                    // Animate numbers on scroll into view
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                this.animateNumber(entry.target.querySelector('.social-proof-number'));
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    });
+                    
+                    socialProofItems.forEach(item => observer.observe(item));
+                },
+                
+                animateNumber(element) {
+                    if (!element) return;
+                    
+                    const finalText = element.textContent;
+                    const isPercentage = finalText.includes('.');
+                    const isPlus = finalText.includes('+');
+                    const numericValue = parseFloat(finalText.replace(/[^\d.]/g, ''));
+                    
+                    if (isNaN(numericValue)) return;
+                    
+                    let currentValue = 0;
+                    const increment = numericValue / 50;
+                    const timer = setInterval(() => {
+                        currentValue += increment;
+                        if (currentValue >= numericValue) {
+                            currentValue = numericValue;
+                            clearInterval(timer);
+                        }
+                        
+                        let displayValue = Math.floor(currentValue);
+                        if (isPercentage) {
+                            displayValue = (currentValue).toFixed(1);
+                        }
+                        
+                        element.textContent = displayValue + (isPlus ? '+' : '');
+                    }, 30);
+                }
+            };
             
             // Utility functions object
             const utils = {
