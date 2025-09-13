@@ -4319,6 +4319,7 @@
                         'order_summary': 'Order Summary',
                         'empty_cart': 'Your cart is empty',
                         'empty_favorites': 'Your favorites will appear here',
+                        'remove_from_favorites': 'Remove from favorites',
                         'browse_menu': 'Browse Menu',
                         'item_added': 'Item added to cart',
                         'language_changed': 'Language changed to English',
@@ -4474,6 +4475,7 @@
                         'order_summary': 'অর্ডার সারাংশ',
                         'empty_cart': 'আপনার কার্ট খালি',
                         'empty_favorites': 'আপনার পছন্দসমূহ এখানে প্রদর্শিত হবে',
+                        'remove_from_favorites': 'পছন্দ তালিকা থেকে সরান',
                         'browse_menu': 'মেনু ব্রাউজ করুন',
                         'item_added': 'আইটেম কার্টে যোগ করা হয়েছে',
                         'language_changed': 'ভাষা বাংলায় পরিবর্তন করা হয়েছে',
@@ -4652,6 +4654,12 @@
             async function init() {
                 setupEventListeners();
                 loadUserData();
+                
+                // Synchronize cart state to ensure everything is properly loaded
+                synchronizeCartState();
+                
+                // Synchronize favorites state to ensure everything is properly loaded
+                synchronizeFavoritesState();
                 
                 // Detect language from URL BEFORE loading translations
                 const detectedLanguage = detectLanguageFromUrl();
@@ -6212,39 +6220,17 @@
                 
                 elements.cartContainer.appendChild(cartSummary);
                 
-                // Add event listeners
-                document.querySelectorAll('[data-action="decrease"]').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const index = parseInt(e.target.getAttribute('data-index'));
-                        updateCartItemQuantity(index, -1);
-                    });
-                });
-                
-                document.querySelectorAll('[data-action="increase"]').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const index = parseInt(e.target.getAttribute('data-index'));
-                        updateCartItemQuantity(index, 1);
-                    });
-                });
-                
-                document.querySelectorAll('.btn-remove').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const index = parseInt(e.target.closest('.btn-remove').getAttribute('data-index'));
-                        removeCartItem(index);
-                    });
-                });
-                
-                document.getElementById('checkout-btn').addEventListener('click', () => {
-                    if (state.currentBranch) {
-                        window.location.hash = createBranchUrl(state.currentBranch, 'checkout');
-                    } else {
-                        window.location.hash = 'checkout';
-                    }
-                });
+                // Attach event listeners using our robust function
+                attachCartEventListeners();
                     }
                     
                     // Remove skeleton class after content is loaded
                     document.getElementById('cart-view').classList.remove('skeleton');
+                    
+                    // Final check to ensure all event listeners are properly attached
+                    setTimeout(() => {
+                        attachCartEventListeners();
+                    }, 100);
                 }, 300); // Minimum 300ms delay to show skeleton
             }
             
@@ -7196,9 +7182,11 @@
                     const favoritesGrid = document.createElement('div');
                     favoritesGrid.className = 'menu-items-grid';
                     
-                    state.favorites.forEach(item => {
+                    state.favorites.forEach((item, index) => {
                         const itemCard = document.createElement('div');
                         itemCard.className = 'menu-item-card';
+                        itemCard.setAttribute('data-branch-menu-id', item.branch_menu_id);
+                        itemCard.setAttribute('data-favorite-index', index);
                         itemCard.innerHTML = `
                             <div class="menu-item-image-container">
                                 <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.name}" class="menu-item-image">
@@ -7224,28 +7212,12 @@
                             </div>
                         `;
                         
-                        // Add click event to show item detail modal
-                        itemCard.addEventListener('click', () => {
-                            showItemDetailModal(item);
-                        });
-                        
-                        // Add favorite toggle event
-                        const favoriteBtn = itemCard.querySelector('.btn-favorite');
-                        favoriteBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            toggleFavorite(item);
-                            favoriteBtn.classList.remove('active');
-                            renderFavorites(); // Re-render to update the list
-                        });
-                        
-                        // Add direct add to cart event
-                        const addToCartBtn = itemCard.querySelector('.btn-add-to-cart');
-                        addToCartBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            addFavoriteItemToCart(item);
-                        });
-                        
                         favoritesGrid.appendChild(itemCard);
+                        
+                        // Attach event listeners after the element is added to DOM
+                        setTimeout(() => {
+                            attachFavoriteItemEventListeners(itemCard, item, index);
+                        }, 0);
                     });
                     
                     elements.favoritesContainer.innerHTML = ''; // Clear any existing content
@@ -7699,6 +7671,9 @@
                     
                     // Update only the specific cart item UI instead of re-rendering everything
                     updateCartItemUI(index);
+                    
+                    // Re-attach event listeners for quantity controls to ensure they work correctly
+                    attachCartEventListeners();
                 }
             }
             
@@ -7710,7 +7685,7 @@
                 const branchMenuId = item.branch_menu_id;
                 const customizations = item.customizations;
                 
-                // Remove from main cart
+                // Remove from main cart (after capturing item info for DOM removal)
                 state.cart.splice(index, 1);
                 
                 // Update branch cart
@@ -7728,8 +7703,14 @@
                 updateCurrentCart();
                 updateCartUI();
                 
-                // Remove the specific cart item from DOM instead of re-rendering everything
-                removeCartItemFromDOM(index);
+                // Remove the specific cart item from DOM using the captured item info
+                removeCartItemFromDOM(item, index);
+                
+                // After removal, update indices of remaining items and re-attach event listeners
+                setTimeout(() => {
+                    updateCartItemIndices();
+                    attachCartEventListeners();
+                }, 350); // Wait for DOM removal animation to complete
             }
             
             function removeCartItemByIndex(index) {
@@ -7759,19 +7740,85 @@
                     priceTotal.textContent = `${formatPrice(cartItem.price)} × ${cartItem.quantity} = ${formatPrice(cartItem.price * cartItem.quantity)}`;
                 }
                 
-                // Update cart summary if it exists
+                // Update cart summary
                 updateCartSummaryUI();
             }
             
-            // Helper function to remove specific cart item from DOM without full re-render
-            function removeCartItemFromDOM(index) {
+            // Helper function to update cart item indices after removal
+            function updateCartItemIndices() {
                 if (state.currentView !== 'cart') return;
                 
-                const cartItem = state.cart[index];
-                if (!cartItem) return;
+                const cartItems = document.querySelectorAll('.cart-item');
+                cartItems.forEach((itemElement, newIndex) => {
+                    itemElement.setAttribute('data-cart-index', newIndex);
+                    
+                    // Update data-index attributes on all buttons within this item
+                    const buttons = itemElement.querySelectorAll('[data-index]');
+                    buttons.forEach(button => {
+                        button.setAttribute('data-index', newIndex);
+                    });
+                });
+            }
+            
+            // Helper function to attach event listeners to cart controls
+            function attachCartEventListeners() {
+                if (state.currentView !== 'cart') return;
                 
-                // Find the cart item element by data attributes (more reliable than index)
-                const itemElement = document.querySelector(`[data-branch-menu-id="${cartItem.branch_menu_id}"][data-cart-index="${index}"]`);
+                // Remove existing event listeners to prevent duplicates
+                document.querySelectorAll('[data-action="decrease"]').forEach(btn => {
+                    btn.replaceWith(btn.cloneNode(true));
+                });
+                
+                document.querySelectorAll('[data-action="increase"]').forEach(btn => {
+                    btn.replaceWith(btn.cloneNode(true));
+                });
+                
+                document.querySelectorAll('.btn-remove').forEach(btn => {
+                    btn.replaceWith(btn.cloneNode(true));
+                });
+                
+                // Add fresh event listeners
+                document.querySelectorAll('[data-action="decrease"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.getAttribute('data-index'));
+                        updateCartItemQuantity(index, -1);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="increase"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.getAttribute('data-index'));
+                        updateCartItemQuantity(index, 1);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-remove').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.closest('.btn-remove').getAttribute('data-index'));
+                        removeCartItem(index);
+                    });
+                });
+                
+                // Re-attach checkout button listener
+                const checkoutBtn = document.getElementById('checkout-btn');
+                if (checkoutBtn) {
+                    checkoutBtn.replaceWith(checkoutBtn.cloneNode(true));
+                    document.getElementById('checkout-btn').addEventListener('click', () => {
+                        if (state.currentBranch) {
+                            window.location.hash = createBranchUrl(state.currentBranch, 'checkout');
+                        } else {
+                            window.location.hash = 'checkout';
+                        }
+                    });
+                }
+            }
+            
+            // Helper function to remove specific cart item from DOM without full re-render
+            function removeCartItemFromDOM(item, index) {
+                if (state.currentView !== 'cart') return;
+                
+                // Find the cart item element by data attributes using the passed item info
+                const itemElement = document.querySelector(`[data-branch-menu-id="${item.branch_menu_id}"][data-cart-index="${index}"]`);
                 if (!itemElement) return;
                 
                 // Add fade out animation
@@ -7788,6 +7835,9 @@
                     // Show empty cart message if no items left
                     if (state.cart.length === 0) {
                         showEmptyCartMessage();
+                    } else {
+                        // Re-attach event listeners for remaining items
+                        attachCartEventListeners();
                     }
                 }, 300);
             }
@@ -7870,6 +7920,35 @@
                         <a href="${browseMenuUrl}" class="btn">${translate('browse_menu')}</a>
                     </div>
                 `;
+            }
+            
+            // Helper function to refresh cart view completely (if needed)
+            function refreshCartView() {
+                if (state.currentView !== 'cart') return;
+                
+                // Show skeleton briefly for better UX
+                renderCartSkeleton();
+                
+                setTimeout(() => {
+                    renderCart();
+                }, 100);
+            }
+            
+            // Enhanced cart state synchronization
+            function synchronizeCartState() {
+                // Ensure cart is properly loaded from localStorage
+                loadCart();
+                
+                // Ensure current cart is updated based on current branch
+                updateCurrentCart();
+                
+                // Update cart UI
+                updateCartUI();
+                
+                // If we're currently on cart view, refresh it
+                if (state.currentView === 'cart') {
+                    refreshCartView();
+                }
             }
             
             // Helper function to ensure branch settings are loaded
@@ -7967,9 +8046,16 @@
                 const index = state.favorites.findIndex(fav => fav.branch_menu_id === item.branch_menu_id);
                 
                 if (index >= 0) {
+                    // Remove from favorites
+                    const removedItem = state.favorites[index];
                     state.favorites.splice(index, 1);
+                    
+                    // Remove from DOM without full re-render if we're on favorites page
+                    if (state.currentView === 'favorites') {
+                        removeFavoriteFromDOM(removedItem, index);
+                    }
                 } else {
-                    // Ensure the item has branch_id before adding to favorites
+                    // Add to favorites
                     const itemWithBranch = { ...item };
                     
                     // If item doesn't have branch_id, try to get it from current branch
@@ -7985,6 +8071,11 @@
                     }
                     
                     state.favorites.push(itemWithBranch);
+                    
+                    // If we're on favorites page, add to DOM without full re-render
+                    if (state.currentView === 'favorites') {
+                        addFavoriteToDOM(itemWithBranch, state.favorites.length - 1);
+                    }
                 }
                 
                 saveFavorites();
@@ -8016,6 +8107,176 @@
                     
                     // Save the updated favorites back to localStorage
                     saveFavorites();
+                }
+            }
+            
+            // Helper function to remove favorite item from DOM without full re-render
+            function removeFavoriteFromDOM(item, index) {
+                if (state.currentView !== 'favorites') return;
+                
+                // Find the favorite item element by data attributes
+                const itemElement = document.querySelector(`[data-branch-menu-id="${item.branch_menu_id}"][data-favorite-index="${index}"]`);
+                if (!itemElement) return;
+                
+                // Add fade out animation
+                itemElement.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                itemElement.style.opacity = '0';
+                itemElement.style.transform = 'scale(0.9)';
+                
+                // Remove element after animation
+                setTimeout(() => {
+                    itemElement.remove();
+                    
+                    // Update remaining indices
+                    updateFavoriteIndices();
+                    
+                    // Show empty state if no favorites left
+                    if (state.favorites.length === 0) {
+                        showEmptyFavoritesMessage();
+                    }
+                }, 300);
+            }
+            
+            // Helper function to add favorite item to DOM without full re-render
+            function addFavoriteToDOM(item, index) {
+                if (state.currentView !== 'favorites') return;
+                
+                const favoritesGrid = document.querySelector('.menu-items-grid');
+                if (!favoritesGrid) return;
+                
+                // Create the favorite item card
+                const itemCard = document.createElement('div');
+                itemCard.className = 'menu-item-card';
+                itemCard.setAttribute('data-branch-menu-id', item.branch_menu_id);
+                itemCard.setAttribute('data-favorite-index', index);
+                
+                const isFeatured = item.is_featured || false;
+                
+                itemCard.innerHTML = `
+                    <div class="menu-item-image-container">
+                        <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.name}" class="menu-item-image">
+                        ${isFeatured ? '<span class="menu-item-badge">Featured</span>' : ''}
+                    </div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h4 class="menu-item-name">${getTranslation(item.name, item.name_translation_key)}</h4>
+                            <div class="menu-item-price">${formatPrice(item.price)}</div>
+                        </div>
+                        <p class="menu-item-desc">${getTranslation(item.description, item.description_translation_key) || translate('delicious_menu_item')}</p>
+                        <div class="menu-item-actions">
+                            <button class="btn btn-icon btn-favorite active" title="${translate('remove_from_favorites')}">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                            <button class="btn btn-add-to-cart" data-item-id="${item.branch_menu_id}">
+                                <i class="fas fa-plus"></i> ${translate('add_to_cart')}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add fade in animation
+                itemCard.style.opacity = '0';
+                itemCard.style.transform = 'scale(0.9)';
+                itemCard.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                
+                favoritesGrid.appendChild(itemCard);
+                
+                // Trigger animation
+                setTimeout(() => {
+                    itemCard.style.opacity = '1';
+                    itemCard.style.transform = 'scale(1)';
+                }, 10);
+                
+                // Attach event listeners
+                attachFavoriteItemEventListeners(itemCard, item, index);
+            }
+            
+            // Helper function to update favorite item indices after removal
+            function updateFavoriteIndices() {
+                if (state.currentView !== 'favorites') return;
+                
+                const favoriteItems = document.querySelectorAll('.menu-item-card[data-favorite-index]');
+                favoriteItems.forEach((itemElement, newIndex) => {
+                    itemElement.setAttribute('data-favorite-index', newIndex);
+                    
+                    // Update data-index attributes on buttons within this item
+                    const buttons = itemElement.querySelectorAll('[data-index]');
+                    buttons.forEach(button => {
+                        button.setAttribute('data-index', newIndex);
+                    });
+                });
+            }
+            
+            // Helper function to attach event listeners to favorite item
+            function attachFavoriteItemEventListeners(itemElement, item, index) {
+                // Item click event (show details)
+                itemElement.addEventListener('click', (e) => {
+                    // Don't trigger if clicking on buttons
+                    if (e.target.closest('.menu-item-actions') || e.target.closest('.item-actions')) return;
+                    
+                    showItemDetailModal(item);
+                });
+                
+                // Favorite button event
+                const favoriteBtn = itemElement.querySelector('.btn-favorite');
+                if (favoriteBtn) {
+                    favoriteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleFavorite(item);
+                    });
+                }
+                
+                // Add to cart button event
+                const addToCartBtn = itemElement.querySelector('.btn-add-to-cart');
+                if (addToCartBtn) {
+                    addToCartBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        addFavoriteItemToCart(item);
+                    });
+                }
+            }
+            
+            // Helper function to show empty favorites message
+            function showEmptyFavoritesMessage() {
+                if (state.currentView !== 'favorites') return;
+                
+                const favoritesContainer = document.getElementById('favorites-container');
+                if (!favoritesContainer) return;
+                
+                const browseMenuUrl = state.currentBranch ? 
+                    createBranchUrl(state.currentBranch, 'menu') : 
+                    '#menu';
+                
+                favoritesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-heart"></i>
+                        <h3>${translate('empty_favorites')}</h3>
+                        <p>${translate('start_adding_favorites')}</p>
+                        <a href="${browseMenuUrl}" class="btn">${translate('browse_menu')}</a>
+                    </div>
+                `;
+            }
+            
+            // Helper function to refresh favorites view completely (if needed)
+            function refreshFavoritesView() {
+                if (state.currentView !== 'favorites') return;
+                
+                // Show skeleton briefly for better UX
+                renderFavoritesSkeleton();
+                
+                setTimeout(() => {
+                    renderFavorites();
+                }, 100);
+            }
+            
+            // Enhanced favorites state synchronization
+            function synchronizeFavoritesState() {
+                // Ensure favorites are properly loaded from localStorage
+                loadFavorites();
+                
+                // If we're currently on favorites view, refresh it
+                if (state.currentView === 'favorites') {
+                    refreshFavoritesView();
                 }
             }
             
