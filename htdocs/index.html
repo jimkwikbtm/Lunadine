@@ -178,7 +178,7 @@
             padding: var(--spacing-8) 0;
             position: relative;
             transition: var(--transition-fast);
-			display: flex;
+                        display: flex;
             align-items: center;
         }
         
@@ -207,7 +207,7 @@
         .nav-link i {
             margin-right: var(--spacing-8);
             font-size: var(--font-size-18);
-			transition: var(--transition-fast);
+                        transition: var(--transition-fast);
         }
         
         .nav-link:hover i {
@@ -1862,6 +1862,149 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* ===== SKELETON LOADING STATES ===== */
+        .skeleton {
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-4);
+        }
+        
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Branch Card Skeleton */
+        .branch-card.skeleton {
+            background: var(--uber-white);
+            border-radius: var(--radius-16);
+            overflow: hidden;
+            box-shadow: var(--shadow-1);
+        }
+        
+        .branch-card.skeleton .branch-image-container {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16 / 10;
+        }
+        
+        .branch-card.skeleton .skeleton-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        
+        .branch-card.skeleton .branch-content {
+            padding: var(--spacing-20);
+        }
+        
+        .branch-card.skeleton .skeleton-text {
+            height: 20px;
+            margin-bottom: var(--spacing-8);
+            border-radius: var(--radius-4);
+        }
+        
+        .branch-card.skeleton .skeleton-text.title {
+            width: 70%;
+            height: 24px;
+        }
+        
+        .branch-card.skeleton .skeleton-text.subtitle {
+            width: 50%;
+            height: 16px;
+        }
+        
+        .branch-card.skeleton .skeleton-text.small {
+            width: 30%;
+            height: 14px;
+        }
+        
+        /* Menu Item Card Skeleton */
+        .menu-item-card.skeleton {
+            background: var(--uber-white);
+            border-radius: var(--radius-12);
+            overflow: hidden;
+            box-shadow: var(--shadow-1);
+        }
+        
+        .menu-item-card.skeleton .menu-item-image-container {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+        }
+        
+        .menu-item-card.skeleton .skeleton-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        
+        .menu-item-card.skeleton .menu-item-content {
+            padding: var(--spacing-16);
+        }
+        
+        .menu-item-card.skeleton .skeleton-text {
+            height: 16px;
+            margin-bottom: var(--spacing-8);
+            border-radius: var(--radius-4);
+        }
+        
+        .menu-item-card.skeleton .skeleton-text.title {
+            width: 80%;
+            height: 20px;
+        }
+        
+        .menu-item-card.skeleton .skeleton-text.price {
+            width: 40%;
+            height: 18px;
+        }
+        
+        .menu-item-card.skeleton .skeleton-text.description {
+            width: 90%;
+            height: 14px;
+        }
+        
+        /* Promotion Card Skeleton */
+        .promotion-card.skeleton {
+            background: var(--uber-white);
+            border-radius: var(--radius-12);
+            overflow: hidden;
+            box-shadow: var(--shadow-1);
+        }
+        
+        .promotion-card.skeleton .promotion-image {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        
+        .promotion-card.skeleton .promotion-content {
+            padding: var(--spacing-16);
+        }
+        
+        .promotion-card.skeleton .skeleton-text {
+            height: 16px;
+            margin-bottom: var(--spacing-8);
+            border-radius: var(--radius-4);
+        }
+        
+        .promotion-card.skeleton .skeleton-text.title {
+            width: 70%;
+            height: 20px;
+        }
+        
+        .promotion-card.skeleton .skeleton-text.description {
+            width: 85%;
+            height: 14px;
+        }
+        
         /* ===== EMPTY STATES ===== */
         .empty-cart, .empty-state {
             text-align: center;
@@ -1883,6 +2026,204 @@
         .empty-cart p, .empty-state p {
             color: var(--uber-gray-500);
             margin-bottom: var(--spacing-24);
+        }
+        
+        /* ===== MODAL SKELETON STATES ===== */
+        .modal.skeleton .modal-header {
+            padding-bottom: var(--spacing-16);
+            border-bottom: 1px solid var(--uber-gray-200);
+        }
+        
+        .modal.skeleton .modal-title {
+            height: 28px;
+            width: 60%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-4);
+            margin-bottom: var(--spacing-8);
+        }
+        
+        .modal.skeleton .modal-body {
+            padding: var(--spacing-20) 0;
+        }
+        
+        .modal.skeleton .skeleton-row {
+            display: flex;
+            margin-bottom: var(--spacing-16);
+            gap: var(--spacing-16);
+        }
+        
+        .modal.skeleton .skeleton-col {
+            flex: 1;
+        }
+        
+        .modal.skeleton .skeleton-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-8);
+            margin-bottom: var(--spacing-16);
+        }
+        
+        .modal.skeleton .skeleton-text {
+            height: 16px;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-4);
+            margin-bottom: var(--spacing-12);
+        }
+        
+        .modal.skeleton .skeleton-text.large {
+            height: 24px;
+            width: 80%;
+        }
+        
+        .modal.skeleton .skeleton-text.medium {
+            height: 20px;
+            width: 60%;
+        }
+        
+        .modal.skeleton .skeleton-text.small {
+            height: 14px;
+            width: 40%;
+        }
+        
+        .modal.skeleton .skeleton-button {
+            height: 44px;
+            width: 120px;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-8);
+            margin-right: var(--spacing-12);
+        }
+        
+        .modal.skeleton .skeleton-form-group {
+            margin-bottom: var(--spacing-20);
+        }
+        
+        .modal.skeleton .skeleton-input {
+            height: 44px;
+            width: 100%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-8);
+        }
+        
+        .modal.skeleton .skeleton-textarea {
+            height: 80px;
+            width: 100%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-8);
+        }
+        
+        .modal.skeleton .skeleton-select {
+            height: 44px;
+            width: 100%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-8);
+        }
+        
+        .modal.skeleton .modal-footer {
+            padding-top: var(--spacing-16);
+            border-top: 1px solid var(--uber-gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-12);
+        }
+        
+        /* ===== PAGE SKELETON STATES ===== */
+        .view.skeleton .page-header {
+            margin-bottom: var(--spacing-32);
+        }
+        
+        .view.skeleton .skeleton-page-title {
+            height: 40px;
+            width: 50%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-4);
+            margin-bottom: var(--spacing-16);
+        }
+        
+        .view.skeleton .skeleton-page-subtitle {
+            height: 20px;
+            width: 70%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-4);
+            margin-bottom: var(--spacing-24);
+        }
+        
+        .view.skeleton .skeleton-content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-24);
+        }
+        
+        .view.skeleton .skeleton-content-card {
+            background: var(--uber-white);
+            border-radius: var(--radius-12);
+            padding: var(--spacing-20);
+            box-shadow: var(--shadow-1);
+        }
+        
+        .view.skeleton .skeleton-list-item {
+            background: var(--uber-white);
+            border-radius: var(--radius-8);
+            padding: var(--spacing-16);
+            margin-bottom: var(--spacing-12);
+            box-shadow: var(--shadow-1);
+        }
+        
+        .view.skeleton .skeleton-list-item .skeleton-list-content {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-16);
+        }
+        
+        .view.skeleton .skeleton-list-item .skeleton-list-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-8);
+            flex-shrink: 0;
+        }
+        
+        .view.skeleton .skeleton-list-item .skeleton-list-details {
+            flex: 1;
+        }
+        
+        .view.skeleton .skeleton-list-item .skeleton-list-title {
+            height: 18px;
+            width: 70%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-4);
+            margin-bottom: var(--spacing-8);
+        }
+        
+        .view.skeleton .skeleton-list-item .skeleton-list-subtitle {
+            height: 14px;
+            width: 50%;
+            background: linear-gradient(90deg, var(--uber-gray-200) 25%, var(--uber-gray-100) 50%, var(--uber-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-4);
         }
         
         /* ===== TOAST NOTIFICATIONS ===== */
@@ -2295,7 +2636,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-			border-radius: var(--radius-12);
+                        border-radius: var(--radius-12);
         }
         
         .order-item-content {
@@ -4711,27 +5052,35 @@
             
             // API Service
             const apiService = {
-                async get(url) {
+                async get(url, showGlobalLoading = true) {
                     try {
-                        showLoading();
+                        if (showGlobalLoading) {
+                            showLoading();
+                        }
                         const response = await fetch(`/api/${url}`);
                         if (!response.ok) {
                             throw new Error(`API error: ${response.status}`);
                         }
                         const data = await response.json();
-                        hideLoading();
+                        if (showGlobalLoading) {
+                            hideLoading();
+                        }
                         return data;
                     } catch (error) {
-                        hideLoading();
+                        if (showGlobalLoading) {
+                            hideLoading();
+                        }
                         console.error('API Error:', error);
                         showError('Failed to load data. Please try again.');
                         throw error;
                     }
                 },
                 
-                async post(url, data) {
+                async post(url, data, showGlobalLoading = true) {
                     try {
-                        showLoading();
+                        if (showGlobalLoading) {
+                            showLoading();
+                        }
                         const response = await fetch(`/api/${url}`, {
                             method: 'POST',
                             headers: {
@@ -4743,19 +5092,25 @@
                             throw new Error(`API error: ${response.status}`);
                         }
                         const result = await response.json();
-                        hideLoading();
+                        if (showGlobalLoading) {
+                            hideLoading();
+                        }
                         return result;
                     } catch (error) {
-                        hideLoading();
+                        if (showGlobalLoading) {
+                            hideLoading();
+                        }
                         console.error('API Error:', error);
                         showError('Failed to submit data. Please try again.');
                         throw error;
                     }
                 },
                 
-                async delete(url) {
+                async delete(url, showGlobalLoading = true) {
                     try {
-                        showLoading();
+                        if (showGlobalLoading) {
+                            showLoading();
+                        }
                         const response = await fetch(`/api/${url}`, {
                             method: 'DELETE'
                         });
@@ -4763,10 +5118,14 @@
                             throw new Error(`API error: ${response.status}`);
                         }
                         const result = await response.json();
-                        hideLoading();
+                        if (showGlobalLoading) {
+                            hideLoading();
+                        }
                         return result;
                     } catch (error) {
-                        hideLoading();
+                        if (showGlobalLoading) {
+                            hideLoading();
+                        }
                         console.error('API Error:', error);
                         showError('Failed to delete data. Please try again.');
                         throw error;
@@ -4775,81 +5134,81 @@
                 
                 // Specific API methods
                 getBranches() {
-                    return this.get('branches');
+                    return this.get('branches', false); // Don't show global loading for branches
                 },
                 
                 getBranch(id) {
-                    return this.get(`branches/${id}`);
+                    return this.get(`branches/${id}`, false); // Don't show global loading for branch details
                 },
                 
                 getBranchMenu(branchId) {
-                    return this.get(`branches/${branchId}/menu`);
+                    return this.get(`branches/${branchId}/menu`, false); // Don't show global loading for menu
                 },
                 
                 getBranchBanners(branchId) {
-                    return this.get(`branches/${branchId}/banners`);
+                    return this.get(`branches/${branchId}/banners`, false);
                 },
                 
                 getBranchSettings(branchId) {
-                    return this.get(`branches/${branchId}/settings`);
+                    return this.get(`branches/${branchId}/settings`, false); // Don't show global loading for settings
                 },
                 
                 getBranchTables(branchId) {
-                    return this.get(`branches/${branchId}/tables`);
+                    return this.get(`branches/${branchId}/tables`, false);
                 },
                 
                 getCustomizations(branchMenuId) {
-                    return this.get(`customizations/${branchMenuId}`);
+                    return this.get(`customizations/${branchMenuId}`, false);
                 },
                 
                 createOrder(orderData) {
-                    return this.post('orders', orderData);
+                    return this.post('orders', orderData, true); // Show loading overlay for order creation (user action)
                 },
                 
                 createServiceRequest(requestData) {
-                    return this.post('servicerequests', requestData);
+                    return this.post('servicerequests', requestData, true); // Show loading overlay for service requests (user action)
                 },
                 
                 getOrder(orderId) {
-                    return this.get(`orders/${orderId}`);
+                    return this.get(`orders/${orderId}`, true); // Show loading overlay for order tracking (user action)
                 },
                 
                 getOrderItems(orderId) {
-                    return this.get(`orders/${orderId}/items`);
+                    return this.get(`orders/${orderId}/items`, true); // Show loading overlay for order tracking (user action)
                 },
                 
                 cancelOrder(orderId) {
-                    return this.delete(`orders/${orderId}`);
+                    return this.delete(`orders/${orderId}`, true); // Show loading overlay for order cancellation (user action)
                 },
                 
                 getPromotions(branchId) {
-                    return branchId ? this.get(`promotions/${branchId}`) : this.get('promotions');
+                    return branchId ? this.get(`promotions/${branchId}`, false) : this.get('promotions', false); // Don't show global loading for promotions
                 },
                 
                 getTableByQr(qrHash) {
-                    return this.get(`tables/qr/${qrHash}`);
+                    return this.get(`tables/qr/${qrHash}`, true); // Show loading overlay for QR scanning (user action)
                 },
                 
                 getFeedback(filter) {
                     if (filter.type === 'branch') {
-                        return this.get(`feedback/branch/${filter.id}`);
+                        return this.get(`feedback/branch/${filter.id}`, false); // Don't show global loading for feedback data
                     } else if (filter.type === 'order') {
-                        return this.get(`feedback/order/${filter.id}`);
+                        return this.get(`feedback/order/${filter.id}`, false); // Don't show global loading for feedback data
                     } else {
-                        return this.get('feedback');
+                        return this.get('feedback', false); // Don't show global loading for feedback data
                     }
                 },
                 
                 submitFeedback(feedbackData) {
-                    return this.post('feedback', feedbackData);
+                    return this.post('feedback', feedbackData, true); // Show loading overlay for feedback submission (user action)
                 },
                 
                 getTranslations(languageCode) {
-                    return this.get(`translations/${languageCode}`);
+                    return this.get(`translations/${languageCode}`, false); // Don't show global loading for translations
                 },
                 
                 getRestaurant() {
-                    return this.get('restaurant');
+                    return this.get('restaurant', false); // Don't show global loading for restaurant details
                 }
             };
             
@@ -4857,6 +5216,9 @@
             async function loadBranches() {
                 try {
                     showToast(translate('loading_branches'));
+                    // Show skeleton views first
+                    renderBranchSkeletons();
+                    
                     const branches = await apiService.getBranches();
                     state.branches = branches.data || branches;
                     renderBranches();
@@ -4908,6 +5270,11 @@
             async function loadMenu(branchId) {
                 try {
                     showToast(translate('loading_menu'));
+                    
+                    // Show skeleton views immediately
+                    showView('menu');
+                    renderMenuItemSkeletons();
+                    renderPromotionSkeletons();
                     
                     // Ensure translations are loaded before proceeding
                     if (!state.translations[state.language] || Object.keys(state.translations[state.language]).length === 0) {
@@ -4964,7 +5331,6 @@
                         elements.promotionsContainer.style.display = 'none';
                     }
                     
-                    showView('menu');
                     renderCategories();
                     renderMenuItems();
                 } catch (error) {
@@ -5058,6 +5424,367 @@
                 
                 // Update title
                 document.title = translate('app_name');
+            }
+            
+            // Skeleton rendering functions
+            function renderBranchSkeletons(count = 3) {
+                elements.branchesContainer.innerHTML = '';
+                
+                for (let i = 0; i < count; i++) {
+                    const skeletonCard = document.createElement('div');
+                    skeletonCard.className = 'branch-card skeleton';
+                    skeletonCard.innerHTML = `
+                        <div class="branch-image-container">
+                            <div class="skeleton-image"></div>
+                        </div>
+                        <div class="branch-content">
+                            <div class="skeleton-text title"></div>
+                            <div class="skeleton-text subtitle"></div>
+                            <div class="skeleton-text"></div>
+                            <div class="skeleton-text small"></div>
+                        </div>
+                    `;
+                    elements.branchesContainer.appendChild(skeletonCard);
+                }
+            }
+            
+            function renderMenuItemSkeletons(count = 6) {
+                elements.menuItemsContainer.innerHTML = '';
+                
+                for (let i = 0; i < count; i++) {
+                    const skeletonCard = document.createElement('div');
+                    skeletonCard.className = 'menu-item-card skeleton';
+                    skeletonCard.innerHTML = `
+                        <div class="menu-item-image-container">
+                            <div class="skeleton-image"></div>
+                        </div>
+                        <div class="menu-item-content">
+                            <div class="skeleton-text title"></div>
+                            <div class="skeleton-text price"></div>
+                            <div class="skeleton-text description"></div>
+                        </div>
+                    `;
+                    elements.menuItemsContainer.appendChild(skeletonCard);
+                }
+            }
+            
+            function renderPromotionSkeletons(count = 2) {
+                elements.promotionsGrid.innerHTML = '';
+                
+                for (let i = 0; i < count; i++) {
+                    const skeletonCard = document.createElement('div');
+                    skeletonCard.className = 'promotion-card skeleton';
+                    skeletonCard.innerHTML = `
+                        <div class="promotion-image"></div>
+                        <div class="promotion-content">
+                            <div class="skeleton-text title"></div>
+                            <div class="skeleton-text description"></div>
+                        </div>
+                    `;
+                    elements.promotionsGrid.appendChild(skeletonCard);
+                }
+            }
+            
+            // Modal skeleton rendering functions
+            function renderItemDetailSkeleton() {
+                const modalContent = document.getElementById('item-detail-content');
+                const modal = document.querySelector('#item-detail-modal .modal');
+                if (!modalContent || !modal) return;
+                
+                // Add skeleton class to modal
+                modal.classList.add('skeleton');
+                
+                modalContent.innerHTML = `
+                    <div class="skeleton-row">
+                        <div class="skeleton-col" style="flex: 1;">
+                            <div class="skeleton-image"></div>
+                        </div>
+                        <div class="skeleton-col" style="flex: 1;">
+                            <div class="skeleton-text large"></div>
+                            <div class="skeleton-text medium"></div>
+                            <div class="skeleton-text small"></div>
+                            <div class="skeleton-text"></div>
+                            <div class="skeleton-text medium"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-form-group">
+                        <div class="skeleton-text small"></div>
+                        <div class="skeleton-select"></div>
+                    </div>
+                    <div class="skeleton-form-group">
+                        <div class="skeleton-text small"></div>
+                        <div class="skeleton-input"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton-button"></div>
+                        <div class="skeleton-button"></div>
+                    </div>
+                `;
+            }
+            
+            function renderServiceModalSkeleton() {
+                const modalBody = document.querySelector('#service-modal .modal-body');
+                const modal = document.querySelector('#service-modal .modal');
+                if (!modalBody || !modal) return;
+                
+                // Add skeleton class to modal
+                modal.classList.add('skeleton');
+                
+                modalBody.innerHTML = `
+                    <div class="skeleton-form-group">
+                        <div class="skeleton-text small"></div>
+                        <div class="skeleton-select"></div>
+                    </div>
+                    <div class="skeleton-form-group">
+                        <div class="skeleton-text small"></div>
+                        <div class="skeleton-textarea"></div>
+                    </div>
+                    <div class="skeleton-form-group">
+                        <div class="skeleton-text small"></div>
+                        <div class="skeleton-input"></div>
+                    </div>
+                `;
+            }
+            
+            function renderConfirmationModalSkeleton() {
+                const modalBody = document.querySelector('#confirmation-modal .modal-body');
+                const modal = document.querySelector('#confirmation-modal .modal');
+                if (!modalBody || !modal) return;
+                
+                // Add skeleton class to modal
+                modal.classList.add('skeleton');
+                
+                modalBody.innerHTML = `
+                    <div class="skeleton-text medium"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text small"></div>
+                `;
+            }
+            
+            function renderBranchConflictModalSkeleton() {
+                const modalBody = document.querySelector('#branch-conflict-modal .modal-body');
+                const modal = document.querySelector('#branch-conflict-modal .modal');
+                if (!modalBody || !modal) return;
+                
+                // Add skeleton class to modal
+                modal.classList.add('skeleton');
+                
+                modalBody.innerHTML = `
+                    <div class="skeleton-text medium"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text small"></div>
+                `;
+            }
+            
+            // Page skeleton rendering functions
+            function renderCartSkeleton() {
+                const cartView = document.getElementById('cart-view');
+                const cartContainer = document.getElementById('cart-container');
+                if (!cartContainer || !cartView) return;
+                
+                // Add skeleton class to view
+                cartView.classList.add('skeleton');
+                
+                cartContainer.innerHTML = `
+                    <div class="page-header">
+                        <div class="skeleton-page-title"></div>
+                        <div class="skeleton-page-subtitle"></div>
+                    </div>
+                    <div class="skeleton-list-item">
+                        <div class="skeleton-list-content">
+                            <div class="skeleton-list-image"></div>
+                            <div class="skeleton-list-details">
+                                <div class="skeleton-list-title"></div>
+                                <div class="skeleton-list-subtitle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-list-item">
+                        <div class="skeleton-list-content">
+                            <div class="skeleton-list-image"></div>
+                            <div class="skeleton-list-details">
+                                <div class="skeleton-list-title"></div>
+                                <div class="skeleton-list-subtitle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-list-item">
+                        <div class="skeleton-list-content">
+                            <div class="skeleton-list-image"></div>
+                            <div class="skeleton-list-details">
+                                <div class="skeleton-list-title"></div>
+                                <div class="skeleton-list-subtitle"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderCheckoutSkeleton() {
+                const checkoutView = document.getElementById('checkout-view');
+                const checkoutForm = document.getElementById('checkout-form');
+                if (!checkoutForm || !checkoutView) return;
+                
+                // Add skeleton class to view
+                checkoutView.classList.add('skeleton');
+                
+                checkoutForm.innerHTML = `
+                    <div class="page-header">
+                        <div class="skeleton-page-title"></div>
+                        <div class="skeleton-page-subtitle"></div>
+                    </div>
+                    <div class="skeleton-content-grid">
+                        <div class="skeleton-content-card">
+                            <div class="skeleton-text medium"></div>
+                            <div class="skeleton-text"></div>
+                            <div class="skeleton-text"></div>
+                            <div class="skeleton-text small"></div>
+                        </div>
+                        <div class="skeleton-content-card">
+                            <div class="skeleton-text medium"></div>
+                            <div class="skeleton-text"></div>
+                            <div class="skeleton-input"></div>
+                            <div class="skeleton-input"></div>
+                            <div class="skeleton-button"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderOrderTrackingSkeleton() {
+                const orderView = document.getElementById('order-tracking-view');
+                const orderContainer = document.getElementById('order-tracking-container');
+                if (!orderContainer || !orderView) return;
+                
+                // Add skeleton class to view
+                orderView.classList.add('skeleton');
+                
+                orderContainer.innerHTML = `
+                    <div class="page-header">
+                        <div class="skeleton-page-title"></div>
+                        <div class="skeleton-page-subtitle"></div>
+                    </div>
+                    <div class="skeleton-content-card">
+                        <div class="skeleton-text large"></div>
+                        <div class="skeleton-text medium"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text small"></div>
+                    </div>
+                    <div class="skeleton-content-card">
+                        <div class="skeleton-text medium"></div>
+                        <div class="skeleton-list-item">
+                            <div class="skeleton-list-content">
+                                <div class="skeleton-list-image"></div>
+                                <div class="skeleton-list-details">
+                                    <div class="skeleton-list-title"></div>
+                                    <div class="skeleton-list-subtitle"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="skeleton-list-item">
+                            <div class="skeleton-list-content">
+                                <div class="skeleton-list-image"></div>
+                                <div class="skeleton-list-details">
+                                    <div class="skeleton-list-title"></div>
+                                    <div class="skeleton-list-subtitle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderOrdersSkeleton() {
+                const ordersView = document.getElementById('orders-view');
+                const ordersContainer = document.getElementById('order-history-container');
+                if (!ordersContainer || !ordersView) return;
+                
+                // Add skeleton class to view
+                ordersView.classList.add('skeleton');
+                
+                ordersContainer.innerHTML = `
+                    <div class="page-header">
+                        <div class="skeleton-page-title"></div>
+                        <div class="skeleton-page-subtitle"></div>
+                    </div>
+                    <div class="skeleton-list-item">
+                        <div class="skeleton-list-content">
+                            <div class="skeleton-list-image"></div>
+                            <div class="skeleton-list-details">
+                                <div class="skeleton-list-title"></div>
+                                <div class="skeleton-list-subtitle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-list-item">
+                        <div class="skeleton-list-content">
+                            <div class="skeleton-list-image"></div>
+                            <div class="skeleton-list-details">
+                                <div class="skeleton-list-title"></div>
+                                <div class="skeleton-list-subtitle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton-list-item">
+                        <div class="skeleton-list-content">
+                            <div class="skeleton-list-image"></div>
+                            <div class="skeleton-list-details">
+                                <div class="skeleton-list-title"></div>
+                                <div class="skeleton-list-subtitle"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderFavoritesSkeleton() {
+                const favoritesView = document.getElementById('favorites-view');
+                const favoritesContainer = document.getElementById('favorites-container');
+                if (!favoritesContainer || !favoritesView) return;
+                
+                // Add skeleton class to view
+                favoritesView.classList.add('skeleton');
+                
+                favoritesContainer.innerHTML = `
+                    <div class="page-header">
+                        <div class="skeleton-page-title"></div>
+                        <div class="skeleton-page-subtitle"></div>
+                    </div>
+                    <div class="skeleton-content-grid">
+                        <div class="menu-item-card skeleton">
+                            <div class="menu-item-image-container">
+                                <div class="skeleton-image"></div>
+                            </div>
+                            <div class="menu-item-content">
+                                <div class="skeleton-text title"></div>
+                                <div class="skeleton-text price"></div>
+                                <div class="skeleton-text description"></div>
+                            </div>
+                        </div>
+                        <div class="menu-item-card skeleton">
+                            <div class="menu-item-image-container">
+                                <div class="skeleton-image"></div>
+                            </div>
+                            <div class="menu-item-content">
+                                <div class="skeleton-text title"></div>
+                                <div class="skeleton-text price"></div>
+                                <div class="skeleton-text description"></div>
+                            </div>
+                        </div>
+                        <div class="menu-item-card skeleton">
+                            <div class="menu-item-image-container">
+                                <div class="skeleton-image"></div>
+                            </div>
+                            <div class="menu-item-content">
+                                <div class="skeleton-text title"></div>
+                                <div class="skeleton-text price"></div>
+                                <div class="skeleton-text description"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
             
             // Rendering functions
@@ -5344,7 +6071,8 @@
             }
             
             function renderCart() {
-                elements.cartContainer.innerHTML = '';
+                // Show skeleton view immediately
+                renderCartSkeleton();
                 
                 // Update cart page title with branch name
                 updateBranchNameDisplays();
@@ -5357,6 +6085,12 @@
                         createBranchUrl(state.currentBranch, 'menu') : 
                         '#menu';
                     
+                    // Remove skeleton class
+                    const cartView = document.getElementById('cart-view');
+                    if (cartView) {
+                        cartView.classList.remove('skeleton');
+                    }
+                    
                     elements.cartContainer.innerHTML = `
                         <div class="empty-cart">
                             <i class="fas fa-shopping-cart"></i>
@@ -5366,6 +6100,12 @@
                         </div>
                     `;
                     return;
+                }
+                
+                // Remove skeleton class
+                const cartView = document.getElementById('cart-view');
+                if (cartView) {
+                    cartView.classList.remove('skeleton');
                 }
                 
                 const cartItems = document.createElement('div');
@@ -5479,6 +6219,9 @@
             }
             
             async function renderCheckout() {
+                // Show skeleton view immediately
+                renderCheckoutSkeleton();
+                
                 // Update checkout page title with branch name
                 updateBranchNameDisplays();
                 
@@ -6052,6 +6795,9 @@
             }
 
             function renderOrderTracking(order) {
+                // Show skeleton view immediately
+                renderOrderTrackingSkeleton();
+                
                 if (!order || !order.data) {
                     elements.orderTrackingContainer.innerHTML = `
                         <div class="empty-state">
@@ -6300,7 +7046,8 @@
             }
             
             function renderOrderHistory() {
-                elements.orderHistoryContainer.innerHTML = '';
+                // Show skeleton view immediately
+                renderOrdersSkeleton();
                 
                 if (state.orderHistory.length === 0) {
                     const browseMenuUrl = state.currentBranch ? 
@@ -6371,7 +7118,8 @@
             }
             
             function renderFavorites() {
-                elements.favoritesContainer.innerHTML = '';
+                // Show skeleton view immediately
+                renderFavoritesSkeleton();
                 
                 if (state.favorites.length === 0) {
                     const browseMenuUrl = state.currentBranch ? 
@@ -6453,6 +7201,10 @@
                 state.currentQuantity = 1;
                 state.currentCustomizations = {};
                 
+                // Show skeleton view immediately
+                showModal('item-detail-modal');
+                renderItemDetailSkeleton();
+                
                 // Set the current branch based on the item's branch_id
                 if (item.branch_id) {
                     const itemBranch = state.branches.find(branch => branch.branch_id === item.branch_id);
@@ -6473,7 +7225,18 @@
                     console.warn('Item does not have branch_id:', item);
                 }
                 
-                elements.itemDetailContent.innerHTML = `
+                // Load customizations for this item
+                try {
+                    const customizations = await apiService.getCustomizations(item.branch_menu_id);
+                    state.itemCustomizations = customizations.data || customizations;
+                    
+                    // Render the actual content
+                    const modal = document.querySelector('#item-detail-modal .modal');
+                    if (modal) {
+                        modal.classList.remove('skeleton');
+                    }
+                    
+                    elements.itemDetailContent.innerHTML = `
                     <div class="item-detail-container">
                         <div class="item-image-section">
                             <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.name}" class="item-detail-image">
@@ -6514,8 +7277,21 @@
                 
                 // Setup quantity controls
                 setupQuantityControls();
-                
-                showModal('item-detail-modal');
+                } catch (error) {
+                    console.error('Failed to load item details:', error);
+                    
+                    // Remove skeleton class and show error
+                    const modal = document.querySelector('#item-detail-modal .modal');
+                    if (modal) {
+                        modal.classList.remove('skeleton');
+                    }
+                    
+                    elements.itemDetailContent.innerHTML = `
+                        <div class="error-message">
+                            <p>${translate('failed_to_load_item_details')}</p>
+                        </div>
+                    `;
+                }
             }
             
             async function loadCustomizations(branchMenuId) {
@@ -7628,6 +8404,7 @@
                 // Service request
                 elements.serviceRequestBtn.addEventListener('click', () => {
                     showModal('service-modal');
+                    renderServiceModalSkeleton();
                 });
                 
                 elements.submitRequestBtn.addEventListener('click', submitServiceRequest);
