@@ -3717,8 +3717,14 @@
         
         .menu-item-footer {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
+        }
+        
+        .prep-time-with-favorite {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-8);
         }
         
         .item-actions {
@@ -4524,6 +4530,25 @@
             bottom: var(--spacing-12);
             right: var(--spacing-12);
             z-index: 10;
+            /* Ensure the quantity controller is always visible */
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: none !important;
+            display: block !important;
+        }
+        
+        /* Ensure quantity controller is visible on menu item cards */
+        .menu-item-card .menu-item-quantity-controller {
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: block !important;
+        }
+        
+        /* Ensure quantity controller is visible even on menu item card hover */
+        .menu-item-card:hover .menu-item-quantity-controller {
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: block !important;
         }
         
         .btn-add-to-cart-menu {
@@ -4541,6 +4566,10 @@
             font-weight: 600;
             transition: all var(--transition-normal);
             box-shadow: 0 2px 8px rgba(6, 193, 103, 0.3);
+            /* Ensure the button is always visible */
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: flex !important;
         }
         
         .btn-add-to-cart-menu:hover {
@@ -4550,13 +4579,16 @@
         }
         
         .quantity-controls-menu {
-            display: flex;
+            display: flex !important;
             align-items: center;
             background: var(--uber-white);
             border: 2px solid var(--uber-green);
             border-radius: var(--radius-24);
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(6, 193, 103, 0.2);
+            /* Ensure the quantity controls are always visible */
+            opacity: 1 !important;
+            visibility: visible !important;
         }
         
         .quantity-controls-menu button {
@@ -9754,8 +9786,16 @@
             }, 100);
             
             function createMenuItemCard(item) {
+                console.log('createMenuItemCard called with item:', {
+                    item_name: item.item_name,
+                    branch_menu_id: item.branch_menu_id,
+                    price: item.price
+                });
+                
                 const isFavorite = state.favorites.some(fav => fav.branch_menu_id === item.branch_menu_id);
                 const quantity = getItemQuantityInCart(item.branch_menu_id);
+                
+                console.log('createMenuItemCard - quantity in cart:', quantity);
                 
                 const itemCard = document.createElement('div');
                 itemCard.className = 'menu-item-card';
@@ -9772,14 +9812,18 @@
                         </div>
                         <p class="menu-item-desc">${getTranslation(item.item_description, item.description_translation_key) || translate('delicious_menu_item')}</p>
                         <div class="menu-item-footer">
-                            <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
-                            <button class="btn-favorite ${isFavorite ? 'active' : ''}" data-item-id="${item.branch_menu_id}">
-                                <i class="fas fa-heart"></i>
-                            </button>
+                            <div class="prep-time-with-favorite">
+                                <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
+                                <button class="btn-favorite ${isFavorite ? 'active' : ''}" data-item-id="${item.branch_menu_id}">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     ${createQuantityControllerHTML(item, quantity)}
                 `;
+                
+                console.log('createMenuItemCard - quantity controller HTML:', createQuantityControllerHTML(item, quantity));
                 
                 // Add click event to show item detail modal (but not when clicking on quantity controller)
                 itemCard.addEventListener('click', (e) => {
@@ -9982,10 +10026,12 @@
                                 </div>
                                 <p class="menu-item-desc">${getTranslation(item.item_description, item.description_translation_key) || translate('delicious_menu_item')}</p>
                                 <div class="menu-item-footer">
-                                    <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
-                                    <button class="btn-favorite ${isFavorite ? 'active' : ''}" data-item-id="${item.branch_menu_id}">
-                                        <i class="fas fa-heart"></i>
-                                    </button>
+                                    <div class="prep-time-with-favorite">
+                                        <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
+                                        <button class="btn-favorite ${isFavorite ? 'active' : ''}" data-item-id="${item.branch_menu_id}">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             ${createQuantityControllerHTML(item, quantity)}
@@ -11239,23 +11285,24 @@
                         itemCard.setAttribute('data-favorite-index', index);
                         itemCard.innerHTML = `
                             <div class="menu-item-image-container">
-                                <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.name}" class="menu-item-image">
+                                <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.item_name}" class="menu-item-image">
                                 ${item.is_featured ? '<span class="menu-item-badge">Featured</span>' : ''}
                             </div>
                             <div class="menu-item-content">
                                 <div class="menu-item-header">
-                                    <h4 class="menu-item-name">${getTranslation(item.name, item.name_translation_key)}</h4>
+                                    <h4 class="menu-item-name">${getTranslation(item.item_name, item.name_translation_key)}</h4>
                                     <div class="menu-item-price">${formatPrice(item.price)}</div>
                                 </div>
-                                <p class="menu-item-desc">${getTranslation(item.description, item.description_translation_key) || translate('delicious_menu_item')}</p>
+                                <p class="item-desc">${getTranslation(item.item_description, item.description_translation_key) || translate('delicious_menu_item')}</p>
                                 <div class="menu-item-footer">
-                                    <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time || 15} ${translate('mins')}</span>
-                                    <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
-                                        <i class="fas fa-heart"></i>
-                                    </button>
+                                    <div class="prep-time-with-favorite">
+                                        <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
+                                        <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            ${createQuantityControllerHTML(item, quantity)}
                         `;
                         
                         favoritesGrid.appendChild(itemCard);
@@ -11263,7 +11310,7 @@
                         // Attach event listeners after the element is added to DOM
                         setTimeout(() => {
                             attachFavoriteItemEventListeners(itemCard, item, index);
-                            setupQuantityControllerEvents(itemCard, item);
+                            // Note: Removed setupQuantityControllerEvents for favorites page
                         }, 0);
                     });
                     
@@ -11391,6 +11438,57 @@
             
             // Item Detail Modal
             async function showItemDetailModal(item) {
+                console.log('showItemDetailModal called with item:', item);
+                console.log('Item properties:', {
+                    item_name: item.item_name,
+                    name: item.name,
+                    price: item.price,
+                    image_url: item.image_url,
+                    branch_menu_id: item.branch_menu_id,
+                    branch_id: item.branch_id
+                });
+                
+                // Ensure item has all required properties, try to find them if missing
+                if (!item.item_name && item.name) {
+                    item.item_name = item.name;
+                }
+                if (!item.item_description && item.description) {
+                    item.item_description = item.description;
+                }
+                if (!item.preparation_time_minutes && item.preparation_time) {
+                    item.preparation_time_minutes = item.preparation_time;
+                }
+                
+                // If still missing critical properties, try to find complete item from menu data
+                if (!item.item_name || !item.branch_id) {
+                    console.log('Item missing critical properties, searching menu data...');
+                    if (state.menuData && Array.isArray(state.menuData) && item.branch_menu_id) {
+                        for (const category of state.menuData) {
+                            if (category.items && Array.isArray(category.items)) {
+                                const foundItem = category.items.find(menuItem => 
+                                    parseInt(menuItem.branch_menu_id) === parseInt(item.branch_menu_id)
+                                );
+                                if (foundItem) {
+                                    console.log('Found complete item, merging properties:', foundItem);
+                                    // Merge the found item properties with the current item
+                                    Object.assign(item, foundItem);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Final fallback for missing properties
+                item.item_name = item.item_name || 'Unknown Item';
+                item.item_description = item.item_description || '';
+                item.price = item.price || 0;
+                item.image_url = item.image_url || '/images/food-default.jpg';
+                item.preparation_time_minutes = item.preparation_time_minutes || 15;
+                item.calories = item.calories || 250;
+                
+                console.log('Final item object after normalization:', item);
+                
                 state.currentItem = item;
                 state.currentQuantity = 1;
                 state.currentCustomizations = {};
@@ -11436,20 +11534,20 @@
                     elements.itemDetailContent.innerHTML = `
                     <div class="item-detail-container">
                         <div class="item-image-section">
-                            <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.name}" class="item-detail-image">
+                            <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.item_name}" class="item-detail-image">
                             ${item.is_featured ? '<span class="item-badge">Featured</span>' : ''}
                         </div>
                         
                         <div class="item-info-section">
                             <div class="item-header">
-                                <h2 class="item-name">${getTranslation(item.name, item.name_translation_key)}</h2>
+                                <h2 class="item-name">${getTranslation(item.item_name, item.name_translation_key)}</h2>
                                 <div class="item-price">${formatPrice(item.price)}</div>
                             </div>
                             
-                            <p class="item-description">${getTranslation(item.description, item.description_translation_key) || translate('delicious_menu_item_description')}</p>
+                            <p class="item-description">${getTranslation(item.item_description, item.description_translation_key) || translate('delicious_menu_item_description')}</p>
                             
                             <div class="item-meta">
-                                <span><i class="fas fa-clock"></i> ${item.preparation_time || 15} ${translate('mins')}</span>
+                                <span><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
                                 <span><i class="fas fa-fire"></i> ${item.calories || 250} cal</span>
                             </div>
                         </div>
@@ -11789,6 +11887,8 @@
                     saveCart();
                     updateCurrentCart();
                     updateCartUI();
+                    // Update the menu cards quantity controllers to reflect the new quantity
+                    updateMenuCardsQuantityControllers();
                 }
             }
             
@@ -11805,6 +11905,8 @@
                     saveCart();
                     updateCurrentCart();
                     updateCartUI();
+                    // Update the menu cards quantity controllers to reflect the item removal
+                    updateMenuCardsQuantityControllers();
                 }
             }
             
@@ -11815,16 +11917,20 @@
              * @returns {string} - HTML string for quantity controller
              */
             function createQuantityControllerHTML(item, quantity) {
+                console.log('createQuantityControllerHTML called with:', { item, quantity });
+                
                 if (quantity === 0) {
-                    return `
+                    const html = `
                         <div class="menu-item-quantity-controller">
                             <button class="btn-add-to-cart-menu" data-item-id="${item.branch_menu_id}" title="Add to cart">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
                     `;
+                    console.log('createQuantityControllerHTML - returning + button:', html);
+                    return html;
                 } else {
-                    return `
+                    const html = `
                         <div class="menu-item-quantity-controller">
                             <div class="quantity-controls-menu" data-item-id="${item.branch_menu_id}">
                                 <button class="quantity-decrease" data-item-id="${item.branch_menu_id}" title="Decrease quantity">
@@ -11839,6 +11945,8 @@
                             </div>
                         </div>
                     `;
+                    console.log('createQuantityControllerHTML - returning quantity controls:', html);
+                    return html;
                 }
             }
             
@@ -11895,16 +12003,81 @@
              * Update all menu cards quantity controllers
              */
             function updateMenuCardsQuantityControllers() {
+                console.log('updateMenuCardsQuantityControllers called');
                 const menuCards = document.querySelectorAll('.menu-item-card');
+                console.log('Found menu cards:', menuCards.length);
+                
                 menuCards.forEach(card => {
                     const itemId = parseInt(card.getAttribute('data-branch-menu-id'));
                     if (itemId) {
                         const quantity = getItemQuantityInCart(itemId);
                         const controller = card.querySelector('.menu-item-quantity-controller');
                         if (controller) {
-                            const newItem = { branch_menu_id: itemId };
-                            controller.innerHTML = createQuantityControllerHTML(newItem, quantity);
-                            setupQuantityControllerEvents(card, newItem);
+                            console.log('Updating controller for item:', itemId, 'quantity:', quantity);
+                            
+                            // Find the complete item object from menu data instead of creating a minimal one
+                            let completeItem = null;
+                            
+                            // Search through all categories and items to find the complete item
+                            if (state.menuData && Array.isArray(state.menuData)) {
+                                for (const category of state.menuData) {
+                                    if (category.items && Array.isArray(category.items)) {
+                                        const foundItem = category.items.find(item => 
+                                            parseInt(item.branch_menu_id) === itemId
+                                        );
+                                        if (foundItem) {
+                                            completeItem = foundItem;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // If we found the complete item, use it; otherwise try to create a better fallback
+                            let itemToUse;
+                            if (completeItem) {
+                                itemToUse = completeItem;
+                            } else {
+                                // Try to get basic info from the cart item if available
+                                const cartItem = getCurrentBranchCart().find(item => 
+                                    parseInt(item.branch_menu_id) === itemId
+                                );
+                                
+                                if (cartItem) {
+                                    itemToUse = {
+                                        branch_menu_id: itemId,
+                                        item_name: cartItem.name || 'Unknown Item',
+                                        price: cartItem.price || 0,
+                                        image_url: cartItem.image_url || '/images/food-default.jpg',
+                                        branch_id: cartItem.branch_id || state.currentBranch?.branch_id
+                                    };
+                                } else {
+                                    // Last resort minimal object
+                                    itemToUse = { 
+                                        branch_menu_id: itemId,
+                                        item_name: 'Unknown Item',
+                                        price: 0,
+                                        image_url: '/images/food-default.jpg',
+                                        branch_id: state.currentBranch?.branch_id
+                                    };
+                                }
+                            }
+                            
+                            console.log('updateMenuCardsQuantityControllers - using item:', {
+                                itemId,
+                                hasCompleteItem: !!completeItem,
+                                itemName: itemToUse.item_name,
+                                hasBranchId: !!itemToUse.branch_id,
+                                itemToUse: itemToUse
+                            });
+                            
+                            const newHTML = createQuantityControllerHTML(itemToUse, quantity);
+                            console.log('New quantity controller HTML:', newHTML);
+                            
+                            controller.innerHTML = newHTML;
+                            setupQuantityControllerEvents(card, itemToUse);
+                        } else {
+                            console.log('No controller found for item:', itemId);
                         }
                     }
                 });
@@ -12047,7 +12220,7 @@
                     const cartItem = {
                         branch_menu_id: state.currentItem.branch_menu_id,
                         item_id: state.currentItem.item_id,
-                        name: state.currentItem.name,
+                        name: state.currentItem.item_name,
                         name_translation_key: state.currentItem.name_translation_key,
                         price: totalPrice,
                         base_price: state.currentItem.price,
@@ -12582,23 +12755,24 @@
                 
                 itemCard.innerHTML = `
                     <div class="menu-item-image-container">
-                        <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.name}" class="menu-item-image">
+                        <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.item_name}" class="menu-item-image">
                         ${isFeatured ? '<span class="menu-item-badge">Featured</span>' : ''}
                     </div>
                     <div class="menu-item-content">
                         <div class="menu-item-header">
-                            <h4 class="menu-item-name">${getTranslation(item.name, item.name_translation_key)}</h4>
+                            <h4 class="menu-item-name">${getTranslation(item.item_name, item.name_translation_key)}</h4>
                             <div class="menu-item-price">${formatPrice(item.price)}</div>
                         </div>
-                        <p class="menu-item-desc">${getTranslation(item.description, item.description_translation_key) || translate('delicious_menu_item')}</p>
+                        <p class="item-desc">${getTranslation(item.item_description, item.description_translation_key) || translate('delicious_menu_item')}</p>
                         <div class="menu-item-footer">
-                            <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time || 15} ${translate('mins')}</span>
-                            <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
-                                <i class="fas fa-heart"></i>
-                            </button>
+                            <div class="prep-time-with-favorite">
+                                <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time_minutes || 15} ${translate('mins')}</span>
+                                <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    ${createQuantityControllerHTML(item, quantity)}
                 `;
                 
                 // Add fade in animation
@@ -12616,7 +12790,7 @@
                 
                 // Attach event listeners
                 attachFavoriteItemEventListeners(itemCard, item, index);
-                setupQuantityControllerEvents(itemCard, item);
+                // Note: Removed setupQuantityControllerEvents for favorites page
             }
             
             // Helper function to update favorite item indices after removal
@@ -14179,15 +14353,48 @@
             
             // Branch conflict management functions
             function checkBranchConflict(item) {
+                console.log('checkBranchConflict called with item:', item);
+                
                 // Check if cart has items from a different branch
                 if (state.cart.length === 0) {
+                    console.log('Cart is empty, no branch conflict');
                     return false; // No conflict if cart is empty
                 }
                 
                 const currentCartBranch = state.cart[0].branch_id;
                 const newItemBranch = item.branch_id;
                 
-                return currentCartBranch != newItemBranch;
+                console.log('Branch conflict check:', {
+                    currentCartBranch,
+                    newItemBranch,
+                    hasBranchId: !!item.branch_id,
+                    itemName: item.item_name || item.name || 'unknown'
+                });
+                
+                // If item doesn't have branch_id, try to find it from menu data
+                if (!newItemBranch && item.branch_menu_id) {
+                    console.log('Item missing branch_id, searching menu data...');
+                    if (state.menuData && Array.isArray(state.menuData)) {
+                        for (const category of state.menuData) {
+                            if (category.items && Array.isArray(category.items)) {
+                                const foundItem = category.items.find(menuItem => 
+                                    parseInt(menuItem.branch_menu_id) === parseInt(item.branch_menu_id)
+                                );
+                                if (foundItem && foundItem.branch_id) {
+                                    console.log('Found complete item with branch_id:', foundItem.branch_id);
+                                    // Update the item object with the missing branch_id
+                                    item.branch_id = foundItem.branch_id;
+                                    return currentCartBranch != foundItem.branch_id;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                const hasConflict = currentCartBranch != newItemBranch;
+                console.log('Branch conflict result:', hasConflict);
+                
+                return hasConflict;
             }
             
             function showBranchConflictModal(item, callback) {
