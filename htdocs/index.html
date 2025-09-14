@@ -3084,7 +3084,7 @@
         
         .compact-promotion-card {
             flex-shrink: 0;
-            width: 308px; /* 280px + 10% = 308px */
+            width: 350px;
             background: var(--uber-white);
             border: 1px solid var(--premium-gray-200);
             border-radius: var(--radius-12);
@@ -3641,6 +3641,7 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         
         .menu-item-card:hover {
@@ -6861,7 +6862,7 @@
             }
             
             .compact-promotion-card {
-                width: 264px; /* 240px + 10% = 264px */
+                width: 300 px;
                 padding: var(--spacing-6) var(--spacing-10);
                 min-height: 40px;
             }
@@ -9827,10 +9828,17 @@
                 
                 // Add click event to show item detail modal (but not when clicking on quantity controller)
                 itemCard.addEventListener('click', (e) => {
+                    console.log('Menu item card clicked:', item.item_name);
+                    console.log('Event target:', e.target);
+                    console.log('Closest quantity controller:', e.target.closest('.menu-item-quantity-controller'));
+                    console.log('Closest favorite button:', e.target.closest('.btn-favorite'));
+                    
                     // Don't open modal if clicking on quantity controller or favorite button
                     if (e.target.closest('.menu-item-quantity-controller') || e.target.closest('.btn-favorite')) {
+                        console.log('Click prevented due to quantity controller or favorite button');
                         return;
                     }
+                    console.log('Calling showItemDetailModal for:', item.item_name);
                     showItemDetailModal(item);
                 });
                 
@@ -10039,10 +10047,17 @@
                         
                         // Add click event to show item detail modal (but not when clicking on quantity controller)
                         itemCard.addEventListener('click', (e) => {
+                            console.log('Menu item card clicked (renderMenuContentArea):', item.item_name);
+                            console.log('Event target:', e.target);
+                            console.log('Closest quantity controller:', e.target.closest('.menu-item-quantity-controller'));
+                            console.log('Closest favorite button:', e.target.closest('.btn-favorite'));
+                            
                             // Don't open modal if clicking on quantity controller or favorite button
                             if (e.target.closest('.menu-item-quantity-controller') || e.target.closest('.btn-favorite')) {
+                                console.log('Click prevented due to quantity controller or favorite button');
                                 return;
                             }
+                            console.log('Calling showItemDetailModal for:', item.item_name);
                             showItemDetailModal(item);
                         });
                         
@@ -11331,10 +11346,21 @@
                     
                     // If we don't have menu data or it's for a different branch, load it
                     if (needsMenuLoad || (state.currentBranch && state.currentBranch.branch_id != branchId)) {
-                        // Show loading state only if we need to load data
+                        // Show loading state and skeleton views if we need to load data
                         if (needsMenuLoad) {
                             showView('menu');
+                            renderMenuItemSkeletons();
+                            renderPromotionSkeletons();
+                            renderCategoryTabsSkeletons();
                             renderMenuContentSkeletons();
+                            
+                            // Load featured branch cover section
+                            loadFeaturedBranch();
+                            
+                            // Ensure translations are loaded before proceeding
+                            if (!state.translations[state.language] || Object.keys(state.translations[state.language]).length === 0) {
+                                await loadTranslationsFromAPI();
+                            }
                         }
                         
                         // Load menu data for the branch
@@ -11353,6 +11379,34 @@
                            });
                           }
                         });
+                        
+                        // Extract categories from menu data (like loadMenu does)
+                        state.categories = state.menuData.map(category => ({
+                            id: category.category_id,
+                            name: getTranslation(category.category_name, category.name_translation_key),
+                            image: category.category_image
+                        }));
+                        console.log('Categories extracted:', state.categories);
+                        
+                        // Load promotions for this branch (like loadMenu does)
+                        try {
+                            console.log('Loading promotions for branch:', branchId);
+                            const promotions = await apiService.getPromotions(branchId);
+                            state.promotions = promotions.data || promotions;
+                            renderPromotions();
+                            console.log('Promotions loaded and rendered:', state.promotions);
+                        } catch (error) {
+                            console.error('Failed to load promotions:', error);
+                            elements.promotionsContainer.style.display = 'none';
+                        }
+                        
+                        // Render categories (like loadMenu does)
+                        renderCategories();
+                        console.log('Categories rendered');
+                        
+                        // Render menu items (like loadMenu does) - this is crucial for menu cards
+                        renderMenuItems();
+                        console.log('Menu items rendered');
                     }
                     
                     // Find the specific item in the menu data
@@ -11381,14 +11435,35 @@
                             updateCartUI();
                         }
                         
-                        // Only render menu if it wasn't already visible
+                        // Only render menu if it wasn't already visible or if menu content is not rendered
                         if (state.currentView !== 'menu') {
                             showView('menu');
-                            // Only render if we just loaded the menu data
-                            if (needsMenuLoad) {
+                            renderMenuContentArea('all');
+                        } else {
+                            // Check if menu content is actually rendered
+                            const menuContentArea = document.getElementById('menu-content-area');
+                            const menuItemsContainer = document.getElementById('menu-items-container');
+                            
+                            // If menu content area is empty or not properly rendered, render it
+                            if (!menuContentArea || menuContentArea.children.length === 0) {
+                                console.log('Menu content area is empty, rendering menu content');
                                 renderMenuContentArea('all');
+                            } else if (!menuItemsContainer || menuItemsContainer.children.length === 0) {
+                                console.log('Menu items container is empty, rendering menu items');
+                                renderMenuItems();
+                            } else {
+                                console.log('Menu content already rendered, skipping re-render');
                             }
                         }
+                        
+                        // Ensure menu items are rendered (backup call)
+                        setTimeout(() => {
+                            const menuItemsContainer = document.getElementById('menu-items-container');
+                            if (!menuItemsContainer || menuItemsContainer.children.length === 0) {
+                                console.log('Backup: Menu items still not rendered, calling renderMenuItems');
+                                renderMenuItems();
+                            }
+                        }, 200);
                         
                         // Then show the item detail modal
                         await showItemDetailModal(targetItem);
@@ -11431,7 +11506,8 @@
                 if (item && item.branch_id && state.currentBranch) {
                     const newUrl = createItemUrl(state.currentBranch, item.branch_menu_id);
                     if (window.location.hash !== newUrl) {
-                        window.location.hash = newUrl;
+                        // Use replaceState instead of hash to avoid triggering hashchange event
+                        history.replaceState(null, '', newUrl);
                     }
                 }
             }
@@ -12910,13 +12986,118 @@
             }
             
             // Modal management
-            function showModal(modalId) {
-                document.getElementById(modalId).classList.add('active');
-            }
-            
             function hideModal(modalId) {
                 document.getElementById(modalId).classList.remove('active');
             }
+            
+            // Enhanced showModal function with history management
+            function showModal(modalId) {
+                console.log('showModal called with:', modalId);
+                const modalElement = document.getElementById(modalId);
+                if (!modalElement) {
+                    console.error('Modal element not found:', modalId);
+                    return;
+                }
+                console.log('Modal element found:', modalElement);
+                console.log('Modal current classes:', modalElement.className);
+                
+                modalElement.classList.add('active');
+                console.log('Modal classes after adding active:', modalElement.className);
+                
+                // Push history state to enable back button functionality
+                // This creates a history entry that the back button can return to
+                const currentState = history.state || {};
+                history.pushState(
+                    { ...currentState, modalOpen: true, modalId: modalId }, 
+                    '', 
+                    window.location.hash
+                );
+                console.log('History state pushed for modal:', modalId);
+            }
+            
+            // Setup modal event listeners after DOM is loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                // Close modal when clicking outside the modal content
+                document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                    overlay.addEventListener('click', (e) => {
+                        // Only close if clicking directly on the overlay (not on modal content)
+                        if (e.target === overlay) {
+                            const modalId = overlay.id;
+                            hideModal(modalId);
+                            
+                            // Only update URL for item detail modal if it's different from current menu URL
+                            // This prevents unnecessary URL changes that might trigger re-renders
+                            if (modalId === 'item-detail-modal' && state.currentBranch) {
+                                const currentHash = window.location.hash;
+                                const menuUrl = createBranchUrl(state.currentBranch, 'menu');
+                                
+                                // Only update URL if we're not already on the menu page
+                                if (!currentHash.includes('/menu') && currentHash !== menuUrl) {
+                                    // Use replaceState instead of hash assignment to avoid router trigger
+                                    history.replaceState(null, null, menuUrl);
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+            
+            // Handle browser back button to close modals (moved outside DOMContentLoaded for better mobile support)
+            window.addEventListener('popstate', (e) => {
+                console.log('popstate event fired', e);
+                console.log('Current URL:', window.location.hash);
+                console.log('History state:', e.state);
+                
+                // Check if we're closing a modal (history state indicates modal was open)
+                const wasModalOpen = e.state && e.state.modalOpen;
+                const activeModals = document.querySelectorAll('.modal-overlay.active');
+                console.log('Active modals found:', activeModals.length);
+                console.log('Was modal open in history:', wasModalOpen);
+                
+                if (activeModals.length > 0 || wasModalOpen) {
+                    console.log('Closing modals due to back button');
+                    // Close all active modals without updating URL
+                    // The back button should just close the modal, not navigate
+                    activeModals.forEach(modal => {
+                        const modalId = modal.id;
+                        console.log('Closing modal:', modalId);
+                        hideModal(modalId);
+                    });
+                    
+                    // Prevent the default back navigation since we handled the modal closing
+                    e.preventDefault();
+                    console.log('Prevented default navigation');
+                } else {
+                    console.log('No active modals and no modal in history, allowing default navigation');
+                }
+            });
+            
+            // Override the existing hashchange handler to prevent re-render when closing modals
+            const originalHandleRouteChange = handleRouteChange;
+            handleRouteChange = function(isInitialLoad = false) {
+                console.log('handleRouteChange called, isInitialLoad:', isInitialLoad);
+                console.log('Current hash:', window.location.hash);
+                
+                // Check if we're closing a modal (has modal in history state)
+                const historyState = history.state || {};
+                const wasModalOpen = historyState.modalOpen;
+                const activeModals = document.querySelectorAll('.modal-overlay.active');
+                
+                console.log('Active modals:', activeModals.length);
+                console.log('Was modal open in history:', wasModalOpen);
+                
+                // If we just closed a modal, don't re-render the page
+                if (wasModalOpen && activeModals.length === 0) {
+                    console.log('Modal just closed, preventing route change to avoid re-render');
+                    // Clear the modal state from history
+                    history.replaceState({}, '', window.location.hash);
+                    return; // Don't proceed with route change
+                }
+                
+                // Otherwise, proceed with normal route handling
+                console.log('Proceeding with normal route handling');
+                return originalHandleRouteChange.call(this, isInitialLoad);
+            };
             
             // Confirmation modal management
             let confirmationCallback = null;
