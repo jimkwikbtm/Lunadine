@@ -29,6 +29,24 @@
             --uber-red: #FF4136;
             --uber-blue: #0074E4;
             
+            /* Premium Color Variations */
+            --premium-green-light: #E8F5F1;
+            --premium-green-medium: #4CAF50;
+            --premium-green-dark: #2E7D32;
+            --premium-gray-50: #FAFAFA;
+            --premium-gray-100: #F5F5F5;
+            --premium-gray-200: #EEEEEE;
+            --premium-gray-300: #E0E0E0;
+            --premium-gray-400: #BDBDBD;
+            --premium-gray-500: #9E9E9E;
+            --premium-gray-600: #757575;
+            --premium-gray-700: #616161;
+            --premium-gray-800: #424242;
+            --premium-gray-900: #212121;
+            --premium-shadow: rgba(0, 0, 0, 0.08);
+            --premium-shadow-hover: rgba(0, 0, 0, 0.12);
+            --premium-shadow-active: rgba(0, 0, 0, 0.16);
+            
             /* Typography Scale */
             --font-size-12: 0.75rem;   /* 12px */
             --font-size-14: 0.875rem;  /* 14px */
@@ -1398,7 +1416,7 @@
             position: absolute;
             bottom: -70px;
             left: 50%;
-			right: 50%;
+                        right: 50%;
             transform: translateX(-50%);
             z-index: 10;
             animation: slideUp 0.8s ease-out 0.4s both;
@@ -1478,7 +1496,7 @@
         .branch-name {
             font-size: var(--font-size-28);
             font-weight: 700;
-			color: var(--uber-green);
+                        color: var(--uber-green);
             margin-bottom: var(--spacing-8);
             transition: color var(--transition-normal);
         }
@@ -1978,9 +1996,9 @@
             
             .branch-logo-container {
                 bottom: -45px;
-				left: 50%;
+                                left: 50%;
             }
-			
+                        
             .branch-logo {
                 width: 100px;
                 height: 100px;
@@ -1994,7 +2012,7 @@
             }
             
             .branch-name {
-			    padding-top: 15px;
+                            padding-top: 15px;
                 font-size: var(--font-size-24);
                 margin-bottom: var(--spacing-6);
             }
@@ -2051,7 +2069,7 @@
         
         /* ===== GOOGLE-INSPIRED SEARCH BAR STYLES ===== */
         .menu-search-advanced {
-		    padding-bottom: 10px;
+                    padding-bottom: 10px;
             margin-bottom: 0;
             position: relative;
         }
@@ -3066,106 +3084,129 @@
         
         .compact-promotion-card {
             flex-shrink: 0;
-            width: 280px;
-            background: linear-gradient(135deg, var(--uber-white), #fafafa);
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            width: 308px; /* 280px + 10% = 308px */
+            background: var(--uber-white);
+            border: 1px solid var(--premium-gray-200);
             border-radius: var(--radius-12);
-            padding: var(--spacing-16);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            transition: all var(--transition-fast);
+            padding: var(--spacing-8) var(--spacing-12);
+            box-shadow: 0 2px 8px var(--premium-shadow);
+            transition: all var(--transition-normal);
             cursor: pointer;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+            min-height: 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         
         .compact-promotion-card::before {
             content: '';
             position: absolute;
-            top: 0;
             left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--uber-green), var(--uber-green-light), var(--uber-green));
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: var(--uber-green);
+            border-radius: var(--radius-full);
+            transition: all var(--transition-normal);
             opacity: 0;
-            transition: opacity var(--transition-fast);
         }
         
         .compact-promotion-card:hover {
-            transform: var(--transform-slide-up);
-            box-shadow: var(--shadow-green-hover-light);
+            background: var(--uber-white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px var(--premium-shadow-hover);
             border-color: var(--uber-green);
         }
         
         .compact-promotion-card:hover::before {
+            height: 70%;
             opacity: 1;
         }
         
         .compact-promotion-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--spacing-8);
+            justify-content: flex-start;
+            margin-bottom: var(--spacing-4);
+            padding-left: 0;
+            position: relative;
+            flex: 1;
+            min-width: 0;
         }
         
         .compact-promotion-title {
-            font-size: var(--font-size-14);
+            font-size: var(--font-size-13);
             font-weight: 600;
-            color: var(--uber-gray-900);
+            color: var(--premium-gray-900);
             display: flex;
             align-items: center;
-            gap: var(--spacing-6);
+            gap: var(--spacing-4);
+            flex: 1;
+            min-width: 0;
         }
         
         .compact-promotion-title .promo-icon {
             color: var(--uber-green);
-            font-size: var(--font-size-16);
+            font-size: var(--font-size-14);
         }
         
         .compact-promotion-badge {
-            background: linear-gradient(135deg, var(--uber-red), #e63946);
+            position: absolute;
+            top: var(--spacing-8);
+            right: var(--spacing-8);
+            background-color: var(--uber-green);
             color: var(--uber-white);
-            font-size: var(--font-size-10);
+            padding: var(--spacing-4) var(--spacing-8);
+            border-radius: var(--radius-4);
+            font-size: var(--font-size-12);
             font-weight: 600;
-            padding: var(--spacing-2) var(--spacing-6);
-            border-radius: var(--radius-full);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            z-index: 10;
         }
         
         .compact-promotion-description {
-            font-size: var(--font-size-12);
-            color: var(--uber-gray-600);
-            line-height: 1.4;
-            margin-bottom: var(--spacing-12);
+            font-size: var(--font-size-11);
+            color: var(--premium-gray-600);
+            line-height: 1.3;
+            margin-bottom: var(--spacing-4);
+            padding-left: 0;
+            flex: 1;
+            min-width: 0;
         }
         
         .compact-promotion-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding-left: 0;
+            flex: 1;
+            min-width: 0;
         }
         
         .compact-promotion-code {
-            background: linear-gradient(135deg, var(--uber-gray-100), var(--uber-gray-200));
-            color: var(--uber-gray-700);
-            font-size: var(--font-size-11);
+            background: var(--premium-gray-100);
+            color: var(--premium-gray-700);
+            font-size: var(--font-size-10);
             font-weight: 600;
-            padding: var(--spacing-4) var(--spacing-8);
-            border-radius: var(--radius-6);
+            padding: var(--spacing-2) var(--spacing-6);
+            border-radius: var(--radius-4);
             font-family: 'Courier New', monospace;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         
         .compact-promotion-validity {
-            font-size: var(--font-size-11);
-            color: var(--uber-gray-500);
+            font-size: var(--font-size-10);
+            color: var(--premium-gray-500);
             display: flex;
             align-items: center;
-            gap: var(--spacing-4);
+            gap: var(--spacing-2);
         }
         
         .compact-promotion-validity .validity-icon {
-            font-size: var(--font-size-10);
+            font-size: var(--font-size-9);
         }
         
         .compact-promotions-empty {
@@ -3234,39 +3275,32 @@
             position: sticky;
             top: 80px;
             z-index: 100;
-            background: linear-gradient(135deg, var(--uber-white), rgba(255, 255, 255, 0.98));
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            background: var(--uber-white);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: 1px;
-            border-radius: var(--radius-20);
-            box-shadow: 
-                0 4px 20px rgba(0, 0, 0, 0.06),
-                0 1px 8px rgba(0, 0, 0, 0.03),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border-radius: var(--radius-16);
+            box-shadow: 0 2px 8px var(--premium-shadow);
             transition: all var(--transition-normal);
             display: block !important;
             overflow: visible;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--premium-gray-200);
         }
         
         .category-tabs-container.sticky {
-            background: linear-gradient(135deg, var(--uber-white), rgba(255, 255, 255, 0.99));
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.12),
-                0 2px 12px rgba(0, 0, 0, 0.06),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            background: var(--uber-white);
+            box-shadow: 0 4px 16px var(--premium-shadow-hover);
             top: 64px;
-            border-color: rgba(255, 255, 255, 0.9);
+            border-color: var(--premium-gray-300);
         }
         
         .category-tabs-wrapper {
             position: relative;
             overflow: visible;
             padding: var(--spacing-8) var(--spacing-16);
-            border-radius: var(--radius-20);
-            background: linear-gradient(135deg, var(--uber-white), #fafbfc);
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            /* Allow height to adjust automatically */
+            border-radius: var(--radius-16);
+            background: var(--uber-white);
+            border: 1px solid var(--premium-gray-100);
             min-height: auto;
             height: auto;
         }
@@ -3287,8 +3321,7 @@
         .category-tabs-wrapper::before {
             left: 0;
             background: linear-gradient(90deg, 
-                rgba(255, 255, 255, 0.9) 0%, 
-                rgba(255, 255, 255, 0.6) 50%, 
+                var(--uber-white) 0%, 
                 transparent 100%);
         }
         
@@ -3296,8 +3329,7 @@
             right: 0;
             background: linear-gradient(90deg, 
                 transparent 0%, 
-                rgba(255, 255, 255, 0.6) 50%, 
-                rgba(255, 255, 255, 0.9) 100%);
+                var(--uber-white) 100%);
         }
         
         /* Hide indicators when not needed */
@@ -3342,38 +3374,30 @@
             animation: scrollHint 2s ease-in-out infinite;
         }
         
-        /* Modern Card-Based Tab Buttons - Enhanced */
+        /* Modern Card-Based Tab Buttons - Clean & Premium */
         button.category-tab {
-            background: linear-gradient(145deg, var(--uber-white), #f8f9fa) !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
-            border-radius: var(--radius-16) !important;
+            background: var(--uber-white) !important;
+            border: 1px solid var(--premium-gray-200) !important;
+            border-radius: var(--radius-12) !important;
             padding: var(--spacing-12) var(--spacing-16) !important;
             cursor: pointer;
-            font-size: var(--font-size-13) !important;
-            font-weight: 600;
-            color: var(--uber-gray-700) !important;
-            transition: all 0.3s cubic-bezier(0.34, 0, 0.1, 0.99) !important;
+            font-size: var(--font-size-14) !important;
+            font-weight: 500;
+            color: var(--premium-gray-700) !important;
+            transition: all var(--transition-normal) !important;
             white-space: nowrap;
             position: relative;
             flex-shrink: 0;
-            min-height: 72px !important;
-            min-width: 100px !important;
-            /* Remove max-height constraint to allow content to determine height */
+            min-height: 56px !important;
+            min-width: 90px !important;
             max-height: none !important;
             display: inline-flex !important;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: var(--spacing-6);
-            box-shadow: 
-                0 2px 8px rgba(0, 0, 0, 0.04),
-                0 1px 3px rgba(0, 0, 0, 0.02),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            gap: var(--spacing-4);
+            box-shadow: 0 1px 3px var(--premium-shadow) !important;
             overflow: visible !important;
-            /* Ensure badges are not clipped */
-            transform: translateZ(0);
         }
         
         button.category-tab::before {
@@ -3383,254 +3407,122 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4));
-            border-radius: var(--radius-16);
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: var(--radius-12);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-normal);
             pointer-events: none;
-        }
-        
-        button.category-tab:hover::before {
-            opacity: 1;
         }
         
         button.category-tab:hover {
-            transform: translateY(-3px) scale(1.03) !important;
-            box-shadow: 
-                0 8px 25px rgba(0, 0, 0, 0.1),
-                0 4px 12px rgba(0, 0, 0, 0.06),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-            border-color: var(--uber-green-light) !important;
-            color: var(--uber-gray-900) !important;
-            background: linear-gradient(145deg, var(--uber-white), #f0fff9) !important;
-        }
-        
-        /* Enhanced Active State for ALL Category Tabs */
-        button.category-tab.active {
-            background: linear-gradient(145deg, #f0fff9, #e6fcf5) !important;
+            background: var(--premium-gray-50) !important;
             border-color: var(--uber-green) !important;
-            color: var(--uber-green) !important;
-            font-weight: 700;
-            transform: var(--transform-slide-up) scale(1.02) !important;
-            box-shadow: 
-                0 6px 20px rgba(6, 193, 103, 0.2),
-                0 3px 12px rgba(0, 0, 0, 0.08),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9),
-                0 0 0 1px rgba(6, 193, 103, 0.1) !important;
+            color: var(--premium-gray-900) !important;
+            box-shadow: 0 2px 6px var(--premium-shadow-hover) !important;
         }
         
-        button.category-tab.active::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: var(--gradient-triple);
-            border-radius: var(--radius-16);
-            z-index: -1;
-            opacity: 0.15;
-            animation: activeGlow 2s ease-in-out infinite alternate;
+        /* Clean Active State for Category Tabs */
+        button.category-tab.active {
+            background: var(--uber-green) !important;
+            border-color: var(--uber-green) !important;
+            color: var(--uber-white) !important;
+            font-weight: 600;
+            box-shadow: 0 2px 8px var(--premium-shadow-active) !important;
         }
         
-        button.category-tab.active::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(6, 193, 103, 0.1), transparent);
-            border-radius: var(--radius-16);
-            pointer-events: none;
-        }
+
         
-        @keyframes activeGlow {
-            from {
-                opacity: 0.1;
-                transform: scale(1);
-            }
-            to {
-                opacity: 0.2;
-                transform: scale(1.02);
-            }
-        }
-        
-        /* Category Icon - Enhanced and Refined */
+        /* Category Icon - Clean and Simple */
         button.category-tab .category-icon {
-            font-size: var(--font-size-20) !important;
+            font-size: var(--font-size-18) !important;
             margin-right: 0 !important;
-            opacity: 0.8;
-            transition: all 0.3s cubic-bezier(0.34, 0, 0.1, 0.99) !important;
-            color: var(--uber-gray-600);
+            opacity: 0.7;
+            transition: all var(--transition-normal) !important;
+            color: var(--premium-gray-600);
             line-height: 1;
-            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
         }
         
         button.category-tab:hover .category-icon {
             opacity: 1;
             color: var(--uber-green);
-            transform: scale(1.12) translateY(-1px);
-            filter: drop-shadow(0 2px 4px rgba(6, 193, 103, 0.2));
         }
         
         button.category-tab.active .category-icon {
             opacity: 1;
-            color: var(--uber-green);
-            transform: scale(1.15) translateY(-1px);
-            filter: drop-shadow(0 2px 6px rgba(6, 193, 103, 0.3));
-            animation: iconPulse 2s ease-in-out infinite;
+            color: var(--uber-white);
         }
         
-        @keyframes iconPulse {
-            0%, 100% { transform: scale(1.15) translateY(-1px); }
-            50% { transform: scale(1.18) translateY(-1px); }
-        }
-        
-        /* Category Text - Enhanced */
+        /* Category Text - Clean and Readable */
         button.category-tab .tab-text {
-            font-size: var(--font-size-11);
-            font-weight: 600;
+            font-size: var(--font-size-12);
+            font-weight: 500;
             text-align: center;
-            line-height: 1.2;
-            letter-spacing: 0.2px;
-            transition: all 0.3s ease;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1.3;
+            transition: all var(--transition-normal);
         }
         
         button.category-tab:hover .tab-text {
-            letter-spacing: 0.3px;
-            text-shadow: 0 1px 3px rgba(6, 193, 103, 0.2);
+            color: var(--premium-gray-900);
         }
         
         button.category-tab.active .tab-text {
-            letter-spacing: 0.4px;
-            text-shadow: 0 1px 4px rgba(6, 193, 103, 0.3);
+            color: var(--uber-white);
         }
         
-        /* Item Count Badge - Enhanced */
+        /* Item Count Badge - Clean and Simple */
         button.category-tab .item-count {
             position: absolute;
-            top: 10px;
-            right: -6px;
-            background: linear-gradient(135deg, var(--uber-gray-200), #e0e0e0);
-            color: var(--uber-gray-700);
-            padding: 0 var(--spacing-8);
+            top: 6px;
+            right: 6px;
+            background: var(--premium-gray-300);
+            color: var(--premium-gray-800);
+            padding: 0 var(--spacing-6);
             border-radius: var(--radius-full);
-            font-size: var(--font-size-9);
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.34, 0, 0.1, 0.99);
+            font-size: var(--font-size-10);
+            font-weight: 600;
+            transition: all var(--transition-normal);
             border: 2px solid var(--uber-white);
-            box-shadow: 
-                0 3px 8px rgba(0, 0, 0, 0.15),
-                0 1px 3px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            min-width: 22px;
-            height: 22px;
+            box-shadow: 0 1px 3px var(--premium-shadow);
+            min-width: 18px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
-            /* Ensure badge appears above everything */
-            transform: translateZ(0);
-            /* Force hardware acceleration */
-            will-change: transform;
-            /* Ensure proper stacking context */
-            isolation: isolate;
-            /* Add negative margin to extend beyond parent bounds */
-            margin: -6px;
-            /* Use clip-path to ensure no clipping */
-            clip-path: none;
+            z-index: 10;
         }
         
         button.category-tab:hover .item-count {
-            background: var(--gradient-primary-reverse);
+            background: var(--uber-green);
             color: var(--uber-white);
-            transform: scale(1.15) rotate(5deg) translateZ(0);
-            box-shadow: 
-                0 5px 15px rgba(6, 193, 103, 0.4),
-                0 2px 8px rgba(0, 0, 0, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-            z-index: 10000;
         }
         
         button.category-tab.active .item-count {
-            background: var(--gradient-primary-strong);
-            color: var(--uber-white);
-            transform: scale(1.2) rotate(3deg) translateZ(0);
-            box-shadow: 
-                0 6px 20px rgba(6, 193, 103, 0.5),
-                0 3px 10px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-            animation: badgePulse 2s ease-in-out infinite;
-            z-index: 10001;
-            /* Adjusted positioning for better visibility */
-            top: 12px;
-            right: -1px;
-            min-width: 24px;
-            height: 24px;
-            /* Ensure it appears above all elements */
-            margin: -8px;
-            /* Use clip-path to ensure no clipping */
-            clip-path: none;
+            background: var(--uber-white);
+            color: var(--uber-green);
         }
         
-        @keyframes badgePulse {
-            0%, 100% { transform: scale(1.15) rotate(3deg); }
-            50% { transform: scale(1.2) rotate(5deg); }
-        }
-        
-        /* New Badge - Enhanced */
+        /* New Badge - Clean */
         button.category-tab.new::after {
             content: 'New';
             position: absolute;
-            top: -12px;
-            left: -12px;
-            background: linear-gradient(135deg, var(--uber-red), #ff6b6b, #ff8e8e);
+            top: -8px;
+            right: -8px;
+            background: var(--uber-red);
             color: var(--uber-white);
-            font-size: var(--font-size-8);
-            padding: 3px var(--spacing-8);
-            border-radius: var(--radius-8);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 
-                0 4px 12px rgba(255, 65, 54, 0.5),
-                0 2px 6px rgba(0, 0, 0, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            z-index: 15;
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            animation: newBadgeShimmer 2s ease-in-out infinite;
-            /* Ensure badge is not clipped by parent border-radius */
-            transform: translateZ(0);
-            /* Add extra margin to prevent clipping */
-            margin: 3px;
-            /* Force hardware acceleration */
-            will-change: transform;
-            /* Ensure proper stacking context */
-            isolation: isolate;
+            padding: 2px 6px;
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-9);
+            font-weight: 600;
+            z-index: 11;
         }
         
         /* Special positioning for active + new */
         button.category-tab.active.new::after {
-            top: -14px;
-            left: -14px;
-            padding: 4px var(--spacing-10);
-            z-index: 16;
+            top: -10px;
+            right: -10px;
+            background: var(--uber-red);
         }
         
-        @keyframes newBadgeShimmer {
-            0%, 100% { 
-                background: linear-gradient(135deg, var(--uber-red), #ff6b6b);
-                transform: scale(1);
-            }
-            50% { 
-                background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
-                transform: scale(1.05);
-            }
-        }
-        
-
         /* Tab Content */
         .tab-content {
             position: relative;
@@ -3638,7 +3530,7 @@
         
         .tab-pane {
             display: none;
-            animation: fadeIn 0.4s cubic-bezier(0.34, 0, 0.1, 0.99);
+            animation: fadeIn var(--transition-normal);
         }
         
         .tab-pane.active {
@@ -3648,7 +3540,7 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(8px);
             }
             to {
                 opacity: 1;
@@ -4624,6 +4516,90 @@
             text-align: center;
             font-size: var(--font-size-16);
             font-weight: 600;
+        }
+        
+        /* ===== MENU CARD QUANTITY CONTROLLER ===== */
+        .menu-item-quantity-controller {
+            position: absolute;
+            bottom: var(--spacing-12);
+            right: var(--spacing-12);
+            z-index: 10;
+        }
+        
+        .btn-add-to-cart-menu {
+            background: var(--uber-green);
+            color: var(--uber-white);
+            border: none;
+            border-radius: var(--radius-full);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: var(--font-size-18);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: 0 2px 8px rgba(6, 193, 103, 0.3);
+        }
+        
+        .btn-add-to-cart-menu:hover {
+            background: var(--uber-green-dark);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(6, 193, 103, 0.4);
+        }
+        
+        .quantity-controls-menu {
+            display: flex;
+            align-items: center;
+            background: var(--uber-white);
+            border: 2px solid var(--uber-green);
+            border-radius: var(--radius-24);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(6, 193, 103, 0.2);
+        }
+        
+        .quantity-controls-menu button {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: var(--font-size-16);
+            font-weight: 600;
+            color: var(--uber-green);
+            transition: all var(--transition-fast);
+        }
+        
+        .quantity-controls-menu button:hover:not(:disabled) {
+            background: var(--uber-green);
+            color: var(--uber-white);
+        }
+        
+        .quantity-controls-menu button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .quantity-controls-menu input {
+            width: 40px;
+            height: 32px;
+            border: none;
+            text-align: center;
+            font-size: var(--font-size-14);
+            font-weight: 600;
+            color: var(--uber-gray-900);
+            background: transparent;
+        }
+        
+        .quantity-controls-menu .quantity-separator {
+            width: 1px;
+            height: 20px;
+            background: var(--uber-green);
+            margin: 0 var(--spacing-2);
         }
         
         /* ===== LOADING OVERLAY ===== */
@@ -6853,8 +6829,9 @@
             }
             
             .compact-promotion-card {
-                width: 240px;
-                padding: var(--spacing-12);
+                width: 264px; /* 240px + 10% = 264px */
+                padding: var(--spacing-6) var(--spacing-10);
+                min-height: 40px;
             }
             
             .compact-promotion-title {
@@ -6862,12 +6839,12 @@
             }
             
             .compact-promotion-title .promo-icon {
-                font-size: var(--font-size-14);
+                font-size: var(--font-size-12);
             }
             
             .compact-promotion-description {
-                font-size: var(--font-size-11);
-                margin-bottom: var(--spacing-8);
+                font-size: var(--font-size-10);
+                margin-bottom: var(--spacing-2);
             }
             
             .compact-promotion-code {
@@ -9771,11 +9748,18 @@
                 return section;
             }
             
+            // Update menu cards quantity controllers after rendering
+            setTimeout(() => {
+                updateMenuCardsQuantityControllers();
+            }, 100);
+            
             function createMenuItemCard(item) {
                 const isFavorite = state.favorites.some(fav => fav.branch_menu_id === item.branch_menu_id);
+                const quantity = getItemQuantityInCart(item.branch_menu_id);
                 
                 const itemCard = document.createElement('div');
                 itemCard.className = 'menu-item-card';
+                itemCard.setAttribute('data-branch-menu-id', item.branch_menu_id);
                 itemCard.innerHTML = `
                     <div class="menu-item-image-container">
                         <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.item_name}" class="menu-item-image">
@@ -9794,10 +9778,15 @@
                             </button>
                         </div>
                     </div>
+                    ${createQuantityControllerHTML(item, quantity)}
                 `;
                 
-                // Add click event to show item detail modal
-                itemCard.addEventListener('click', () => {
+                // Add click event to show item detail modal (but not when clicking on quantity controller)
+                itemCard.addEventListener('click', (e) => {
+                    // Don't open modal if clicking on quantity controller or favorite button
+                    if (e.target.closest('.menu-item-quantity-controller') || e.target.closest('.btn-favorite')) {
+                        return;
+                    }
                     showItemDetailModal(item);
                 });
                 
@@ -9808,6 +9797,9 @@
                     toggleFavorite(item);
                     favoriteBtn.classList.toggle('active');
                 });
+                
+                // Setup quantity controller events
+                setupQuantityControllerEvents(itemCard, item);
                 
                 return itemCard;
             }
@@ -9973,9 +9965,11 @@
                     
                     category.items.forEach(item => {
                         const isFavorite = state.favorites.some(fav => fav.branch_menu_id === item.branch_menu_id);
+                        const quantity = getItemQuantityInCart(item.branch_menu_id);
                         
                         const itemCard = document.createElement('div');
                         itemCard.className = 'menu-item-card';
+                        itemCard.setAttribute('data-branch-menu-id', item.branch_menu_id);
                         itemCard.innerHTML = `
                             <div class="menu-item-image-container">
                                 <img src="${item.image_url || '/images/food-default.jpg'}" alt="${item.item_name}" class="menu-item-image">
@@ -9994,10 +9988,15 @@
                                     </button>
                                 </div>
                             </div>
+                            ${createQuantityControllerHTML(item, quantity)}
                         `;
                         
-                        // Add click event to show item detail modal
-                        itemCard.addEventListener('click', () => {
+                        // Add click event to show item detail modal (but not when clicking on quantity controller)
+                        itemCard.addEventListener('click', (e) => {
+                            // Don't open modal if clicking on quantity controller or favorite button
+                            if (e.target.closest('.menu-item-quantity-controller') || e.target.closest('.btn-favorite')) {
+                                return;
+                            }
                             showItemDetailModal(item);
                         });
                         
@@ -10008,6 +10007,9 @@
                             toggleFavorite(item);
                             favoriteBtn.classList.toggle('active');
                         });
+                        
+                        // Setup quantity controller events
+                        setupQuantityControllerEvents(itemCard, item);
                         
                         itemsGrid.appendChild(itemCard);
                     });
@@ -10100,14 +10102,13 @@
                         ${isValid ? '<span class="compact-promotion-badge">Active</span>' : '<span class="compact-promotion-badge">Expired</span>'}
                     </div>
                     <div class="compact-promotion-description">
-                        ${promoDescription}
-                        ${promo.min_order_value ? `<br>Min order: ${formatPrice(promo.min_order_value)}` : ''}
+                        ${promoDescription}${promo.min_order_value ? ` • Min: ${formatPrice(promo.min_order_value)}` : ''}
                     </div>
                     <div class="compact-promotion-footer">
                         <div class="compact-promotion-code">${promo.code || 'PROMO'}</div>
                         <div class="compact-promotion-validity">
                             <i class="${validityIcon} validity-icon"></i>
-                            ${validityText}
+                            ${isValid ? new Date(promo.end_date).toLocaleDateString() : 'Expired'}
                         </div>
                     </div>
                 `;
@@ -11230,6 +11231,8 @@
                     favoritesGrid.className = 'menu-items-grid';
                     
                     state.favorites.forEach((item, index) => {
+                        const quantity = getItemQuantityInCart(item.branch_menu_id);
+                        
                         const itemCard = document.createElement('div');
                         itemCard.className = 'menu-item-card';
                         itemCard.setAttribute('data-branch-menu-id', item.branch_menu_id);
@@ -11247,16 +11250,12 @@
                                 <p class="menu-item-desc">${getTranslation(item.description, item.description_translation_key) || translate('delicious_menu_item')}</p>
                                 <div class="menu-item-footer">
                                     <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time || 15} ${translate('mins')}</span>
-                                    <div class="item-actions">
-                                        <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
-                                            <i class="fas fa-heart"></i>
-                                        </button>
-                                        <button class="btn-add-to-cart" data-item-id="${item.branch_menu_id}">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
+                                    <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
                                 </div>
                             </div>
+                            ${createQuantityControllerHTML(item, quantity)}
                         `;
                         
                         favoritesGrid.appendChild(itemCard);
@@ -11264,6 +11263,7 @@
                         // Attach event listeners after the element is added to DOM
                         setTimeout(() => {
                             attachFavoriteItemEventListeners(itemCard, item, index);
+                            setupQuantityControllerEvents(itemCard, item);
                         }, 0);
                     });
                     
@@ -11661,6 +11661,255 @@
                 }
             }
             
+            // ===== MENU CARD QUANTITY CONTROLLER FUNCTIONS =====
+            
+            /**
+             * Check if an item has customizations available
+             * @param {number} branchMenuId - The branch menu item ID
+             * @returns {Promise<boolean>} - True if item has customizations
+             */
+            async function hasItemCustomizations(branchMenuId) {
+                try {
+                    const response = await apiService.getCustomizations(branchMenuId);
+                    const customizations = response.data || response;
+                    return customizations.groups && customizations.groups.length > 0;
+                } catch (error) {
+                    console.error('Failed to check customizations:', error);
+                    return false;
+                }
+            }
+            
+            /**
+             * Get the quantity of an item in the current cart
+             * @param {number} branchMenuId - The branch menu item ID
+             * @returns {number} - Quantity of item in cart (0 if not found)
+             */
+            function getItemQuantityInCart(branchMenuId) {
+                const currentCart = getCurrentBranchCart();
+                const cartItem = currentCart.find(item => item.branch_menu_id === branchMenuId);
+                return cartItem ? cartItem.quantity : 0;
+            }
+            
+            /**
+             * Check if an item is already in the current cart
+             * @param {number} branchMenuId - The branch menu item ID
+             * @returns {boolean} - True if item is in cart
+             */
+            function isItemInCart(branchMenuId) {
+                return getItemQuantityInCart(branchMenuId) > 0;
+            }
+            
+            /**
+             * Add item to cart directly (without customizations)
+             * @param {Object} item - The menu item to add
+             * @param {number} quantity - The quantity to add
+             */
+            function addItemToCartDirectly(item, quantity = 1) {
+                if (!state.currentBranch) {
+                    showError(translate('please_select_branch'));
+                    return;
+                }
+                
+                // Check for branch conflict
+                const hasConflict = checkBranchConflict(item);
+                
+                if (hasConflict) {
+                    // Show branch conflict modal
+                    showBranchConflictModal(item, () => {
+                        performDirectAddToCart(item, quantity);
+                    });
+                    return;
+                }
+                
+                // No conflict, proceed with direct add
+                performDirectAddToCart(item, quantity);
+            }
+            
+            /**
+             * Perform the actual direct add to cart operation
+             * @param {Object} item - The menu item to add
+             * @param {number} quantity - The quantity to add
+             */
+            function performDirectAddToCart(item, quantity) {
+                const currentCart = getCurrentBranchCart();
+                
+                // Check if item already exists in cart
+                const existingIndex = currentCart.findIndex(cartItem => 
+                    cartItem.branch_menu_id === item.branch_menu_id && 
+                    Object.keys(cartItem.customizations || {}).length === 0
+                );
+                
+                if (existingIndex >= 0) {
+                    // Update quantity if already exists
+                    currentCart[existingIndex].quantity += quantity;
+                } else {
+                    // Add new item to cart
+                    const cartItem = {
+                        branch_menu_id: item.branch_menu_id,
+                        item_id: item.item_id,
+                        name: item.item_name,
+                        name_translation_key: item.name_translation_key,
+                        price: item.price,
+                        base_price: item.price,
+                        image_url: item.image_url,
+                        customizations: {},
+                        quantity: quantity,
+                        branch_id: state.currentBranch.branch_id,
+                        branch_name: state.currentBranch.internal_name
+                    };
+                    
+                    currentCart.push(cartItem);
+                }
+                
+                saveCart();
+                updateCurrentCart();
+                updateCartUI();
+                showToast(translate('item_added'));
+                
+                // Update all menu cards to reflect new cart state
+                updateMenuCardsQuantityControllers();
+            }
+            
+            /**
+             * Update item quantity in cart
+             * @param {number} branchMenuId - The branch menu item ID
+             * @param {number} newQuantity - The new quantity
+             */
+            function updateItemQuantityInCart(branchMenuId, newQuantity) {
+                if (newQuantity <= 0) {
+                    removeItemFromCart(branchMenuId);
+                    return;
+                }
+                
+                const currentCart = getCurrentBranchCart();
+                const cartItem = currentCart.find(item => item.branch_menu_id === branchMenuId);
+                
+                if (cartItem) {
+                    cartItem.quantity = newQuantity;
+                    saveCart();
+                    updateCurrentCart();
+                    updateCartUI();
+                }
+            }
+            
+            /**
+             * Remove item from cart
+             * @param {number} branchMenuId - The branch menu item ID
+             */
+            function removeItemFromCart(branchMenuId) {
+                const currentCart = getCurrentBranchCart();
+                const itemIndex = currentCart.findIndex(item => item.branch_menu_id === branchMenuId);
+                
+                if (itemIndex >= 0) {
+                    currentCart.splice(itemIndex, 1);
+                    saveCart();
+                    updateCurrentCart();
+                    updateCartUI();
+                }
+            }
+            
+            /**
+             * Create quantity controller HTML for menu card
+             * @param {Object} item - The menu item
+             * @param {number} quantity - Current quantity in cart
+             * @returns {string} - HTML string for quantity controller
+             */
+            function createQuantityControllerHTML(item, quantity) {
+                if (quantity === 0) {
+                    return `
+                        <div class="menu-item-quantity-controller">
+                            <button class="btn-add-to-cart-menu" data-item-id="${item.branch_menu_id}" title="Add to cart">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="menu-item-quantity-controller">
+                            <div class="quantity-controls-menu" data-item-id="${item.branch_menu_id}">
+                                <button class="quantity-decrease" data-item-id="${item.branch_menu_id}" title="Decrease quantity">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <div class="quantity-separator"></div>
+                                <input type="number" class="quantity-input" value="${quantity}" min="1" max="99" readonly data-item-id="${item.branch_menu_id}">
+                                <div class="quantity-separator"></div>
+                                <button class="quantity-increase" data-item-id="${item.branch_menu_id}" title="Increase quantity">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            /**
+             * Setup event listeners for quantity controller
+             * @param {HTMLElement} menuCard - The menu card element
+             * @param {Object} item - The menu item
+             */
+            function setupQuantityControllerEvents(menuCard, item) {
+                const controller = menuCard.querySelector('.menu-item-quantity-controller');
+                if (!controller) return;
+                
+                // Add to cart button
+                const addBtn = controller.querySelector('.btn-add-to-cart-menu');
+                if (addBtn) {
+                    addBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        
+                        // Check if item has customizations
+                        const hasCustomizations = await hasItemCustomizations(item.branch_menu_id);
+                        
+                        if (hasCustomizations) {
+                            // Open item detail modal for customization
+                            showItemDetailModal(item);
+                        } else {
+                            // Add directly to cart
+                            addItemToCartDirectly(item, 1);
+                        }
+                    });
+                }
+                
+                // Quantity decrease button
+                const decreaseBtn = controller.querySelector('.quantity-decrease');
+                if (decreaseBtn) {
+                    decreaseBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const currentQuantity = getItemQuantityInCart(item.branch_menu_id);
+                        updateItemQuantityInCart(item.branch_menu_id, currentQuantity - 1);
+                    });
+                }
+                
+                // Quantity increase button
+                const increaseBtn = controller.querySelector('.quantity-increase');
+                if (increaseBtn) {
+                    increaseBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const currentQuantity = getItemQuantityInCart(item.branch_menu_id);
+                        updateItemQuantityInCart(item.branch_menu_id, currentQuantity + 1);
+                    });
+                }
+            }
+            
+            /**
+             * Update all menu cards quantity controllers
+             */
+            function updateMenuCardsQuantityControllers() {
+                const menuCards = document.querySelectorAll('.menu-item-card');
+                menuCards.forEach(card => {
+                    const itemId = parseInt(card.getAttribute('data-branch-menu-id'));
+                    if (itemId) {
+                        const quantity = getItemQuantityInCart(itemId);
+                        const controller = card.querySelector('.menu-item-quantity-controller');
+                        if (controller) {
+                            const newItem = { branch_menu_id: itemId };
+                            controller.innerHTML = createQuantityControllerHTML(newItem, quantity);
+                            setupQuantityControllerEvents(card, newItem);
+                        }
+                    }
+                });
+            }
+            
             // QR Scanner functionality
             function showQRScanner() {
                 elements.qrScannerContainer.classList.add('active');
@@ -11817,6 +12066,9 @@
                 updateCurrentCart();
                 updateCartUI();
                 hideModal('item-detail-modal');
+                
+                // Update all menu cards to reflect new cart state
+                updateMenuCardsQuantityControllers();
                 
                 // Update URL to go back to menu after adding to cart
                 // Use replaceState to avoid triggering router navigation
@@ -12326,6 +12578,7 @@
                 itemCard.setAttribute('data-favorite-index', index);
                 
                 const isFeatured = item.is_featured || false;
+                const quantity = getItemQuantityInCart(item.branch_menu_id);
                 
                 itemCard.innerHTML = `
                     <div class="menu-item-image-container">
@@ -12338,15 +12591,14 @@
                             <div class="menu-item-price">${formatPrice(item.price)}</div>
                         </div>
                         <p class="menu-item-desc">${getTranslation(item.description, item.description_translation_key) || translate('delicious_menu_item')}</p>
-                        <div class="menu-item-actions">
-                            <button class="btn btn-icon btn-favorite active" title="${translate('remove_from_favorites')}">
+                        <div class="menu-item-footer">
+                            <span class="prep-time"><i class="fas fa-clock"></i> ${item.preparation_time || 15} ${translate('mins')}</span>
+                            <button class="btn-favorite active" data-item-id="${item.branch_menu_id}">
                                 <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="btn btn-add-to-cart" data-item-id="${item.branch_menu_id}">
-                                <i class="fas fa-plus"></i> ${translate('add_to_cart')}
                             </button>
                         </div>
                     </div>
+                    ${createQuantityControllerHTML(item, quantity)}
                 `;
                 
                 // Add fade in animation
@@ -12364,6 +12616,7 @@
                 
                 // Attach event listeners
                 attachFavoriteItemEventListeners(itemCard, item, index);
+                setupQuantityControllerEvents(itemCard, item);
             }
             
             // Helper function to update favorite item indices after removal
