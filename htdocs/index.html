@@ -1210,7 +1210,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.6);
             transition: all var(--transition-normal);
             display: block !important;
-            overflow: hidden;
+            overflow: visible;
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
         
@@ -1226,11 +1226,14 @@
         
         .category-tabs-wrapper {
             position: relative;
-            overflow: hidden;
-            padding: 0 var(--spacing-16);
+            overflow: visible;
+            padding: var(--spacing-8) var(--spacing-16);
             border-radius: var(--radius-20);
             background: linear-gradient(135deg, var(--uber-white), #fafbfc);
             border: 1px solid rgba(0, 0, 0, 0.04);
+            /* Allow height to adjust automatically */
+            min-height: auto;
+            height: auto;
         }
         
         /* Add scroll indicators */
@@ -1276,6 +1279,7 @@
             display: flex;
             flex-wrap: nowrap;
             overflow-x: auto;
+            overflow-y: visible;
             gap: var(--spacing-12);
             padding: var(--spacing-10) 0;
             scrollbar-width: none;
@@ -1317,9 +1321,10 @@
             white-space: nowrap;
             position: relative;
             flex-shrink: 0;
-            min-height: 56px !important;
+            min-height: 72px !important;
             min-width: 100px !important;
-            max-height: 56px !important;
+            /* Remove max-height constraint to allow content to determine height */
+            max-height: none !important;
             display: inline-flex !important;
             flex-direction: column;
             align-items: center;
@@ -1471,8 +1476,8 @@
         /* Item Count Badge - Enhanced */
         button.category-tab .item-count {
             position: absolute;
-            top: -12px;
-            right: -12px;
+            top: 10px;
+            right: -6px;
             background: linear-gradient(135deg, var(--uber-gray-200), #e0e0e0);
             color: var(--uber-gray-700);
             padding: 0 var(--spacing-8);
@@ -1490,15 +1495,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10;
-            /* Ensure badge is not clipped by parent border-radius */
+            z-index: 9999;
+            /* Ensure badge appears above everything */
             transform: translateZ(0);
-            /* Add extra margin to prevent clipping */
-            margin: 3px;
             /* Force hardware acceleration */
             will-change: transform;
             /* Ensure proper stacking context */
             isolation: isolate;
+            /* Add negative margin to extend beyond parent bounds */
+            margin: -6px;
+            /* Use clip-path to ensure no clipping */
+            clip-path: none;
         }
         
         button.category-tab:hover .item-count {
@@ -1509,7 +1516,7 @@
                 0 5px 15px rgba(6, 193, 103, 0.4),
                 0 2px 8px rgba(0, 0, 0, 0.15),
                 inset 0 1px 0 rgba(255, 255, 255, 0.9);
-            z-index: 11;
+            z-index: 10000;
         }
         
         button.category-tab.active .item-count {
@@ -1521,12 +1528,16 @@
                 0 3px 10px rgba(0, 0, 0, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.9);
             animation: badgePulse 2s ease-in-out infinite;
-            z-index: 12;
-            /* Extra clearance for active state */
-            top: -14px;
-            right: -14px;
+            z-index: 10001;
+            /* Adjusted positioning for better visibility */
+            top: 12px;
+            right: -1px;
             min-width: 24px;
             height: 24px;
+            /* Ensure it appears above all elements */
+            margin: -8px;
+            /* Use clip-path to ensure no clipping */
+            clip-path: none;
         }
         
         @keyframes badgePulse {
@@ -1584,8 +1595,7 @@
             }
         }
         
-        /* Category Tabs Scroll Buttons - Removed (replaced with marquee effect) */
-        
+
         /* Tab Content */
         .tab-content {
             position: relative;
@@ -4691,8 +4701,8 @@
                 min-width: 18px;
                 height: 18px;
                 font-size: var(--font-size-8);
-                top: -10px;
-                right: -10px;
+                top: 10px;
+                right: -6px;
                 padding: 0 var(--spacing-6);
                 border-width: 1.5px;
             }
@@ -4716,12 +4726,6 @@
                 top: -12px;
                 left: -12px;
                 padding: 3px var(--spacing-8);
-            }
-            
-            .category-tabs-scroll-btn {
-                width: 28px;
-                height: 28px;
-                font-size: var(--font-size-12);
             }
             
             .compact-promotions {
@@ -4837,6 +4841,9 @@
             .category-tab {
                 padding: var(--spacing-10) var(--spacing-16);
                 font-size: var(--font-size-13);
+                min-height: 68px !important;
+                max-height: none !important;
+                overflow: visible !important;
             }
             
             .menu-mention-content {
@@ -4867,15 +4874,15 @@
                 min-width: 16px;
                 height: 16px;
                 font-size: var(--font-size-7);
-                top: -8px;
+                top: 8px;
                 right: -8px;
                 padding: 0 var(--spacing-4);
                 border-width: 1px;
             }
             
             button.category-tab.active .item-count {
-                top: -10px;
-                right: -10px;
+                top: 10px;
+                right: 2px;
                 min-width: 18px;
                 height: 18px;
             }
@@ -4906,12 +4913,6 @@
             .category-tabs-wrapper::before,
             .category-tabs-wrapper::after {
                 width: var(--spacing-16);
-            }
-            
-            .category-tabs-scroll-btn {
-                width: 24px;
-                height: 24px;
-                font-size: var(--font-size-10);
             }
         }
         
@@ -5111,17 +5112,9 @@
                         <!-- Sticky Category Tabs Section -->
                         <div class="category-tabs-container" id="category-tabs-container">
                             <div class="category-tabs-wrapper">
-                                <button class="category-tabs-scroll-btn prev hidden" id="category-tabs-prev">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                
                                 <div class="category-tabs" id="category-tabs">
                                     <!-- Category tabs will be dynamically loaded here -->
                                 </div>
-                                
-                                <button class="category-tabs-scroll-btn next hidden" id="category-tabs-next">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
                             </div>
                         </div>
                         
@@ -5754,8 +5747,6 @@
                 currentBranchName: document.getElementById('current-branch-name'),
                 categoryTabsContainer: document.getElementById('category-tabs-container'),
                 categoryTabs: document.getElementById('category-tabs'),
-                categoryTabsPrev: document.getElementById('category-tabs-prev'),
-                categoryTabsNext: document.getElementById('category-tabs-next'),
                 menuContentArea: document.getElementById('menu-content-area'),
                 newBranchName: document.getElementById('new-branch-name'),
                 branchConflictCancelBtn: document.getElementById('branch-conflict-cancel-btn'),
