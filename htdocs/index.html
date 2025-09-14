@@ -3904,8 +3904,10 @@
         
         .cart-item {
             display: flex;
+            flex-wrap: wrap;
             border-bottom: 1px solid var(--uber-gray-200);
             padding: var(--spacing-16) 0;
+            align-items: flex-start;
         }
         
         .cart-item-image {
@@ -3918,6 +3920,8 @@
         
         .cart-item-details {
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .cart-item-name {
@@ -3933,24 +3937,31 @@
             margin-bottom: var(--spacing-8);
         }
         
-        .cart-item-price {
-            color: var(--uber-green);
-            font-weight: 600;
-            font-size: var(--font-size-16);
+        .cart-item-price-section {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-4);
+            gap: var(--spacing-8);
         }
         
-        .cart-item-price .price-breakdown {
+        .cart-item-price-breakdown {
+            padding: var(--spacing-8) 0;
+        }
+        
+        .cart-item-price-total {
+            padding: var(--spacing-8) 0;
+        }
+        
+        .cart-item-price-breakdown .price-breakdown {
             font-size: var(--font-size-14);
             color: var(--uber-gray-600);
             font-weight: normal;
         }
         
-        .cart-item-price .price-total {
+        .cart-item-price-total .price-total {
             font-weight: 600;
             color: var(--uber-gray-900);
+            font-size: var(--font-size-16);
         }
         
         .cart-item-actions {
@@ -6712,7 +6723,22 @@
             }
             
             .order-type-selector {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-8);
+            }
+            
+            .order-type-btn {
+                padding: var(--spacing-8) var(--spacing-4);
+                border-radius: var(--radius-8);
+            }
+            
+            .order-type-icon {
+                font-size: var(--font-size-20);
+                margin-bottom: var(--spacing-4);
+            }
+            
+            .order-type-btn div:last-child {
+                font-size: var(--font-size-12);
             }
             
             .fab {
@@ -6726,21 +6752,60 @@
             }
             
             .cart-item {
-                flex-direction: column;
+                flex-direction: row;
+                align-items: flex-start;
+                flex-wrap: wrap;
             }
             
             .cart-item-image {
-                width: 100%;
-                height: 120px;
-                margin-right: 0;
-                margin-bottom: var(--spacing-12);
+                width: 60px;
+                height: 60px;
+                margin-right: var(--spacing-12);
+                margin-bottom: 0;
+            }
+            
+            .cart-item-details {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .cart-item-name {
+                font-size: var(--font-size-14);
+                margin-bottom: var(--spacing-2);
+            }
+            
+            .cart-item-customizations {
+                font-size: var(--font-size-12);
+                margin-bottom: var(--spacing-6);
+            }
+            
+            .cart-item-price-section {
+                gap: var(--spacing-6);
+            }
+            
+            .cart-item-price-breakdown {
+                padding: var(--spacing-6) 0;
+            }
+            
+            .cart-item-price-total {
+                padding: var(--spacing-6) 0;
+            }
+            
+            .cart-item-price-breakdown .price-breakdown {
+                font-size: var(--font-size-12);
+            }
+            
+            .cart-item-price-total .price-total {
+                font-size: var(--font-size-14);
             }
             
             .cart-item-actions {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                width: 100%;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-end;
+                gap: var(--spacing-8);
+                width: auto;
             }
             
             .modal {
@@ -10270,10 +10335,6 @@
                         <div class="cart-item-details">
                             <h4 class="cart-item-name">${getTranslation(item.name, item.name_translation_key)}</h4>
                             ${hasCustomizations ? `<p class="cart-item-customizations">${customizationText}</p>` : ''}
-                            <div class="cart-item-price">
-                                <div class="price-breakdown">${formatDetailedPrice(item)}</div>
-                                <div class="price-total">${formatPrice(item.price)} × ${item.quantity} = ${formatPrice(itemTotal)}</div>
-                            </div>
                         </div>
                         <div class="cart-item-actions">
                             <div class="quantity-control">
@@ -10284,6 +10345,16 @@
                             <button class="btn-remove" data-index="${index}">
                                 <i class="fas fa-trash"></i>
                             </button>
+                        </div>
+                        <div class="cart-item-price-section">
+                            ${hasCustomizations ? `
+                            <div class="cart-item-price-breakdown">
+                                <div class="price-breakdown">${formatDetailedPrice(item)}</div>
+                            </div>
+                            ` : ''}
+                            <div class="cart-item-price-total">
+                                <div class="price-total">${formatPrice(item.price)} × ${item.quantity} = ${formatPrice(itemTotal)}</div>
+                            </div>
                         </div>
                     `;
                     
@@ -10299,7 +10370,26 @@
                 
                 const serviceCharge = subtotal * (serviceChargePercentage / 100);
                 const tax = (subtotal + serviceCharge) * (vatPercentage / 100);
-                const total = subtotal + serviceCharge + tax;
+                
+                // Calculate discount if promo is applied
+                const discountAmount = state.appliedPromo ? calculateDiscountAmount(subtotal, state.appliedPromo) : 0;
+                const total = subtotal + serviceCharge + tax - discountAmount;
+                
+                // Add promo code section before cart summary
+                const promoSection = document.createElement('div');
+                promoSection.className = 'promo-code-section';
+                promoSection.innerHTML = `
+                    <h4>${translate('promo_code')}</h4>
+                    <div id="promo-code-container">
+                        <div class="promo-code-input-group">
+                            <input type="text" class="promo-code-input" id="promo-code-input" placeholder="${translate('promo_code')}" maxlength="20">
+                            <button class="apply-promo-btn" id="apply-promo-btn">${translate('apply_promo')}</button>
+                        </div>
+                        <div id="promo-status"></div>
+                    </div>
+                `;
+                
+                elements.cartContainer.appendChild(promoSection);
                 
                 const cartSummary = document.createElement('div');
                 cartSummary.className = 'cart-summary';
@@ -10320,6 +10410,12 @@
                         <span>${formatPrice(tax)}</span>
                     </div>
                     ` : ''}
+                    ${state.appliedPromo ? `
+                    <div class="summary-row discount-row">
+                        <span>${translate('discount')} (${state.appliedPromo.code}):</span>
+                        <span>-${formatPrice(discountAmount)}</span>
+                    </div>
+                    ` : ''}
                     <div class="summary-row summary-total">
                         <span>${translate('total')}:</span>
                         <span>${formatPrice(total)}</span>
@@ -10331,6 +10427,11 @@
                 
                 // Attach event listeners using our robust function
                 attachCartEventListeners();
+                
+                // Add promo code functionality
+                setTimeout(() => {
+                    setupPromoCodeFunctionality();
+                }, 100);
                     }
                     
                     // Remove skeleton class after content is loaded
@@ -10376,10 +10477,6 @@
                         
                         <div id="checkout-details">
                             <!-- Dynamic content based on order type -->
-                        </div>
-                        
-                        <div class="checkout-actions">
-                            <button class="btn" id="place-order-btn">${translate('place_order')}</button>
                         </div>
                     `;
                     
@@ -10441,7 +10538,9 @@
                             <h3>${translate('takeaway')} ${translate('details')}</h3>
                             <div class="form-group">
                                 <label class="form-label">${translate('pickup_time')}</label>
-                                <input type="datetime-local" class="form-input" id="pickup-time">
+                                <input type="time" class="form-input" id="pickup-time-input">
+                                <input type="hidden" id="pickup-time" name="pickup-time">
+                                <div class="pickup-time-display" id="pickup-time-display"></div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">${translate('your_name')}</label>
@@ -10477,18 +10576,6 @@
                 detailsContainer.innerHTML += `
                     <h3>${translate('payment')} ${translate('information')}</h3>
                     
-                    <!-- Promo Code Section -->
-                    <div class="promo-code-section">
-                        <h4>${translate('promo_code')}</h4>
-                        <div id="promo-code-container">
-                            <div class="promo-code-input-group">
-                                <input type="text" class="promo-code-input" id="promo-code-input" placeholder="${translate('promo_code')}" maxlength="20">
-                                <button class="apply-promo-btn" id="apply-promo-btn">${translate('apply_promo')}</button>
-                            </div>
-                            <div id="promo-status"></div>
-                        </div>
-                    </div>
-                    
                     <div class="form-group">
                         <label class="form-label">${translate('payment_method')}</label>
                         <select class="form-select" id="payment-method">
@@ -10503,6 +10590,13 @@
                     </div>
                 `;
                 
+                // Setup pickup time functionality if it's takeaway order
+                if (orderType === 'takeaway') {
+                    setTimeout(() => {
+                        setupPickupTime();
+                    }, 100);
+                }
+                
                 // Add promo code functionality
                 setTimeout(() => {
                     setupPromoCodeFunctionality();
@@ -10510,12 +10604,6 @@
                 
                 // Render order summary
                 renderCheckoutOrderSummary();
-                
-                // Set up place order button
-                const placeOrderBtn = document.getElementById('place-order-btn');
-                if (placeOrderBtn) {
-                    placeOrderBtn.addEventListener('click', placeOrder);
-                }
             }
             
             function setupPromoCodeFunctionality() {
@@ -10754,6 +10842,11 @@
                     // Update order summary if it exists
                     updateOrderSummary();
                     
+                    // Also update cart summary if we're on cart page
+                    if (state.currentView === 'cart') {
+                        updateCartSummaryUI();
+                    }
+                    
                     // Show success toast as fallback
                     showToast(`Promo code "${promoCode}" applied successfully!`);
                     
@@ -10773,6 +10866,10 @@
                 state.appliedPromo = null;
                 updatePromoCodeSection();
                 updateOrderSummary();
+                // Also update cart summary if we're on cart page
+                if (state.currentView === 'cart') {
+                    updateCartSummaryUI();
+                }
             }
             
             function showPromoStatus(type, message) {
@@ -10784,6 +10881,19 @@
             
             function calculateCartSubtotal() {
                 return state.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            }
+            
+            function calculateDiscountAmount(subtotal, promo) {
+                let discountAmount = 0;
+                if (promo.type === 'PERCENTAGE') {
+                    discountAmount = (subtotal * promo.value) / 100;
+                    if (promo.max_discount_amount && discountAmount > promo.max_discount_amount) {
+                        discountAmount = promo.max_discount_amount;
+                    }
+                } else if (promo.type === 'FIXED_AMOUNT') {
+                    discountAmount = promo.value;
+                }
+                return discountAmount;
             }
             
             function updateOrderSummary() {
@@ -10856,7 +10966,16 @@
                         <span>${translate('total')}:</span>
                         <span>${formatPrice(total)}</span>
                     </div>
+                    <div class="checkout-actions">
+                        <button class="btn" id="place-order-btn">${translate('place_order')}</button>
+                    </div>
                 `;
+                
+                // Set up place order button event listener
+                const placeOrderBtn = document.getElementById('place-order-btn');
+                if (placeOrderBtn) {
+                    placeOrderBtn.addEventListener('click', placeOrder);
+                }
             }
             
             // Helper functions to get charge percentages from order data
@@ -12537,7 +12656,10 @@
                 
                 const serviceCharge = subtotal * (serviceChargePercentage / 100);
                 const tax = (subtotal + serviceCharge) * (vatPercentage / 100);
-                const total = subtotal + serviceCharge + tax;
+                
+                // Calculate discount if promo is applied
+                const discountAmount = state.appliedPromo ? calculateDiscountAmount(subtotal, state.appliedPromo) : 0;
+                const total = subtotal + serviceCharge + tax - discountAmount;
                 
                 // Update summary HTML
                 cartSummary.innerHTML = `
@@ -12555,6 +12677,12 @@
                     <div class="summary-row">
                         <span>${translate('tax')} (${vatPercentage}%):</span>
                         <span>${formatPrice(tax)}</span>
+                    </div>
+                    ` : ''}
+                    ${state.appliedPromo ? `
+                    <div class="summary-row discount-row">
+                        <span>${translate('discount')} (${state.appliedPromo.code}):</span>
+                        <span>-${formatPrice(discountAmount)}</span>
                     </div>
                     ` : ''}
                     <div class="summary-row summary-total">
@@ -13281,8 +13409,215 @@
                 return apiCustomizations;
             }
             
+            // Validate checkout fields based on order type
+            function validateCheckoutFields() {
+                const orderType = document.querySelector('.order-type-btn.active');
+                if (!orderType) {
+                    return { valid: false, message: 'Please select an order type' };
+                }
+                
+                const type = orderType.getAttribute('data-type');
+                const missingFields = [];
+                
+                switch(type) {
+                    case 'dine-in':
+                        const tableNumber = document.getElementById('table-number');
+                        if (!tableNumber || !tableNumber.value) {
+                            missingFields.push('Table Number');
+                        }
+                        break;
+                        
+                    case 'takeaway':
+                        const customerName = document.getElementById('customer-name');
+                        const customerPhone = document.getElementById('customer-phone');
+                        const pickupTime = document.getElementById('pickup-time'); // Hidden field
+                        
+                        if (!customerName || !customerName.value.trim()) {
+                            missingFields.push('Customer Name');
+                        }
+                        if (!customerPhone || !customerPhone.value.trim()) {
+                            missingFields.push('Phone Number');
+                        }
+                        if (!pickupTime || !pickupTime.value) {
+                            missingFields.push('Pickup Time');
+                        }
+                        break;
+                        
+                    case 'delivery':
+                        const deliveryCustomerName = document.getElementById('customer-name');
+                        const deliveryCustomerPhone = document.getElementById('customer-phone');
+                        const deliveryAddress = document.getElementById('delivery-address');
+                        
+                        if (!deliveryCustomerName || !deliveryCustomerName.value.trim()) {
+                            missingFields.push('Customer Name');
+                        }
+                        if (!deliveryCustomerPhone || !deliveryCustomerPhone.value.trim()) {
+                            missingFields.push('Phone Number');
+                        }
+                        if (!deliveryAddress || !deliveryAddress.value.trim()) {
+                            missingFields.push('Delivery Address');
+                        }
+                        break;
+                }
+                
+                // Validate payment method (required for all order types)
+                const paymentMethod = document.getElementById('payment-method');
+                if (!paymentMethod || !paymentMethod.value) {
+                    missingFields.push('Payment Method');
+                }
+                
+                if (missingFields.length > 0) {
+                    const fieldList = missingFields.join(', ');
+                    return { 
+                        valid: false, 
+                        message: `Please fill in the following required fields: ${fieldList}` 
+                    };
+                }
+                
+                return { valid: true };
+            }
+            
+            // Setup pickup time functionality
+            function setupPickupTime() {
+                const timeInput = document.getElementById('pickup-time-input');
+                const hiddenInput = document.getElementById('pickup-time');
+                const display = document.getElementById('pickup-time-display');
+                
+                if (timeInput) {
+                    // Set minimum time to current time
+                    const now = new Date();
+                    const currentHour = now.getHours().toString().padStart(2, '0');
+                    const currentMinute = now.getMinutes().toString().padStart(2, '0');
+                    const minTime = `${currentHour}:${currentMinute}`;
+                    timeInput.min = minTime;
+                    
+                    // Add click event to ensure time picker appears
+                    timeInput.addEventListener('click', function() {
+                        // Force the time picker to show
+                        this.showPicker();
+                    });
+                    
+                    // Add input event to validate time selection
+                    timeInput.addEventListener('input', function() {
+                        validateAndUpdateTime(this);
+                    });
+                    
+                    // Add change event for final validation
+                    timeInput.addEventListener('change', function() {
+                        validateAndUpdateTime(this);
+                    });
+                    
+                    // Function to validate and update time
+                    function validateAndUpdateTime(input) {
+                        const selectedTime = input.value;
+                        if (selectedTime) {
+                            // Validate that selected time is not in the past
+                            const now = new Date();
+                            const selectedDateTime = new Date();
+                            const [hours, minutes] = selectedTime.split(':');
+                            selectedDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                            
+                            if (selectedDateTime <= now) {
+                                // If selected time is in the past or now, reset to minimum time
+                                input.value = minTime;
+                                const today = new Date();
+                                const dateStr = today.toISOString().split('T')[0];
+                                const datetimeStr = `${dateStr}T${minTime}`;
+                                hiddenInput.value = datetimeStr;
+                                
+                                // Show user-friendly display
+                                const dateObj = new Date(datetimeStr);
+                                updateTimeDisplay(dateObj);
+                                
+                                // Show warning message
+                                showTimeWarning();
+                            } else {
+                                // Valid future time selected
+                                const today = new Date();
+                                const dateStr = today.toISOString().split('T')[0];
+                                const datetimeStr = `${dateStr}T${selectedTime}`;
+                                hiddenInput.value = datetimeStr;
+                                
+                                // Show user-friendly display
+                                const dateObj = new Date(datetimeStr);
+                                updateTimeDisplay(dateObj);
+                            }
+                        } else {
+                            hiddenInput.value = '';
+                            display.textContent = '';
+                        }
+                    }
+                    
+                    // Function to update time display
+                    function updateTimeDisplay(dateObj) {
+                        const options = { 
+                            weekday: 'short', 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric',
+                            hour: '2-digit', 
+                            minute: '2-digit'
+                        };
+                        display.textContent = `📅 Pickup: ${dateObj.toLocaleDateString('en-US', options)}`;
+                        display.style.color = 'var(--uber-green)';
+                        display.style.fontWeight = '600';
+                        display.style.marginTop = 'var(--spacing-4)';
+                        display.style.fontSize = 'var(--font-size-14)';
+                    }
+                    
+                    // Function to show time warning
+                    function showTimeWarning() {
+                        const warning = document.createElement('div');
+                        warning.textContent = '⚠️ Please select a future time for pickup';
+                        warning.style.color = 'var(--uber-red)';
+                        warning.style.fontSize = 'var(--font-size-12)';
+                        warning.style.marginTop = 'var(--spacing-4)';
+                        warning.style.fontWeight = '500';
+                        
+                        // Remove any existing warning
+                        const existingWarning = display.parentNode.querySelector('.time-warning');
+                        if (existingWarning) {
+                            existingWarning.remove();
+                        }
+                        
+                        // Add new warning
+                        warning.className = 'time-warning';
+                        display.parentNode.insertBefore(warning, display.nextSibling);
+                        
+                        // Remove warning after 3 seconds
+                        setTimeout(() => {
+                            if (warning.parentNode) {
+                                warning.remove();
+                            }
+                        }, 3000);
+                    }
+                    
+                    // Add placeholder text to guide user
+                    timeInput.placeholder = 'Select pickup time';
+                    timeInput.style.cursor = 'pointer';
+                    
+                    // Add focus event to enhance UX
+                    timeInput.addEventListener('focus', function() {
+                        this.style.borderColor = 'var(--uber-green)';
+                        this.style.boxShadow = '0 0 0 3px rgba(6, 193, 103, 0.1)';
+                    });
+                    
+                    timeInput.addEventListener('blur', function() {
+                        this.style.borderColor = '';
+                        this.style.boxShadow = '';
+                    });
+                }
+            }
+            
             // Order placement
             async function placeOrder() {
+                // Validate required fields based on order type
+                const validation = validateCheckoutFields();
+                if (!validation.valid) {
+                    showError(validation.message);
+                    return;
+                }
+                
                 // Ensure we have a branch selected
                 const hasBranch = await ensureBranchSelected();
                 if (!hasBranch) {
@@ -13320,7 +13655,7 @@
                         orderData.customer_name = customerName ? customerName.value : '';
                         const customerPhone = document.getElementById('customer-phone');
                         orderData.customer_phone = customerPhone ? customerPhone.value : '';
-                        const pickupTime = document.getElementById('pickup-time');
+                        const pickupTime = document.getElementById('pickup-time'); // Hidden field
                         orderData.pickup_time = pickupTime ? pickupTime.value : '';
                         break;
                     case 'delivery':
