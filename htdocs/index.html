@@ -1696,6 +1696,13 @@
         
         /* Mobile (576px and below) */
         @media (max-width: 576px) {
+		    
+			.menu-item-image-container {
+        height: 300px;
+    }
+	        .item-image-section {
+                height: 300px;
+            }
             .menu-search {
                 margin-bottom: var(--spacing-20);
             }
@@ -3460,7 +3467,7 @@
         
         .menu-item-image-container {
             position: relative;
-            height: 307px;
+            height: 345px;
             overflow: hidden;
         }
         
@@ -4156,7 +4163,7 @@
         
         .item-image-section {
             position: relative;
-            height: 250px;
+            height: 460px;
             border-radius: var(--radius-12);
             overflow: hidden;
         }
@@ -6401,7 +6408,7 @@
             }
             
             .menu-item-image-container {
-                height: 230px;
+                height: 340px;
             }
             
             .order-type-selector {
@@ -6447,7 +6454,7 @@
             }
             
             .item-image-section {
-                height: 200px;
+                height: 250px;
             }
             
             .item-name {
@@ -6462,8 +6469,16 @@
                 grid-template-columns: 1fr;
             }
         }
-        
+			
+			
         @media (max-width: 480px) {
+		    .menu-item-image-container {
+        height: 260px;
+    }       
+	        .item-image-section {
+                height: 280px;
+            }
+		
             .menu-items-grid {
                 grid-template-columns: 1fr;
             }
@@ -8004,7 +8019,13 @@
                             
                             switch(page) {
                                 case 'menu':
-                                    loadMenu(branch.branch_id);
+                                    // Check if this is an item detail URL: #/{branch-name}/menu/item/{branch_menu_id}
+                                    if (parts.length >= 4 && parts[2] === 'item') {
+                                        const branchMenuId = parts[3];
+                                        loadItemById(branch.branch_id, branchMenuId);
+                                    } else {
+                                        loadMenu(branch.branch_id);
+                                    }
                                     break;
                                 case 'cart':
                                     showView('cart');
@@ -8013,6 +8034,16 @@
                                 case 'checkout':
                                     showView('checkout');
                                     renderCheckout();
+                                    break;
+                                case 'item':
+                                    // Legacy support for old format: #/{branch-name}/item/{branch_menu_id}
+                                    if (parts.length >= 3) {
+                                        const branchMenuId = parts[2];
+                                        loadItemById(branch.branch_id, branchMenuId);
+                                    } else {
+                                        showError('Item ID not provided');
+                                        loadMenu(branch.branch_id);
+                                    }
                                     break;
                                 default:
                                     console.warn('Unknown page:', page);
@@ -8046,10 +8077,33 @@
                                     showError('Failed to load branch data');
                                 });
                             } else {
-                                loadMenu(param);
+                                // Check if we already have menu data for this branch
+                                const targetBranchId = parseInt(param, 10);
+                                const hasCurrentMenuData = state.menuData && state.menuData.length > 0 && 
+                                                          state.currentBranch && 
+                                                          state.currentBranch.branch_id === targetBranchId;
+                                
+                                if (hasCurrentMenuData) {
+                                    // We already have the menu data, just show the view
+                                    showView('menu');
+                                    renderMenuContentArea('all');
+                                } else {
+                                    // Load the menu data
+                                    loadMenu(param);
+                                }
                             }
                         } else if (state.currentBranch) {
-                            loadMenu(state.currentBranch.branch_id);
+                            // Check if we already have menu data for the current branch
+                            const hasCurrentMenuData = state.menuData && state.menuData.length > 0;
+                            
+                            if (hasCurrentMenuData) {
+                                // We already have the menu data, just show the view
+                                showView('menu');
+                                renderMenuContentArea('all');
+                            } else {
+                                // Load the menu data
+                                loadMenu(state.currentBranch.branch_id);
+                            }
                         } else {
                             showView('home');
                         }
@@ -10775,6 +10829,120 @@
                 }, 300); // Minimum 300ms delay to show skeleton
             }
             
+            // Item Detail Route Handler
+            async function loadItemById(branchId, branchMenuId) {
+                try {
+                    // Check if we already have menu data for this branch
+                    let menuData = state.menuData;
+                    let needsMenuLoad = !menuData || menuData.length === 0;
+                    
+                    // If we don't have menu data or it's for a different branch, load it
+                    if (needsMenuLoad || (state.currentBranch && state.currentBranch.branch_id != branchId)) {
+                        // Show loading state only if we need to load data
+                        if (needsMenuLoad) {
+                            showView('menu');
+                            renderMenuContentSkeletons();
+                        }
+                        
+                        // Load menu data for the branch
+                        const menuDataResponse = await apiService.getBranchMenu(branchId);
+                        menuData = menuDataResponse.data || menuDataResponse;
+                        
+                        // Store menu data in state
+                        state.menuData = menuData;
+                        
+                        // Ensure all items have the correct branch_id set (consistent with loadMenu function)
+                        menuData.forEach(category => {
+                          if (category.items && Array.isArray(category.items)) {
+                           category.items.forEach(item => {
+                            // We use parseInt to ensure the ID is a number, preventing future type issues.
+                            item.branch_id = parseInt(branchId, 10);
+                           });
+                          }
+                        });
+                    }
+                    
+                    // Find the specific item in the menu data
+                    let targetItem = null;
+                    for (const category of menuData) {
+                        if (category.items && Array.isArray(category.items)) {
+                            const item = category.items.find(item => item.branch_menu_id == branchMenuId);
+                            if (item) {
+                                targetItem = item;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (targetItem) {
+                        // Double-check that the target item has the correct branch_id set
+                        targetItem.branch_id = parseInt(branchId, 10);
+                        
+                        // Set current branch (only if different from current)
+                        const itemBranch = state.branches.find(branch => branch.branch_id == branchId);
+                        if (itemBranch && (!state.currentBranch || state.currentBranch.branch_id != branchId)) {
+                            const branchWithSettings = await ensureBranchSettings(itemBranch);
+                            state.currentBranch = branchWithSettings;
+                            updateBranchNameDisplays();
+                            updateCurrentCart();
+                            updateCartUI();
+                        }
+                        
+                        // Only render menu if it wasn't already visible
+                        if (state.currentView !== 'menu') {
+                            showView('menu');
+                            // Only render if we just loaded the menu data
+                            if (needsMenuLoad) {
+                                renderMenuContentArea('all');
+                            }
+                        }
+                        
+                        // Then show the item detail modal
+                        await showItemDetailModal(targetItem);
+                        
+                        return true;
+                    } else {
+                        showError('Item not found');
+                        showView('menu');
+                        if (state.currentBranch) {
+                            loadMenu(state.currentBranch.branch_id);
+                        }
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('Failed to load item:', error);
+                    showError('Failed to load item details');
+                    showView('menu');
+                    if (state.currentBranch) {
+                        loadMenu(state.currentBranch.branch_id);
+                    }
+                    return false;
+                }
+            }
+            
+            // Create URL for item detail
+            function createItemUrl(branch, branchMenuId) {
+                const branchUrlName = getBranchUrlName(branch);
+                
+                // For URLs with Unicode characters, we should encode them
+                if (/[\u0980-\u09FF\u0800-\uFFFF]/.test(branchUrlName)) {
+                    const encodedName = encodeUrlName(branchUrlName);
+                    return `#/${encodedName}/menu/item/${branchMenuId}`;
+                }
+                
+                return `#/${branchUrlName}/menu/item/${branchMenuId}`;
+            }
+            
+            // Update URL to reflect current item modal
+            function updateUrlForItem(item) {
+                if (item && item.branch_id && state.currentBranch) {
+                    const newUrl = createItemUrl(state.currentBranch, item.branch_menu_id);
+                    if (window.location.hash !== newUrl) {
+                        window.location.hash = newUrl;
+                    }
+                }
+            }
+            
             // Item Detail Modal
             async function showItemDetailModal(item) {
                 state.currentItem = item;
@@ -10798,6 +10966,9 @@
                         updateBranchNameDisplays();
                         updateCurrentCart();
                         updateCartUI();
+                        
+                        // Update URL to reflect the current item (for bookmarking/sharing)
+                        updateUrlForItem(item);
                     } else {
                         console.warn('Branch not found for item branch_id:', item.branch_id);
                     }
@@ -11200,6 +11371,17 @@
                 updateCurrentCart();
                 updateCartUI();
                 hideModal('item-detail-modal');
+                
+                // Update URL to go back to menu after adding to cart
+                // Use replaceState to avoid triggering router navigation
+                if (state.currentBranch) {
+                    const menuUrl = createBranchUrl(state.currentBranch, 'menu');
+                    if (window.location.hash !== menuUrl) {
+                        // Use replaceState instead of hash assignment to avoid router trigger
+                        history.replaceState(null, null, menuUrl);
+                    }
+                }
+                
                 showToast(translate('item_added'));
             }
             
@@ -12431,6 +12613,16 @@
                     btn.addEventListener('click', () => {
                         const modalId = btn.getAttribute('data-modal');
                         hideModal(modalId);
+                        
+                        // If closing item detail modal, update URL to go back to menu
+                        // Use replaceState to avoid triggering router navigation
+                        if (modalId === 'item-detail-modal' && state.currentBranch) {
+                            const menuUrl = createBranchUrl(state.currentBranch, 'menu');
+                            if (window.location.hash !== menuUrl) {
+                                // Use replaceState instead of hash assignment to avoid router trigger
+                                history.replaceState(null, null, menuUrl);
+                            }
+                        }
                     });
                 });
                 
