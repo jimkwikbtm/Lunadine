@@ -3886,6 +3886,80 @@
                 padding: 0 var(--spacing-12);
             }
             
+            /* ===== MODERN CARD-BASED CATEGORY TABS MOBILE STYLES ===== */
+            .category-tabs-container {
+                margin-bottom: var(--spacing-16);
+                padding: 1px;
+                top: 70px;
+            }
+            
+            .category-tabs-container.sticky {
+                top: 60px;
+            }
+            
+            .category-tabs {
+                gap: var(--spacing-16); /* Increased spacing between buttons */
+                padding: var(--spacing-12) 0; /* Added vertical padding for better spacing */
+            }
+            
+            .category-tabs-wrapper {
+                padding: var(--spacing-12) var(--spacing-12); /* Increased padding for better spacing */
+            }
+            
+            /* Adjust scroll indicators for mobile */
+            .category-tabs-wrapper::before,
+            .category-tabs-wrapper::after {
+                width: var(--spacing-24);
+            }
+            
+            button.category-tab {
+                min-height: auto !important; /* Allow auto height based on content */
+                min-width: 90px !important; /* Slightly increased minimum width */
+                max-height: none !important; /* Remove max-height constraint */
+                padding: var(--spacing-12) var(--spacing-14) !important; /* Increased padding for better spacing */
+                overflow: visible !important;
+                height: auto !important; /* Allow height to adjust automatically */
+            }
+            
+            button.category-tab .category-icon {
+                font-size: var(--font-size-18) !important;
+            }
+            
+            button.category-tab .tab-text {
+                font-size: var(--font-size-11);
+            }
+            
+            button.category-tab .item-count {
+                min-width: 20px;
+                height: 20px;
+                font-size: var(--font-size-9);
+                top: 8px;
+                right: -8px;
+                padding: 0 var(--spacing-6);
+                border-width: 1.5px;
+            }
+            
+            button.category-tab.active .item-count {
+                top: -10px;
+                right: -10px;
+                min-width: 22px;
+                height: 22px;
+            }
+            
+            button.category-tab.new::after {
+                top: -8px;
+                left: -8px;
+                font-size: var(--font-size-8);
+                padding: 2px var(--spacing-6);
+                border-width: 1.5px;
+            }
+            
+            button.category-tab.active.new::after {
+                top: -10px;
+                left: -10px;
+                padding: 3px var(--spacing-8);
+            }
+            
             /* Header Styles */
             .header .container {
                 height: 56px;
@@ -4658,7 +4732,7 @@
             
             /* ===== MODERN CARD-BASED CATEGORY TABS RESPONSIVE STYLES ===== */
             .category-tabs-container {
-                margin-bottom: var(--spacing-12);
+                margin-bottom: var(--spacing-16);
                 padding: 1px;
                 top: 70px;
             }
@@ -4668,11 +4742,12 @@
             }
             
             .category-tabs {
-                gap: var(--spacing-8);
+                gap: var(--spacing-16); /* Increased spacing between buttons */
+                
             }
             
             .category-tabs-wrapper {
-                padding: 0 var(--spacing-8);
+                padding: var(--spacing-10) var(--spacing-10); /* Increased padding for better spacing */
             }
             
             /* Adjust scroll indicators for responsive */
@@ -4682,11 +4757,12 @@
             }
             
             button.category-tab {
-                min-height: 48px !important;
-                min-width: 80px !important;
-                max-height: 48px !important;
-                padding: var(--spacing-6) var(--spacing-10) !important;
+                min-height: auto !important; /* Allow auto height based on content */
+                min-width: 85px !important; /* Slightly increased minimum width */
+                max-height: none !important; /* Remove max-height constraint */
+                padding: var(--spacing-10) var(--spacing-12) !important; /* Increased padding for better spacing */
                 overflow: visible !important;
+                height: auto !important; /* Allow height to adjust automatically */
             }
             
             button.category-tab .category-icon {
@@ -4875,14 +4951,14 @@
                 height: 16px;
                 font-size: var(--font-size-7);
                 top: 8px;
-                right: -8px;
+                right: -4px;
                 padding: 0 var(--spacing-4);
                 border-width: 1px;
             }
             
             button.category-tab.active .item-count {
                 top: 10px;
-                right: 2px;
+                right: -6px;
                 min-width: 18px;
                 height: 18px;
             }
@@ -4902,7 +4978,7 @@
             }
             
             .category-tabs {
-                gap: var(--spacing-6);
+                gap: var(--spacing-16);
             }
             
             .category-tabs-wrapper {
