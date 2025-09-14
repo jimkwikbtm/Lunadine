@@ -1190,184 +1190,425 @@
         
   
         
-        /* ===== STICKY CATEGORY TABS ===== */
+        /* ===== MODERN CARD-BASED CATEGORY TABS ===== */
+        /* Category Tabs Container */
         .category-tabs-container {
-            margin-bottom: var(--spacing-32);
+            width: 100%;
+            margin: 0 auto;
+            margin-bottom: var(--spacing-16);
             position: sticky;
             top: 80px;
             z-index: 100;
-            background: var(--uber-white);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: var(--spacing-16) 0;
-            border-bottom: 1px solid var(--uber-gray-200);
-            box-shadow: var(--shadow-1);
-            transition: var(--transition-normal);
+            background: linear-gradient(135deg, var(--uber-white), rgba(255, 255, 255, 0.98));
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 1px;
+            border-radius: var(--radius-20);
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.06),
+                0 1px 8px rgba(0, 0, 0, 0.03),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transition: all var(--transition-normal);
             display: block !important;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
         
         .category-tabs-container.sticky {
-            background: var(--uber-white);
-            box-shadow: var(--shadow-2);
+            background: linear-gradient(135deg, var(--uber-white), rgba(255, 255, 255, 0.99));
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                0 2px 12px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
             top: 64px;
+            border-color: rgba(255, 255, 255, 0.9);
         }
         
         .category-tabs-wrapper {
             position: relative;
             overflow: hidden;
             padding: 0 var(--spacing-16);
+            border-radius: var(--radius-20);
+            background: linear-gradient(135deg, var(--uber-white), #fafbfc);
+            border: 1px solid rgba(0, 0, 0, 0.04);
         }
         
+        /* Add scroll indicators */
+        .category-tabs-wrapper::before,
+        .category-tabs-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: var(--spacing-24);
+            z-index: 2;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .category-tabs-wrapper::before {
+            left: 0;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(255, 255, 255, 0.6) 50%, 
+                transparent 100%);
+        }
+        
+        .category-tabs-wrapper::after {
+            right: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.6) 50%, 
+                rgba(255, 255, 255, 0.9) 100%);
+        }
+        
+        /* Hide indicators when not needed */
+        .category-tabs-wrapper.no-scroll-left::before {
+            opacity: 0;
+        }
+        
+        .category-tabs-wrapper.no-scroll-right::after {
+            opacity: 0;
+        }
+        
+        /* Category Tabs */
         .category-tabs {
             display: flex;
-            gap: var(--spacing-8);
+            flex-wrap: nowrap;
             overflow-x: auto;
+            gap: var(--spacing-12);
+            padding: var(--spacing-10) 0;
             scrollbar-width: none;
-            -ms-overflow-style: none;
-            padding: var(--spacing-8) 0;
+            scrollbar-color: transparent transparent;
+            position: relative;
+            z-index: 1;
+            /* Smooth scrolling */
             scroll-behavior: smooth;
+            /* Hide scrollbar */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         
         .category-tabs::-webkit-scrollbar {
             display: none;
         }
         
-        .category-tab {
-            flex-shrink: 0;
-            padding: var(--spacing-12) var(--spacing-20);
-            background: var(--uber-white);
-            border: 2px solid var(--uber-gray-200);
-            border-radius: var(--radius-full);
-            font-size: var(--font-size-14);
-            font-weight: 500;
-            color: var(--uber-gray-700);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            white-space: nowrap;
-            position: relative;
-            overflow: hidden;
-            text-transform: capitalize;
-            letter-spacing: 0.2px;
+        /* Add subtle scroll animation hint */
+        @keyframes scrollHint {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-5px); }
         }
         
-        .category-tab::before {
+        .category-tabs.scroll-hint {
+            animation: scrollHint 2s ease-in-out infinite;
+        }
+        
+        /* Modern Card-Based Tab Buttons - Enhanced */
+        button.category-tab {
+            background: linear-gradient(145deg, var(--uber-white), #f8f9fa) !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            border-radius: var(--radius-16) !important;
+            padding: var(--spacing-12) var(--spacing-16) !important;
+            cursor: pointer;
+            font-size: var(--font-size-13) !important;
+            font-weight: 600;
+            color: var(--uber-gray-700) !important;
+            transition: all 0.3s cubic-bezier(0.34, 0, 0.1, 0.99) !important;
+            white-space: nowrap;
+            position: relative;
+            flex-shrink: 0;
+            min-height: 56px !important;
+            min-width: 100px !important;
+            max-height: 56px !important;
+            display: inline-flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-6);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                0 1px 3px rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: visible !important;
+            /* Ensure badges are not clipped */
+            transform: translateZ(0);
+        }
+        
+        button.category-tab::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--uber-green);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform var(--transition-normal);
-            z-index: -1;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4));
+            border-radius: var(--radius-16);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
         
-        .category-tab:hover {
-            border-color: var(--uber-green-light);
-            color: var(--uber-green-dark);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-2);
-        }
-        
-        .category-tab.active {
-            background: var(--uber-green);
-            border-color: var(--uber-green);
-            color: var(--uber-white);
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(6, 193, 103, 0.2);
-            transform: translateY(-1px);
-        }
-        
-        .category-tab.active::before {
-            transform: scaleX(1);
-        }
-        
-        .category-tab .item-count {
-            background: var(--uber-gray-200);
-            color: var(--uber-gray-700);
-            padding: var(--spacing-2) var(--spacing-6);
-            border-radius: var(--radius-full);
-            font-size: var(--font-size-11);
-            margin-left: var(--spacing-8);
-            font-weight: 600;
-            transition: all var(--transition-fast);
-        }
-        
-        .category-tab.active .item-count {
-            background: rgba(255, 255, 255, 0.25);
-            color: var(--uber-white);
-        }
-        
-        .category-tab .category-icon {
-            margin-right: var(--spacing-6);
-            font-size: var(--font-size-14);
-            opacity: 0.7;
-            transition: all var(--transition-fast);
-        }
-        
-        .category-tab.active .category-icon {
+        button.category-tab:hover::before {
             opacity: 1;
         }
         
-        .category-tab.new::after {
-            content: 'New';
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: var(--uber-red);
-            color: var(--uber-white);
-            font-size: var(--font-size-9);
-            padding: var(--spacing-1) var(--spacing-4);
-            border-radius: var(--radius-4);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 6px rgba(255, 65, 54, 0.3);
-            z-index: 2;
+        button.category-tab:hover {
+            transform: translateY(-3px) scale(1.03) !important;
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.1),
+                0 4px 12px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+            border-color: var(--uber-green-light) !important;
+            color: var(--uber-gray-900) !important;
+            background: linear-gradient(145deg, var(--uber-white), #f0fff9) !important;
         }
         
-        .category-tabs-scroll-btn {
+        /* Enhanced Active State for ALL Category Tabs */
+        button.category-tab.active {
+            background: linear-gradient(145deg, #f0fff9, #e6fcf5) !important;
+            border-color: var(--uber-green) !important;
+            color: var(--uber-green) !important;
+            font-weight: 700;
+            transform: translateY(-2px) scale(1.02) !important;
+            box-shadow: 
+                0 6px 20px rgba(6, 193, 103, 0.2),
+                0 3px 12px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                0 0 0 1px rgba(6, 193, 103, 0.1) !important;
+        }
+        
+        button.category-tab.active::before {
+            content: '';
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 36px;
-            height: 36px;
-            background: var(--uber-white);
-            border: 1px solid var(--uber-gray-200);
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(135deg, var(--uber-green), var(--uber-green-light), #7FDD9C);
+            border-radius: var(--radius-16);
+            z-index: -1;
+            opacity: 0.15;
+            animation: activeGlow 2s ease-in-out infinite alternate;
+        }
+        
+        button.category-tab.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(6, 193, 103, 0.1), transparent);
+            border-radius: var(--radius-16);
+            pointer-events: none;
+        }
+        
+        @keyframes activeGlow {
+            from {
+                opacity: 0.1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0.2;
+                transform: scale(1.02);
+            }
+        }
+        
+        /* Category Icon - Enhanced and Refined */
+        button.category-tab .category-icon {
+            font-size: var(--font-size-20) !important;
+            margin-right: 0 !important;
+            opacity: 0.8;
+            transition: all 0.3s cubic-bezier(0.34, 0, 0.1, 0.99) !important;
+            color: var(--uber-gray-600);
+            line-height: 1;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        }
+        
+        button.category-tab:hover .category-icon {
+            opacity: 1;
+            color: var(--uber-green);
+            transform: scale(1.12) translateY(-1px);
+            filter: drop-shadow(0 2px 4px rgba(6, 193, 103, 0.2));
+        }
+        
+        button.category-tab.active .category-icon {
+            opacity: 1;
+            color: var(--uber-green);
+            transform: scale(1.15) translateY(-1px);
+            filter: drop-shadow(0 2px 6px rgba(6, 193, 103, 0.3));
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1.15) translateY(-1px); }
+            50% { transform: scale(1.18) translateY(-1px); }
+        }
+        
+        /* Category Text - Enhanced */
+        button.category-tab .tab-text {
+            font-size: var(--font-size-11);
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+            letter-spacing: 0.2px;
+            transition: all 0.3s ease;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        button.category-tab:hover .tab-text {
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 3px rgba(6, 193, 103, 0.2);
+        }
+        
+        button.category-tab.active .tab-text {
+            letter-spacing: 0.4px;
+            text-shadow: 0 1px 4px rgba(6, 193, 103, 0.3);
+        }
+        
+        /* Item Count Badge - Enhanced */
+        button.category-tab .item-count {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: linear-gradient(135deg, var(--uber-gray-200), #e0e0e0);
+            color: var(--uber-gray-700);
+            padding: 0 var(--spacing-8);
             border-radius: var(--radius-full);
+            font-size: var(--font-size-9);
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.34, 0, 0.1, 0.99);
+            border: 2px solid var(--uber-white);
+            box-shadow: 
+                0 3px 8px rgba(0, 0, 0, 0.15),
+                0 1px 3px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            min-width: 22px;
+            height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            z-index: 2;
-            box-shadow: var(--shadow-2);
-            font-size: var(--font-size-14);
-            color: var(--uber-gray-600);
+            z-index: 10;
+            /* Ensure badge is not clipped by parent border-radius */
+            transform: translateZ(0);
+            /* Add extra margin to prevent clipping */
+            margin: 3px;
+            /* Force hardware acceleration */
+            will-change: transform;
+            /* Ensure proper stacking context */
+            isolation: isolate;
         }
         
-        .category-tabs-scroll-btn:hover {
-            background: var(--uber-green);
-            border-color: var(--uber-green);
+        button.category-tab:hover .item-count {
+            background: linear-gradient(135deg, var(--uber-green-light), var(--uber-green));
             color: var(--uber-white);
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 6px 16px rgba(6, 193, 103, 0.3);
+            transform: scale(1.15) rotate(5deg) translateZ(0);
+            box-shadow: 
+                0 5px 15px rgba(6, 193, 103, 0.4),
+                0 2px 8px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            z-index: 11;
         }
         
-        .category-tabs-scroll-btn.prev {
-            left: var(--spacing-8);
+        button.category-tab.active .item-count {
+            background: linear-gradient(135deg, var(--uber-green), #05a654);
+            color: var(--uber-white);
+            transform: scale(1.2) rotate(3deg) translateZ(0);
+            box-shadow: 
+                0 6px 20px rgba(6, 193, 103, 0.5),
+                0 3px 10px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            animation: badgePulse 2s ease-in-out infinite;
+            z-index: 12;
+            /* Extra clearance for active state */
+            top: -14px;
+            right: -14px;
+            min-width: 24px;
+            height: 24px;
         }
         
-        .category-tabs-scroll-btn.next {
-            right: var(--spacing-8);
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1.15) rotate(3deg); }
+            50% { transform: scale(1.2) rotate(5deg); }
         }
         
-        .category-tabs-scroll-btn.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(-50%) scale(0.8);
+        /* New Badge - Enhanced */
+        button.category-tab.new::after {
+            content: 'New';
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            background: linear-gradient(135deg, var(--uber-red), #ff6b6b, #ff8e8e);
+            color: var(--uber-white);
+            font-size: var(--font-size-8);
+            padding: 3px var(--spacing-8);
+            border-radius: var(--radius-8);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 4px 12px rgba(255, 65, 54, 0.5),
+                0 2px 6px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            z-index: 15;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            animation: newBadgeShimmer 2s ease-in-out infinite;
+            /* Ensure badge is not clipped by parent border-radius */
+            transform: translateZ(0);
+            /* Add extra margin to prevent clipping */
+            margin: 3px;
+            /* Force hardware acceleration */
+            will-change: transform;
+            /* Ensure proper stacking context */
+            isolation: isolate;
+        }
+        
+        /* Special positioning for active + new */
+        button.category-tab.active.new::after {
+            top: -14px;
+            left: -14px;
+            padding: 4px var(--spacing-10);
+            z-index: 16;
+        }
+        
+        @keyframes newBadgeShimmer {
+            0%, 100% { 
+                background: linear-gradient(135deg, var(--uber-red), #ff6b6b);
+                transform: scale(1);
+            }
+            50% { 
+                background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Category Tabs Scroll Buttons - Removed (replaced with marquee effect) */
+        
+        /* Tab Content */
+        .tab-content {
+            position: relative;
+        }
+        
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.4s cubic-bezier(0.34, 0, 0.1, 0.99);
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         /* ===== MAIN CONTENT AREA ===== */
@@ -4405,10 +4646,10 @@
                 grid-template-columns: 1fr;
             }
             
-            /* ===== NEW TABBED LAYOUT RESPONSIVE STYLES ===== */
+            /* ===== MODERN CARD-BASED CATEGORY TABS RESPONSIVE STYLES ===== */
             .category-tabs-container {
-                margin-bottom: var(--spacing-24);
-                padding: var(--spacing-12) 0;
+                margin-bottom: var(--spacing-12);
+                padding: 1px;
                 top: 70px;
             }
             
@@ -4417,23 +4658,64 @@
             }
             
             .category-tabs {
-                gap: var(--spacing-6);
+                gap: var(--spacing-8);
             }
             
-            .category-tab {
-                padding: var(--spacing-8) var(--spacing-12);
-                font-size: var(--font-size-12);
+            .category-tabs-wrapper {
+                padding: 0 var(--spacing-8);
             }
             
-            .category-tab .category-icon {
-                margin-right: var(--spacing-4);
-                font-size: var(--font-size-12);
+            /* Adjust scroll indicators for responsive */
+            .category-tabs-wrapper::before,
+            .category-tabs-wrapper::after {
+                width: var(--spacing-20);
             }
             
-            .category-tab .item-count {
-                margin-left: var(--spacing-4);
+            button.category-tab {
+                min-height: 48px !important;
+                min-width: 80px !important;
+                max-height: 48px !important;
+                padding: var(--spacing-6) var(--spacing-10) !important;
+                overflow: visible !important;
+            }
+            
+            button.category-tab .category-icon {
+                font-size: var(--font-size-16) !important;
+            }
+            
+            button.category-tab .tab-text {
                 font-size: var(--font-size-10);
-                padding: var(--spacing-1) var(--spacing-4);
+            }
+            
+            button.category-tab .item-count {
+                min-width: 18px;
+                height: 18px;
+                font-size: var(--font-size-8);
+                top: -10px;
+                right: -10px;
+                padding: 0 var(--spacing-6);
+                border-width: 1.5px;
+            }
+            
+            button.category-tab.active .item-count {
+                top: -12px;
+                right: -12px;
+                min-width: 20px;
+                height: 20px;
+            }
+            
+            button.category-tab.new::after {
+                top: -10px;
+                left: -10px;
+                font-size: var(--font-size-7);
+                padding: 2px var(--spacing-6);
+                border-width: 1.5px;
+            }
+            
+            button.category-tab.active.new::after {
+                top: -12px;
+                left: -12px;
+                padding: 3px var(--spacing-8);
             }
             
             .category-tabs-scroll-btn {
@@ -4560,6 +4842,76 @@
             .menu-mention-content {
                 flex-direction: row;
                 text-align: left;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            button.category-tab {
+                min-height: 44px !important;
+                min-width: 70px !important;
+                max-height: 44px !important;
+                padding: var(--spacing-4) var(--spacing-8) !important;
+                overflow: visible !important;
+            }
+            
+            button.category-tab .category-icon {
+                font-size: var(--font-size-14) !important;
+            }
+            
+            button.category-tab .tab-text {
+                font-size: var(--font-size-9);
+                letter-spacing: 0;
+            }
+            
+            button.category-tab .item-count {
+                min-width: 16px;
+                height: 16px;
+                font-size: var(--font-size-7);
+                top: -8px;
+                right: -8px;
+                padding: 0 var(--spacing-4);
+                border-width: 1px;
+            }
+            
+            button.category-tab.active .item-count {
+                top: -10px;
+                right: -10px;
+                min-width: 18px;
+                height: 18px;
+            }
+            
+            button.category-tab.new::after {
+                top: -8px;
+                left: -8px;
+                font-size: var(--font-size-7);
+                padding: 2px var(--spacing-4);
+                border-width: 1px;
+            }
+            
+            button.category-tab.active.new::after {
+                top: -10px;
+                left: -10px;
+                padding: 3px var(--spacing-6);
+            }
+            
+            .category-tabs {
+                gap: var(--spacing-6);
+            }
+            
+            .category-tabs-wrapper {
+                padding: 0 var(--spacing-6);
+            }
+            
+            /* Adjust scroll indicators for mobile */
+            .category-tabs-wrapper::before,
+            .category-tabs-wrapper::after {
+                width: var(--spacing-16);
+            }
+            
+            .category-tabs-scroll-btn {
+                width: 24px;
+                height: 24px;
+                font-size: var(--font-size-10);
             }
         }
         
@@ -6869,8 +7221,9 @@
                 
                 const icon = category.icon ? `<i class="${category.icon} category-icon"></i>` : '';
                 const count = category.count > 0 ? `<span class="item-count">${category.count}</span>` : '';
+                const text = `<span class="tab-text">${category.name}</span>`;
                 
-                tab.innerHTML = `${icon}${category.name}${count}`;
+                tab.innerHTML = `${icon}${text}${count}`;
                 
                 tab.addEventListener('click', () => {
                     selectCategoryTab(category.id);
@@ -7048,37 +7401,110 @@
             
             function setupTabScrolling() {
                 const tabsContainer = document.getElementById('category-tabs');
-                const prevBtn = document.getElementById('category-tabs-prev');
-                const nextBtn = document.getElementById('category-tabs-next');
+                const tabsWrapper = document.querySelector('.category-tabs-wrapper');
                 
-                if (!tabsContainer || !prevBtn || !nextBtn) return;
+                if (!tabsContainer || !tabsWrapper) return;
                 
-                const updateScrollButtons = () => {
+                const updateScrollIndicators = () => {
                     const isAtStart = tabsContainer.scrollLeft <= 0;
-                    const isAtEnd = tabsContainer.scrollLeft >= tabsContainer.scrollWidth - tabsContainer.clientWidth;
+                    const isAtEnd = tabsContainer.scrollLeft >= tabsContainer.scrollWidth - tabsContainer.clientWidth - 1; // -1 for rounding
                     
-                    prevBtn.classList.toggle('hidden', isAtStart);
-                    nextBtn.classList.toggle('hidden', isAtEnd);
+                    // Add/remove classes to show/hide scroll indicators
+                    tabsWrapper.classList.toggle('no-scroll-left', isAtStart);
+                    tabsWrapper.classList.toggle('no-scroll-right', isAtEnd);
+                    
+                    // Add scroll hint animation if there's more content to scroll
+                    const canScroll = !isAtStart || !isAtEnd;
+                    tabsContainer.classList.toggle('scroll-hint', canScroll);
                 };
                 
-                prevBtn.addEventListener('click', () => {
-                    tabsContainer.scrollBy({
-                        left: -200,
-                        behavior: 'smooth'
-                    });
+                // Add touch/mouse wheel support for better UX
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+                
+                // Mouse events for desktop
+                tabsContainer.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    startX = e.pageX - tabsContainer.offsetLeft;
+                    scrollLeft = tabsContainer.scrollLeft;
+                    tabsContainer.style.cursor = 'grabbing';
+                    tabsContainer.classList.remove('scroll-hint');
                 });
                 
-                nextBtn.addEventListener('click', () => {
-                    tabsContainer.scrollBy({
-                        left: 200,
-                        behavior: 'smooth'
-                    });
+                tabsContainer.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    tabsContainer.style.cursor = 'grab';
                 });
                 
-                tabsContainer.addEventListener('scroll', updateScrollButtons);
-                window.addEventListener('resize', updateScrollButtons);
+                tabsContainer.addEventListener('mouseup', () => {
+                    isDown = false;
+                    tabsContainer.style.cursor = 'grab';
+                    updateScrollIndicators();
+                });
                 
-                updateScrollButtons(); // Initial call
+                tabsContainer.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - tabsContainer.offsetLeft;
+                    const walk = (x - startX) * 2; // Scroll speed
+                    tabsContainer.scrollLeft = scrollLeft - walk;
+                });
+                
+                // Touch events for mobile
+                let touchStartX = 0;
+                let touchScrollLeft = 0;
+                
+                tabsContainer.addEventListener('touchstart', (e) => {
+                    touchStartX = e.touches[0].clientX;
+                    touchScrollLeft = tabsContainer.scrollLeft;
+                    tabsContainer.classList.remove('scroll-hint');
+                }, { passive: true });
+                
+                tabsContainer.addEventListener('touchmove', (e) => {
+                    const touchX = e.touches[0].clientX;
+                    const walk = (touchStartX - touchX) * 2; // Scroll speed
+                    tabsContainer.scrollLeft = touchScrollLeft + walk;
+                }, { passive: true });
+                
+                tabsContainer.addEventListener('touchend', updateScrollIndicators, { passive: true });
+                
+                // Wheel event for desktop scrolling
+                tabsContainer.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    tabsContainer.scrollLeft += e.deltaY * 0.5; // Adjust scroll speed
+                    updateScrollIndicators();
+                }, { passive: false });
+                
+                // Keyboard navigation
+                tabsContainer.addEventListener('keydown', (e) => {
+                    if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+                    
+                    e.preventDefault();
+                    const scrollAmount = 150;
+                    
+                    if (e.key === 'ArrowLeft') {
+                        tabsContainer.scrollLeft -= scrollAmount;
+                    } else {
+                        tabsContainer.scrollLeft += scrollAmount;
+                    }
+                    
+                    updateScrollIndicators();
+                });
+                
+                // Make tabs container focusable for keyboard navigation
+                tabsContainer.setAttribute('tabindex', '0');
+                tabsContainer.setAttribute('role', 'tablist');
+                
+                // Update indicators on scroll and resize
+                tabsContainer.addEventListener('scroll', updateScrollIndicators);
+                window.addEventListener('resize', updateScrollIndicators);
+                
+                // Initial call
+                updateScrollIndicators();
+                
+                // Set initial cursor style
+                tabsContainer.style.cursor = 'grab';
             }
             
             // Update the existing renderCategories function to only render tabs
