@@ -2118,12 +2118,9 @@
                 try {
                     showToast(translate('loading_menu'));
                     
-                    // Show skeleton views immediately
+                    // Show menu view and comprehensive skeleton
                     showView('menu');
-                    renderMenuItemSkeletons();
-                    renderPromotionSkeletons();
-                    renderCategoryTabsSkeletons();
-                    renderMenuContentSkeletons();
+                    renderCompleteMenuSkeleton();
                     
                     // Load featured branch cover section
                     loadFeaturedBranch();
@@ -2189,6 +2186,11 @@
                     
                     renderCategories();
                     renderMenuItems();
+                    
+                    // Remove skeleton class after content is loaded
+                    setTimeout(() => {
+                        document.getElementById('menu-view').classList.remove('skeleton');
+                    }, 500);
                     
                     // Debug: Check if elements exist
                     setTimeout(() => {
@@ -2337,10 +2339,16 @@
                             <div class="skeleton-image"></div>
                         </div>
                         <div class="branch-content">
-                            <div class="skeleton-text title"></div>
+                            <div class="branch-header">
+                                <div class="skeleton-text title"></div>
+                                <div class="skeleton-badge"></div>
+                            </div>
                             <div class="skeleton-text subtitle"></div>
-                            <div class="skeleton-text"></div>
-                            <div class="skeleton-text small"></div>
+                            <div class="skeleton-text description"></div>
+                            <div class="branch-footer">
+                                <div class="skeleton-text small"></div>
+                                <div class="skeleton-button"></div>
+                            </div>
                         </div>
                     `,
                     menuItem: `
@@ -2348,16 +2356,36 @@
                             <div class="skeleton-image"></div>
                         </div>
                         <div class="menu-item-content">
-                            <div class="skeleton-text title"></div>
-                            <div class="skeleton-text price"></div>
+                            <div class="menu-item-header">
+                                <div class="skeleton-text title"></div>
+                                <div class="skeleton-text price"></div>
+                            </div>
                             <div class="skeleton-text description"></div>
+                            <div class="menu-item-footer">
+                                <div class="prep-time-with-favorite">
+                                    <div class="skeleton-text small"></div>
+                                    <div class="skeleton-icon"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="menu-item-quantity-controller">
+                            <div class="skeleton-button"></div>
                         </div>
                     `,
                     promotion: `
-                        <div class="promotion-image"></div>
+                        <div class="promotion-image-container">
+                            <div class="skeleton-image"></div>
+                        </div>
                         <div class="promotion-content">
-                            <div class="skeleton-text title"></div>
+                            <div class="promotion-header">
+                                <div class="skeleton-text title"></div>
+                                <div class="skeleton-badge"></div>
+                            </div>
                             <div class="skeleton-text description"></div>
+                            <div class="promotion-footer">
+                                <div class="skeleton-text small"></div>
+                                <div class="skeleton-button small"></div>
+                            </div>
                         </div>
                     `,
                     categoryTab: `
@@ -2417,25 +2445,67 @@
                 skeletonSection.className = 'menu-section';
                 skeletonSection.innerHTML = `
                     <div class="menu-section-header">
-                        <div class="skeleton-text section-title"></div>
+                        <div>
+                            <h3 class="menu-section-title">
+                                <div class="skeleton-icon"></div>
+                                <div class="skeleton-text section-title"></div>
+                            </h3>
+                            <div class="skeleton-text subtitle"></div>
+                        </div>
                     </div>
                     <div class="menu-section-items">
                         ${Array(count).fill('').map(() => `
                             <div class="menu-item-card skeleton">
-                                <div class="menu-item-image-container">
-                                    <div class="skeleton-image"></div>
-                                </div>
-                                <div class="menu-item-content">
-                                    <div class="skeleton-text title"></div>
-                                    <div class="skeleton-text price"></div>
-                                    <div class="skeleton-text description"></div>
-                                </div>
+                                ${skeletonRenderer.templates.menuItem}
                             </div>
                         `).join('')}
                     </div>
                 `;
                 
                 contentArea.appendChild(skeletonSection);
+            }
+            
+            // Comprehensive menu skeleton that includes all menu page components
+            function renderCompleteMenuSkeleton() {
+                const menuView = document.getElementById('menu-view');
+                if (!menuView) return;
+                
+                // Add skeleton class to the entire menu view
+                menuView.classList.add('skeleton');
+                
+                // Render individual skeleton components
+                renderMenuSearchSkeleton();
+                renderPromotionSkeletons();
+                renderCategoryTabsSkeletons();
+                renderMenuContentSkeletons(6);
+            }
+            
+            // Search bar skeleton
+            function renderMenuSearchSkeleton() {
+                const searchContainer = document.querySelector('.menu-search-container');
+                if (!searchContainer) return;
+                
+                // Create skeleton overlay for search
+                const searchSkeleton = document.createElement('div');
+                searchSkeleton.className = 'search-skeleton';
+                searchSkeleton.innerHTML = `
+                    <div class="skeleton-search-bar">
+                        <div class="skeleton-icon"></div>
+                        <div class="skeleton-input"></div>
+                        <div class="skeleton-button"></div>
+                    </div>
+                `;
+                
+                // Add skeleton temporarily
+                searchContainer.style.position = 'relative';
+                searchContainer.appendChild(searchSkeleton);
+                
+                // Remove skeleton after content loads
+                setTimeout(() => {
+                    if (searchSkeleton.parentNode) {
+                        searchSkeleton.remove();
+                    }
+                }, 1000);
             }
             
             // Modal skeleton rendering functions
@@ -2497,6 +2567,55 @@
                         <div class="skeleton-input"></div>
                     </div>
                 `;
+                
+                // Load actual content after a delay
+                setTimeout(() => {
+                    renderServiceModalContent();
+                }, 300);
+            }
+            
+            function renderServiceModalContent() {
+                const modalBody = document.querySelector('#service-modal .modal-body');
+                const modal = document.querySelector('#service-modal .modal');
+                if (!modalBody || !modal) return;
+                
+                // Remove skeleton class
+                modal.classList.remove('skeleton');
+                
+                // Render actual content
+                modalBody.innerHTML = `
+                    <div class="form-group">
+                        <label class="form-label" data-translate="request_type">${translate('request_type')}</label>
+                        <select class="form-select" id="request-type">
+                            <option value="CALL_WAITER" data-translate="call_waiter">${translate('call_waiter')}</option>
+                            <option value="REQUEST_BILL" data-translate="request_bill">${translate('request_bill')}</option>
+                            <option value="CLEANING_ASSISTANCE" data-translate="cleaning_assistance">${translate('cleaning_assistance')}</option>
+                            <option value="OTHER" data-translate="other">${translate('other')}</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="other-request-container" style="display: none;">
+                        <label class="form-label" data-translate="please_specify">${translate('please_specify')}</label>
+                        <input type="text" class="form-input" id="other-request" data-translate-placeholder="specify_request" placeholder="${translate('specify_request')}">
+                    </div>
+                `;
+                
+                // Re-setup event listeners for the new elements
+                setupServiceModalEventListeners();
+            }
+            
+            function setupServiceModalEventListeners() {
+                const requestType = document.getElementById('request-type');
+                const otherRequestContainer = document.getElementById('other-request-container');
+                
+                if (requestType) {
+                    requestType.addEventListener('change', function() {
+                        if (this.value === 'OTHER') {
+                            otherRequestContainer.style.display = 'block';
+                        } else {
+                            otherRequestContainer.style.display = 'none';
+                        }
+                    });
+                }
             }
             
             function renderConfirmationModalSkeleton() {
@@ -2541,35 +2660,46 @@
                 
                 cartContainer.innerHTML = `
                     <div class="page-header">
-                        <div class="skeleton-page-title"></div>
-                        <div class="skeleton-page-subtitle"></div>
+                        <div class="skeleton-text page-title"></div>
+                        <div class="skeleton-text subtitle"></div>
                     </div>
-                    <div class="skeleton-list-item">
-                        <div class="skeleton-list-content">
-                            <div class="skeleton-list-image"></div>
-                            <div class="skeleton-list-details">
-                                <div class="skeleton-list-title"></div>
-                                <div class="skeleton-list-subtitle"></div>
+                    
+                    <div class="cart-items-section">
+                        ${Array(3).fill('').map(() => `
+                            <div class="cart-item-card skeleton">
+                                <div class="cart-item-image-container">
+                                    <div class="skeleton-image"></div>
+                                </div>
+                                <div class="cart-item-content">
+                                    <div class="cart-item-header">
+                                        <div class="skeleton-text title"></div>
+                                        <div class="skeleton-text price"></div>
+                                    </div>
+                                    <div class="skeleton-text description"></div>
+                                    <div class="cart-item-footer">
+                                        <div class="skeleton-text small"></div>
+                                        <div class="cart-item-controls">
+                                            <div class="skeleton-button small"></div>
+                                            <div class="skeleton-text small center"></div>
+                                            <div class="skeleton-button small"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        `).join('')}
                     </div>
-                    <div class="skeleton-list-item">
-                        <div class="skeleton-list-content">
-                            <div class="skeleton-list-image"></div>
-                            <div class="skeleton-list-details">
-                                <div class="skeleton-list-title"></div>
-                                <div class="skeleton-list-subtitle"></div>
-                            </div>
+                    
+                    <div class="cart-summary-section">
+                        <div class="skeleton-text title"></div>
+                        <div class="summary-rows">
+                            ${Array(4).fill('').map(() => `
+                                <div class="summary-row skeleton">
+                                    <div class="skeleton-text small"></div>
+                                    <div class="skeleton-text small"></div>
+                                </div>
+                            `).join('')}
                         </div>
-                    </div>
-                    <div class="skeleton-list-item">
-                        <div class="skeleton-list-content">
-                            <div class="skeleton-list-image"></div>
-                            <div class="skeleton-list-details">
-                                <div class="skeleton-list-title"></div>
-                                <div class="skeleton-list-subtitle"></div>
-                            </div>
-                        </div>
+                        <div class="skeleton-button primary full-width"></div>
                     </div>
                 `;
             }
@@ -2584,22 +2714,46 @@
                 
                 checkoutForm.innerHTML = `
                     <div class="page-header">
-                        <div class="skeleton-page-title"></div>
-                        <div class="skeleton-page-subtitle"></div>
+                        <div class="skeleton-text page-title"></div>
+                        <div class="skeleton-text subtitle"></div>
                     </div>
-                    <div class="skeleton-content-grid">
-                        <div class="skeleton-content-card">
-                            <div class="skeleton-text medium"></div>
-                            <div class="skeleton-text"></div>
-                            <div class="skeleton-text"></div>
-                            <div class="skeleton-text small"></div>
+                    
+                    <div class="checkout-sections">
+                        <div class="checkout-section skeleton">
+                            <div class="section-header">
+                                <div class="skeleton-text section-title"></div>
+                            </div>
+                            <div class="section-content">
+                                <div class="form-group skeleton">
+                                    <div class="skeleton-text small"></div>
+                                    <div class="skeleton-select"></div>
+                                </div>
+                                <div class="form-group skeleton">
+                                    <div class="skeleton-text small"></div>
+                                    <div class="skeleton-input"></div>
+                                </div>
+                                <div class="form-group skeleton">
+                                    <div class="skeleton-text small"></div>
+                                    <div class="skeleton-input"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skeleton-content-card">
-                            <div class="skeleton-text medium"></div>
-                            <div class="skeleton-text"></div>
-                            <div class="skeleton-input"></div>
-                            <div class="skeleton-input"></div>
-                            <div class="skeleton-button"></div>
+                        
+                        <div class="checkout-section skeleton">
+                            <div class="section-header">
+                                <div class="skeleton-text section-title"></div>
+                            </div>
+                            <div class="section-content">
+                                <div class="order-summary-skeleton">
+                                    ${Array(5).fill('').map(() => `
+                                        <div class="summary-row skeleton">
+                                            <div class="skeleton-text small"></div>
+                                            <div class="skeleton-text small"></div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="skeleton-button primary full-width"></div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2614,36 +2768,76 @@
                 orderView.classList.add('skeleton');
                 
                 orderContainer.innerHTML = `
-                    <div class="page-header">
-                        <div class="skeleton-page-title"></div>
-                        <div class="skeleton-page-subtitle"></div>
-                    </div>
-                    <div class="skeleton-content-card">
-                        <div class="skeleton-text large"></div>
-                        <div class="skeleton-text medium"></div>
-                        <div class="skeleton-text"></div>
-                        <div class="skeleton-text"></div>
-                        <div class="skeleton-text small"></div>
-                    </div>
-                    <div class="skeleton-content-card">
-                        <div class="skeleton-text medium"></div>
-                        <div class="skeleton-list-item">
-                            <div class="skeleton-list-content">
-                                <div class="skeleton-list-image"></div>
-                                <div class="skeleton-list-details">
-                                    <div class="skeleton-list-title"></div>
-                                    <div class="skeleton-list-subtitle"></div>
-                                </div>
-                            </div>
+                    <!-- Order Type Header Skeleton -->
+                    <div class="order-type-header skeleton">
+                        <div class="ot-order-type-icon">
+                            <div class="skeleton-icon"></div>
                         </div>
-                        <div class="skeleton-list-item">
-                            <div class="skeleton-list-content">
-                                <div class="skeleton-list-image"></div>
-                                <div class="skeleton-list-details">
-                                    <div class="skeleton-list-title"></div>
-                                    <div class="skeleton-list-subtitle"></div>
+                        <div class="order-type-info">
+                            <div class="skeleton-text title"></div>
+                            <div class="skeleton-text subtitle"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- ETA Display Skeleton -->
+                    <div class="eta-display skeleton">
+                        <div class="skeleton-text small"></div>
+                        <div class="skeleton-text large"></div>
+                    </div>
+                    
+                    <!-- Status Progress Skeleton -->
+                    <div class="status-progress-custom skeleton">
+                        ${Array(4).fill('').map(() => `
+                            <div class="status-step-custom">
+                                <div class="step-icon">
+                                    <div class="skeleton-icon"></div>
                                 </div>
+                                <div class="skeleton-text small"></div>
                             </div>
+                        `).join('')}
+                    </div>
+                    
+                    <!-- Info Cards Skeleton -->
+                    <div class="order-type-info-cards skeleton">
+                        ${Array(2).fill('').map(() => `
+                            <div class="info-card skeleton">
+                                <div class="skeleton-text medium"></div>
+                                <div class="skeleton-text"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <!-- Order Items Skeleton -->
+                    <div class="order-details skeleton">
+                        <div class="skeleton-text section-title"></div>
+                        <div class="order-items-list">
+                            ${Array(3).fill('').map(() => `
+                                <div class="order-item-card skeleton">
+                                    <div class="order-item-image">
+                                        <div class="skeleton-image"></div>
+                                    </div>
+                                    <div class="order-item-content">
+                                        <div class="order-item-header">
+                                            <div class="skeleton-text title"></div>
+                                            <div class="skeleton-text small"></div>
+                                        </div>
+                                        <div class="skeleton-text description"></div>
+                                        <div class="order-item-footer">
+                                            <div class="skeleton-text small"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <!-- Order Summary Skeleton -->
+                        <div class="order-summary skeleton">
+                            ${Array(5).fill('').map(() => `
+                                <div class="summary-row skeleton">
+                                    <div class="skeleton-text small"></div>
+                                    <div class="skeleton-text small"></div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
@@ -2659,35 +2853,46 @@
                 
                 ordersContainer.innerHTML = `
                     <div class="page-header">
-                        <div class="skeleton-page-title"></div>
-                        <div class="skeleton-page-subtitle"></div>
+                        <div class="skeleton-text page-title"></div>
+                        <div class="skeleton-text subtitle"></div>
                     </div>
-                    <div class="skeleton-list-item">
-                        <div class="skeleton-list-content">
-                            <div class="skeleton-list-image"></div>
-                            <div class="skeleton-list-details">
-                                <div class="skeleton-list-title"></div>
-                                <div class="skeleton-list-subtitle"></div>
+                    
+                    <div class="orders-list">
+                        ${Array(4).fill('').map(() => `
+                            <div class="order-history-card skeleton">
+                                <div class="order-header">
+                                    <div class="order-info">
+                                        <div class="skeleton-text title"></div>
+                                        <div class="skeleton-text subtitle"></div>
+                                    </div>
+                                    <div class="order-status">
+                                        <div class="skeleton-badge"></div>
+                                    </div>
+                                </div>
+                                <div class="order-body">
+                                    <div class="order-items-preview">
+                                        ${Array(2).fill('').map(() => `
+                                            <div class="order-item-preview skeleton">
+                                                <div class="skeleton-image small"></div>
+                                                <div class="item-preview-details">
+                                                    <div class="skeleton-text small"></div>
+                                                    <div class="skeleton-text tiny"></div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <div class="order-footer">
+                                        <div class="order-total">
+                                            <div class="skeleton-text medium"></div>
+                                        </div>
+                                        <div class="order-actions">
+                                            <div class="skeleton-button small"></div>
+                                            <div class="skeleton-button small primary"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="skeleton-list-item">
-                        <div class="skeleton-list-content">
-                            <div class="skeleton-list-image"></div>
-                            <div class="skeleton-list-details">
-                                <div class="skeleton-list-title"></div>
-                                <div class="skeleton-list-subtitle"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="skeleton-list-item">
-                        <div class="skeleton-list-content">
-                            <div class="skeleton-list-image"></div>
-                            <div class="skeleton-list-details">
-                                <div class="skeleton-list-title"></div>
-                                <div class="skeleton-list-subtitle"></div>
-                            </div>
-                        </div>
+                        `).join('')}
                     </div>
                 `;
             }
@@ -2702,40 +2907,34 @@
                 
                 favoritesContainer.innerHTML = `
                     <div class="page-header">
-                        <div class="skeleton-page-title"></div>
-                        <div class="skeleton-page-subtitle"></div>
+                        <div class="skeleton-text page-title"></div>
+                        <div class="skeleton-text subtitle"></div>
                     </div>
-                    <div class="skeleton-content-grid">
-                        <div class="menu-item-card skeleton">
-                            <div class="menu-item-image-container">
-                                <div class="skeleton-image"></div>
+                    
+                    <div class="favorites-grid">
+                        ${Array(9).fill('').map(() => `
+                            <div class="menu-item-card skeleton">
+                                <div class="menu-item-image-container">
+                                    <div class="skeleton-image"></div>
+                                </div>
+                                <div class="menu-item-content">
+                                    <div class="menu-item-header">
+                                        <div class="skeleton-text title"></div>
+                                        <div class="skeleton-text price"></div>
+                                    </div>
+                                    <div class="skeleton-text description"></div>
+                                    <div class="menu-item-footer">
+                                        <div class="prep-time-with-favorite">
+                                            <div class="skeleton-text small"></div>
+                                            <div class="skeleton-icon"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="menu-item-quantity-controller">
+                                    <div class="skeleton-button"></div>
+                                </div>
                             </div>
-                            <div class="menu-item-content">
-                                <div class="skeleton-text title"></div>
-                                <div class="skeleton-text price"></div>
-                                <div class="skeleton-text description"></div>
-                            </div>
-                        </div>
-                        <div class="menu-item-card skeleton">
-                            <div class="menu-item-image-container">
-                                <div class="skeleton-image"></div>
-                            </div>
-                            <div class="menu-item-content">
-                                <div class="skeleton-text title"></div>
-                                <div class="skeleton-text price"></div>
-                                <div class="skeleton-text description"></div>
-                            </div>
-                        </div>
-                        <div class="menu-item-card skeleton">
-                            <div class="menu-item-image-container">
-                                <div class="skeleton-image"></div>
-                            </div>
-                            <div class="menu-item-content">
-                                <div class="skeleton-text title"></div>
-                                <div class="skeleton-text price"></div>
-                                <div class="skeleton-text description"></div>
-                            </div>
-                        </div>
+                        `).join('')}
                     </div>
                 `;
             }
@@ -4753,95 +4952,84 @@
                                     <button class="btn btn-secondary" onclick="window.location.reload()">${translate('back_to_menu')}</button>
                                 </div>
                             </div>
-                        `;
-                        
-                        // Add order items and summary for cancelled orders
-                        setTimeout(() => {
-                            const cancelledContainer = elements.orderTrackingContainer;
-                            cancelledContainer.innerHTML += `
-                                <!-- Order Items -->
-                                <div class="order-details">
-                                    <h4>${translate('order_items')}</h4>
-                                    <div class="order-items-list">
-                                        ${orderData.items && orderData.items.length > 0 ? orderData.items.map(item => {
-                                            const customizationText = formatCustomizations(item.customizations);
-                                            const hasCustomizations = customizationText && customizationText.trim() !== '';
-                                            
-                                            return `
-                                                <div class="order-item-card">
-                                                    <div class="order-item-image">
-                                                        <img src="${item.image_url || '/images/food-default.jpg'}" alt="${getTranslation(item.name, item.name_translation_key)}">
+                            
+                            <!-- Order Items -->
+                            <div class="order-details">
+                                <h4>${translate('order_items')}</h4>
+                                <div class="order-items-list">
+                                    ${orderData.items && orderData.items.length > 0 ? orderData.items.map(item => {
+                                        const customizationText = formatCustomizations(item.customizations);
+                                        const hasCustomizations = customizationText && customizationText.trim() !== '';
+                                        
+                                        return `
+                                            <div class="order-item-card">
+                                                <div class="order-item-image">
+                                                    <img src="${item.image_url || '/images/food-default.jpg'}" alt="${getTranslation(item.name, item.name_translation_key)}">
+                                                </div>
+                                                <div class="order-item-content">
+                                                    <div class="order-item-header">
+                                                        <h5 class="order-item-name">${getTranslation(item.name, item.name_translation_key)}</h5>
+                                                        <div class="order-item-quantity">
+                                                            <span class="quantity-badge">×${item.quantity}</span>
+                                                        </div>
                                                     </div>
-                                                    <div class="order-item-content">
-                                                        <div class="order-item-header">
-                                                            <h5 class="order-item-name">${getTranslation(item.name, item.name_translation_key)}</h5>
-                                                            <div class="order-item-quantity">
-                                                                <span class="quantity-badge">×${item.quantity}</span>
-                                                            </div>
-                                                        </div>
-                                                        ${hasCustomizations ? `
-                                                        <div class="order-item-customizations">
-                                                            <i class="fas fa-cog"></i>
-                                                            <span>${customizationText}</span>
-                                                        </div>
-                                                        ` : ''}
-                                                        <div class="order-item-footer">
-                                                            <div class="order-item-price">
-                                                                ${formatPrice(item.price_at_order)} × ${item.quantity} = ${formatPrice(item.item_total)}
-                                                            </div>
+                                                    ${hasCustomizations ? `
+                                                    <div class="order-item-customizations">
+                                                        <i class="fas fa-cog"></i>
+                                                        <span>${customizationText}</span>
+                                                    </div>
+                                                    ` : ''}
+                                                    <div class="order-item-footer">
+                                                        <div class="order-item-price">
+                                                            ${formatPrice(item.price_at_order)} × ${item.quantity} = ${formatPrice(item.item_total)}
                                                         </div>
                                                     </div>
                                                 </div>
-                                            `;
-                                        }).join('') : '<p class="no-items">No items found</p>'}
+                                            </div>
+                                        `;
+                                    }).join('') : '<p class="no-items">No items found</p>'}
+                                </div>
+                                
+                                <!-- Order Summary -->
+                                <div class="order-summary">
+                                    <div class="summary-row">
+                                        <span>${translate('subtotal')}:</span>
+                                        <span>${formatPrice(orderData.items_subtotal)}</span>
                                     </div>
-                                    
-                                    <!-- Order Summary -->
-                                    <div class="order-summary">
-                                        <div class="summary-row">
-                                            <span>${translate('subtotal')}:</span>
-                                            <span>${formatPrice(orderData.items_subtotal)}</span>
-                                        </div>
-                                        ${orderData.promo_id && orderData.discount_amount > 0 ? `
-                                        <div class="summary-row discount-row">
-                                            <span>${translate('discount')} ${orderData.promo_code ? `(${orderData.promo_code})` : ''}:</span>
-                                            <span>-${formatPrice(orderData.discount_amount)}</span>
-                                        </div>
-                                        ` : ''}
-                                        ${orderData.service_charge_amount ? `
-                                        <div class="summary-row">
-                                            <span>${translate('service_charge')}${getServiceChargePercentage(orderData)}:</span>
-                                            <span>${formatPrice(orderData.service_charge_amount)}</span>
-                                        </div>
-                                        ` : ''}
-                                        ${orderData.vat_amount ? `
-                                        <div class="summary-row">
-                                            <span>${translate('tax')}${getVatPercentage(orderData)}:</span>
-                                            <span>${formatPrice(orderData.vat_amount)}</span>
-                                        </div>
-                                        ` : ''}
-                                        ${orderData.delivery_charge_amount ? `
-                                        <div class="summary-row">
-                                            <span>${translate('delivery_charge')}:</span>
-                                            <span>${formatPrice(orderData.delivery_charge_amount)}</span>
-                                        </div>
-                                        ` : ''}
-                                        <div class="summary-row total">
-                                            <span>${translate('total')}:</span>
-                                            <span>${formatPrice(orderData.total_amount)}</span>
-                                        </div>
+                                    ${orderData.promo_id && orderData.discount_amount > 0 ? `
+                                    <div class="summary-row discount-row">
+                                        <span>${translate('discount')} ${orderData.promo_code ? `(${orderData.promo_code})` : ''}:</span>
+                                        <span>-${formatPrice(orderData.discount_amount)}</span>
+                                    </div>
+                                    ` : ''}
+                                    ${orderData.service_charge_amount ? `
+                                    <div class="summary-row">
+                                        <span>${translate('service_charge')}${getServiceChargePercentage(orderData)}:</span>
+                                        <span>${formatPrice(orderData.service_charge_amount)}</span>
+                                    </div>
+                                    ` : ''}
+                                    ${orderData.vat_amount ? `
+                                    <div class="summary-row">
+                                        <span>${translate('tax')}${getVatPercentage(orderData)}:</span>
+                                        <span>${formatPrice(orderData.vat_amount)}</span>
+                                    </div>
+                                    ` : ''}
+                                    ${orderData.delivery_charge_amount ? `
+                                    <div class="summary-row">
+                                        <span>${translate('delivery_charge')}:</span>
+                                        <span>${formatPrice(orderData.delivery_charge_amount)}</span>
+                                    </div>
+                                    ` : ''}
+                                    <div class="summary-row total">
+                                        <span>${translate('total')}:</span>
+                                        <span>${formatPrice(orderData.total_amount)}</span>
                                     </div>
                                 </div>
-                            `;
-                            
-                            // Remove skeleton class after content is loaded
-                            document.getElementById('order-tracking-view').classList.remove('skeleton');
-                            
-                            // Setup mobile bounce marquee for status flow (if any status flow exists)
-                            setTimeout(() => {
-                                setupMobileStatusMarquee();
-                            }, 500);
-                        }, 100);
+                            </div>
+                        `;
+                        
+                        // Remove skeleton class after content is loaded
+                        document.getElementById('order-tracking-view').classList.remove('skeleton');
                         return;
                     }
                     
@@ -4877,14 +5065,6 @@
                         
                         <!-- Enhanced Order Type Specific Status Flow -->
                         <div class="status-progress-custom status-flow-${orderType}" style="--completed-steps: ${currentStepIndex >= 0 ? currentStepIndex + 1 : 0}; --total-steps: ${statusSteps.length};">
-                            <!-- Mobile scroll hint arrows -->
-                            <div class="status-scroll-hint scroll-hint-left">
-                                <i class="fas fa-chevron-left"></i>
-                            </div>
-                            <div class="status-scroll-hint scroll-hint-right">
-                                <i class="fas fa-chevron-right"></i>
-                            </div>
-                            
                             ${statusSteps.map((step, index) => `
                                 <div class="status-step-custom ${index <= currentStepIndex ? 'completed' : ''} ${index === currentStepIndex ? 'active' : ''}">
                                     <div class="step-icon">
@@ -5056,18 +5236,15 @@
                 const statusProgressElements = document.querySelectorAll('.status-progress-custom');
                 
                 statusProgressElements.forEach(element => {
+                    // Remove any potential blurry overlays
+                    removeBlurryOverlays(element);
+                    
                     // Check if element is scrollable
                     const isScrollable = element.scrollWidth > element.clientWidth;
                     
                     if (isScrollable && window.innerWidth <= 480) {
                         // Add bounce animation class
                         element.classList.add('bouncing');
-                        
-                        // Show scroll hints
-                        const scrollHints = element.querySelectorAll('.status-scroll-hint');
-                        scrollHints.forEach(hint => {
-                            hint.style.display = 'block';
-                        });
                         
                         // Pause animation on user interaction
                         let isPaused = false;
@@ -5101,10 +5278,6 @@
                         // Add touch feedback for better mobile experience
                         element.addEventListener('touchmove', () => {
                             element.classList.remove('bouncing');
-                            // Hide scroll hints when user is scrolling
-                            scrollHints.forEach(hint => {
-                                hint.style.display = 'none';
-                            });
                         });
                         
                         // Restart bouncing after scrolling stops
@@ -5114,9 +5287,6 @@
                             touchTimeout = setTimeout(() => {
                                 if (window.innerWidth <= 480 && element.scrollWidth > element.clientWidth) {
                                     element.classList.add('bouncing');
-                                    scrollHints.forEach(hint => {
-                                        hint.style.display = 'block';
-                                    });
                                 }
                             }, 2000);
                         });
@@ -5124,12 +5294,54 @@
                     } else {
                         // Remove bounce animation if not scrollable or not mobile
                         element.classList.remove('bouncing');
-                        
-                        // Hide scroll hints
-                        const scrollHints = element.querySelectorAll('.status-scroll-hint');
-                        scrollHints.forEach(hint => {
-                            hint.style.display = 'none';
-                        });
+                    }
+                });
+            }
+            
+            // Helper function to remove blurry overlays from status progress
+            function removeBlurryOverlays(element) {
+                // Remove any overlay pseudo-elements by overriding styles
+                const style = document.createElement('style');
+                style.textContent = `
+                    .status-progress-custom::before,
+                    .status-progress-custom::after {
+                        display: none !important;
+                        content: none !important;
+                    }
+                    .status-progress-custom .status-step-custom::before,
+                    .status-progress-custom .status-step-custom::after {
+                        display: none !important;
+                        content: none !important;
+                    }
+                    .status-progress-custom {
+                        background: transparent !important;
+                        backdrop-filter: none !important;
+                        filter: none !important;
+                    }
+                    .status-step-custom {
+                        background: transparent !important;
+                        backdrop-filter: none !important;
+                        filter: none !important;
+                    }
+                `;
+                
+                // Add style to head if not already present
+                if (!document.querySelector('#remove-overlay-styles')) {
+                    style.id = 'remove-overlay-styles';
+                    document.head.appendChild(style);
+                }
+                
+                // Also remove any inline styles that might cause overlays
+                const steps = element.querySelectorAll('.status-step-custom');
+                steps.forEach((step, index) => {
+                    // Remove any potential overlay styles from first step specifically
+                    if (index === 0) {
+                        step.style.filter = 'none';
+                        step.style.backdropFilter = 'none';
+                        step.style.boxShadow = 'none';
+                        step.style.background = '';
+                        step.style.position = 'relative';
+                        step.style.zIndex = '1';
                     }
                 });
             }
@@ -6635,15 +6847,180 @@
             }
             
             // QR Scanner functionality
+            let qrScanner = null;
+            let cameraStream = null;
+            
             function showQRScanner() {
                 elements.qrScannerContainer.classList.add('active');
                 elements.qrCodeInput.value = '';
                 elements.qrCodeInput.focus();
+                
+                // Initialize camera for QR scanning
+                initializeQRCamera();
             }
             
             function hideQRScanner() {
                 elements.qrScannerContainer.classList.remove('active');
+                stopQRCamera();
             }
+            
+            async function initializeQRCamera() {
+                try {
+                    // Check if browser supports camera access
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        console.warn('Camera not supported, using manual input only');
+                        return;
+                    }
+                    
+                    // Create video element for camera feed
+                    const qrPlaceholder = document.querySelector('.qr-scanner-placeholder');
+                    if (!qrPlaceholder) return;
+                    
+                    // Create video element if it doesn't exist
+                    let video = qrPlaceholder.querySelector('#qr-video');
+                    if (!video) {
+                        video = document.createElement('video');
+                        video.id = 'qr-video';
+                        video.style.cssText = `
+                            width: 100%;
+                            height: 200px;
+                            object-fit: cover;
+                            border-radius: 8px;
+                            border: 2px solid var(--uber-gray-300);
+                            margin-bottom: 1rem;
+                        `;
+                        video.autoplay = true;
+                        video.playsInline = true;
+                        qrPlaceholder.insertBefore(video, qrPlaceholder.firstChild);
+                    }
+                    
+                    // Create canvas for QR detection
+                    let canvas = qrPlaceholder.querySelector('#qr-canvas');
+                    if (!canvas) {
+                        canvas = document.createElement('canvas');
+                        canvas.id = 'qr-canvas';
+                        canvas.style.display = 'none';
+                        qrPlaceholder.appendChild(canvas);
+                    }
+                    
+                    // Get camera stream
+                    cameraStream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            facingMode: 'environment', // Use back camera if available
+                            width: { ideal: 640 },
+                            height: { ideal: 480 }
+                        }
+                    });
+                    
+                    video.srcObject = cameraStream;
+                    
+                    // Start QR code detection
+                    startQRDetection(video, canvas);
+                    
+                } catch (error) {
+                    console.error('Failed to initialize camera:', error);
+                    showError('Camera access denied or not available. Please use manual input.');
+                }
+            }
+            
+            function startQRDetection(video, canvas) {
+                const context = canvas.getContext('2d');
+                
+                const detectQR = () => {
+                    if (!video.videoWidth || !video.videoHeight) {
+                        requestAnimationFrame(detectQR);
+                        return;
+                    }
+                    
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    try {
+                        // Get image data for QR detection
+                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        
+                        // Use jsQR library for QR code detection
+                        if (window.jsQR) {
+                            const code = jsQR(imageData.data, imageData.width, imageData.height);
+                            
+                            if (code && code.data) {
+                                // QR code detected
+                                console.log('QR Code detected:', code.data);
+                                processQRCode(code.data);
+                                return; // Stop detection after successful scan
+                            }
+                        } else {
+                            // Fallback: Try to detect QR patterns manually (basic implementation)
+                            // This is a simple pattern matching approach
+                            const qrPattern = detectQRPattern(imageData);
+                            if (qrPattern) {
+                                console.log('QR Pattern detected (basic):', qrPattern);
+                                processQRCode(qrPattern);
+                                return;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('QR detection error:', error);
+                    }
+                    
+                    // Continue scanning if camera is still active
+                    if (cameraStream && cameraStream.active) {
+                        requestAnimationFrame(detectQR);
+                    }
+                };
+                
+                // Start detection
+                requestAnimationFrame(detectQR);
+            }
+            
+            function detectQRPattern(imageData) {
+                // Basic QR code pattern detection (fallback)
+                // This is a simplified approach - in real implementation you'd want a proper QR library
+                const { data, width, height } = imageData;
+                
+                // Look for QR code-like patterns in the image
+                // For now, we'll just return null and rely on manual input
+                // A full implementation would analyze the pixel data for QR patterns
+                return null;
+            }
+            
+            function stopQRCamera() {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraStream = null;
+                }
+                
+                // Remove video element
+                const video = document.querySelector('#qr-video');
+                if (video) {
+                    video.remove();
+                }
+                
+                // Remove canvas element
+                const canvas = document.querySelector('#qr-canvas');
+                if (canvas) {
+                    canvas.remove();
+                }
+            }
+            
+            // Load jsQR library dynamically for QR code detection
+            function loadQRLibrary() {
+                if (window.jsQR) return Promise.resolve();
+                
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            }
+            
+            // Initialize QR library when app starts
+            loadQRLibrary().catch(error => {
+                console.warn('Failed to load QR library:', error);
+            });
             
             async function processQRCode(qrCode) {
                 try {
@@ -9272,7 +9649,7 @@
                         <h3>${translate('quick_links')}</h3>
                         <ul>
                             <li><a href="#home" data-view="home">${translate('nav_home')}</a></li>
-                            <li><a href="#menu" data-view="menu">${translate('nav_menu')}</a></li>
+                            <li><a href="#our_branches">${translate('nav_menu')}</a></li>
                             <li><a href="#favorites" data-view="favorites">${translate('nav_favorites')}</a></li>
                             <li><a href="#orders" data-view="orders">${translate('nav_orders')}</a></li>
                             <li><a href="#" id="privacy-policy">${translate('privacy_policy')}</a></li>
